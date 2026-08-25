@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --velora-primary: #C96A26;
+  --velora-primary-soft: #C89B5A;
+  --velora-primary-deep: #B5742E;
+  --velora-cream: #F8F5EF;
+  --velora-ivory: #FAF7F2;
+  --velora-white: #FFFFFF;
+  --velora-dark: #1F1713;
+  --velora-text: #4B3A30;
+  --velora-text-soft: #7B675D;
+  --velora-border: #EFE7DC;
+  --velora-soft-border: #E7DED2;
+  --velora-bg-gradient: linear-gradient(135deg, #FAF7F2 0%, #F8F5EF 45%, #FCFAF7 100%);
+  --velora-hero-gradient: linear-gradient(135deg, #FAF7F2 0%, #F8F5EF 50%, #FFF8EF 100%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #FAF7F2 0%, #F8F5EF 45%, #FCFAF7 100%);
+  color: #1F1713;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(201, 106, 38, 0.18);
+  color: #1F1713;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  transition: all 200ms ease;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Restore the original warm premium palette for legacy beige/orange arbitrary values */
+.bg-\[\#F7F3EC\],
+.bg-\[\#F8F5EF\],
+.bg-\[\#F3E7DC\],
+.bg-\[\#FCFAF7\],
+.bg-\[\#FBF8F2\],
+.bg-\[\#FFF7EE\],
+.bg-\[\#FFFDF9\] {
+  background-color: #F8F5EF !important;
+}
+
+.hover\:bg-\[\#F7F3EC\]\:hover,
+.hover\:bg-\[\#F8F5EF\]\:hover,
+.hover\:bg-\[\#F3E7DC\]\:hover,
+.hover\:bg-\[\#FCFAF7\]\:hover,
+.hover\:bg-\[\#FBF8F2\]\:hover,
+.hover\:bg-\[\#FFF7EE\]\:hover,
+.hover\:bg-\[\#FFFDF9\]\:hover {
+  background-color: #F3E7DC !important;
+}
+
+.border-\[\#E7DED2\],
+.border-\[\#EFE7DC\],
+.border-\[\#E8DED1\],
+.border-\[\#F1E9DF\],
+.border-\[\#F3E7DC\] {
+  border-color: #E7DED2 !important;
+}
+
+.border-\[\#E7DED2\]\:focus-within,
+.focus-within\:border-\[\#E7DED2\]\:focus-within,
+.focus-within\:border-\[\#E7DED2\]\/70\:focus-within {
+  border-color: #C96A26 !important;
+}
+
+.text-\[\#1F1713\],
+.text-\[\#2C231C\],
+.text-\[\#2F2A24\] {
+  color: #1F1713 !important;
+}
+
+.text-\[\#4A4A4A\],
+.text-\[\#5F5A58\],
+.text-\[\#6B625E\] {
+  color: #7B675D !important;
+}
+
+.hover\:text-\[\#C89B5A\]\:hover,
+.hover\:text-\[\#C96A26\]\:hover,
+.hover\:text-\[\#A3541E\]\:hover,
+.hover\:text-\[\#C65A11\]\:hover,
+.hover\:text-\[\#E87F24\]\:hover {
+  color: #C96A26 !important;
+}
+
+.bg-\[\#FFF7EE\] .text-\[\#C89B5A\],
+.bg-\[\#FFF7EE\] .text-\[\#C96A26\],
+.bg-\[\#FFF7EE\] .text-\[\#A3541E\] {
+  color: #C96A26 !important;
+}

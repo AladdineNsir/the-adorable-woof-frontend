@@ -1,0 +1,35 @@
+{
+  "name": "velora-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "optimize:image": "node ./scripts/optimize-image.js"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.14",
+    "axios": "^1.6.8",
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^1.23.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.51.2",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.7.0",
+    "react-router-dom": "^6.22.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "sharp": "^0.32.0",
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.2.7"
+  }
+}
