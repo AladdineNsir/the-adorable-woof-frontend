@@ -15,3 +15,12 @@ export const getClientById = async (id) => {
   const { data } = await axios.get(`${API_URL}/${id}`, authHeaders());
   return data;
 };
+
+export const deleteClient = async (id) => {
+  const { data } = await axios.delete(
+    `${API_URL}/${id}`,
+    authHeaders()
+  );
+
+  return data;
+};
