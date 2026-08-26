@@ -158,8 +158,17 @@ export default function ProductForm({ product = null, isEdit = false }) {
         alert("Produit ajouté.");
       }
     } catch (error) {
-      console.log(error);
-    } finally {
+  console.error("❌ ERREUR CREATE PRODUCT");
+  console.error("STATUS :", error.response?.status);
+  console.error("DATA :", error.response?.data);
+  console.error("MESSAGE :", error.response?.data?.message);
+  console.error("FULL ERROR :", error);
+
+  alert(
+    error.response?.data?.message ||
+      "Erreur lors de la création du produit."
+  );
+} finally {
       setLoading(false);
     }
   };

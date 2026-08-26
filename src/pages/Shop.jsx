@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Cat,
@@ -83,7 +83,9 @@ const normalizeProduct = (product) => {
     harnais: "Harnais",
   };
 
-  const rawImage = product.image || product.images?.[0] || "";
+  const rawImage =
+    product.image || product.images?.[0] || "";
+
   const image = resolveAssetUrl(rawImage);
 
   const rawSubCategory =
@@ -92,8 +94,9 @@ const normalizeProduct = (product) => {
       : product.subCategory || "";
 
   const subCategory =
-    localToSubCategory[String(rawSubCategory).toLowerCase()] ||
-    rawSubCategory;
+    localToSubCategory[
+      String(rawSubCategory).toLowerCase()
+    ] || rawSubCategory;
 
   const categoryMap = {
     chiens: "chiens",
@@ -117,58 +120,170 @@ const normalizeProduct = (product) => {
     name: product.name,
     price: product.price ?? 0,
     image,
-    category: categoryMap[String(rawCategory).toLowerCase()] || "chiens",
+    category:
+      categoryMap[String(rawCategory).toLowerCase()] ||
+      "chiens",
     description:
-      product.description || product.details || product.name || "",
+      product.description ||
+      product.details ||
+      product.name ||
+      "",
     rating: product.rating ?? product.ratings ?? 0,
-    isNew: product.isNew ?? product.isNewArrival ?? false,
+    isNew:
+      product.isNew ??
+      product.isNewArrival ??
+      false,
     subCategory,
     sizes: product.sizes || [],
     colors: product.colors || [],
     materials: product.materials || [],
     stock: product.stock,
     available:
-      product.stock === undefined || Number(product.stock) > 0,
+      product.stock === undefined ||
+      Number(product.stock) > 0,
   };
 };
 
 export default function Shop() {
   const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get("search") || "";
+
+  const searchQuery =
+    searchParams.get("search") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedCategory, setSelectedCategory] = useState(
-    searchParams.get("category") || "all"
-  );
+  const [selectedCategory, setSelectedCategory] =
+    useState(
+      searchParams.get("category") || "all"
+    );
 
-  const [selectedSubCategory, setSelectedSubCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("featured");
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [view, setView] = useState("grid");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSubCategory, setSelectedSubCategory] =
+    useState("all");
 
-  const [filtersExpanded, setFiltersExpanded] = useState({
-    category: true,
-    subCategory: true,
-  });
+  const [sortBy, setSortBy] =
+    useState("featured");
+
+  const [filterOpen, setFilterOpen] =
+    useState(false);
+
+  const [view, setView] =
+    useState("grid");
+
+  const [currentPage, setCurrentPage] =
+    useState(1);
+
+  // ==========================
+  // PAGINATION BACKEND
+  // ==========================
+
+  const [pagination, setPagination] =
+    useState({
+      page: 1,
+      limit: PRODUCTS_PER_PAGE,
+      total: 0,
+      pages: 1,
+    });
+
+  const [filtersExpanded, setFiltersExpanded] =
+    useState({
+      category: true,
+      subCategory: true,
+    });
+
+  // ==========================
+  // LOAD PRODUCTS
+  // ==========================
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get(`${API_BASE_URL}/products`);
-        setProducts(data.map(normalizeProduct));
+        setLoading(true);
+
+        const params = {
+          page: currentPage,
+          limit: PRODUCTS_PER_PAGE,
+
+          // Seulement les produits disponibles
+          stock: "available",
+        };
+
+        // Recherche
+        if (searchQuery.trim()) {
+          params.search = searchQuery.trim();
+        }
+
+        // Catégorie
+        if (selectedCategory !== "all") {
+          params.category = selectedCategory;
+        }
+
+        // Sous-catégorie
+        if (selectedSubCategory !== "all") {
+          params.subCategory =
+            selectedSubCategory;
+        }
+
+        // Tri
+        if (sortBy !== "featured") {
+          params.sort = sortBy;
+        }
+
+        const { data } = await axios.get(
+          `${API_BASE_URL}/products`,
+          {
+            params,
+          }
+        );
+
+        const productsData =
+          Array.isArray(data)
+            ? data
+            : data.products || [];
+
+        setProducts(
+          productsData.map(normalizeProduct)
+        );
+
+        setPagination(
+          data.pagination || {
+            page: currentPage,
+            limit: PRODUCTS_PER_PAGE,
+            total: productsData.length,
+            pages: 1,
+          }
+        );
       } catch (error) {
-        console.error("Erreur chargement produits:", error);
+        console.error(
+          "Erreur chargement produits:",
+          error
+        );
+
         setProducts([]);
+
+        setPagination({
+          page: 1,
+          limit: PRODUCTS_PER_PAGE,
+          total: 0,
+          pages: 1,
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [
+    currentPage,
+    selectedCategory,
+    selectedSubCategory,
+    sortBy,
+    searchQuery,
+  ]);
+
+  // ==========================
+  // RESET PAGE WHEN FILTER CHANGES
+  // ==========================
 
   useEffect(() => {
     setCurrentPage(1);
@@ -179,77 +294,17 @@ export default function Shop() {
     searchQuery,
   ]);
 
+  // ==========================
+  // RESET SUBCATEGORY
+  // ==========================
+
   useEffect(() => {
     setSelectedSubCategory("all");
   }, [selectedCategory]);
 
-  const filtered = useMemo(() => {
-    let result = products.filter((product) => product.available);
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-
-      result = result.filter(
-        (product) =>
-          product.name.toLowerCase().includes(query) ||
-          product.description.toLowerCase().includes(query)
-      );
-    }
-
-    if (selectedCategory !== "all") {
-      result = result.filter(
-        (product) => product.category === selectedCategory
-      );
-    }
-
-    if (selectedSubCategory !== "all") {
-      result = result.filter(
-        (product) =>
-          product.subCategory === selectedSubCategory
-      );
-    }
-
-    switch (sortBy) {
-      case "price-asc":
-        return [...result].sort((a, b) => a.price - b.price);
-
-      case "price-desc":
-        return [...result].sort((a, b) => b.price - a.price);
-
-      case "rating":
-        return [...result].sort((a, b) => b.rating - a.rating);
-
-      case "newest":
-        return [
-          ...result.filter((product) => product.isNew),
-          ...result.filter((product) => !product.isNew),
-        ];
-
-      default:
-        return result;
-    }
-  }, [
-    products,
-    selectedCategory,
-    selectedSubCategory,
-    sortBy,
-    searchQuery,
-  ]);
-
-  const totalPages = Math.ceil(
-    filtered.length / PRODUCTS_PER_PAGE
-  );
-
-  const paginatedProducts = filtered.slice(
-    (currentPage - 1) * PRODUCTS_PER_PAGE,
-    currentPage * PRODUCTS_PER_PAGE
-  );
-
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
+  // ==========================
+  // PAGE TITLE
+  // ==========================
 
   const pageTitle =
     selectedSubCategory !== "all"
@@ -257,13 +312,23 @@ export default function Shop() {
       : selectedCategory === "all"
       ? "Collection"
       : CATEGORIES.find(
-          (category) => category.id === selectedCategory
+          (category) =>
+            category.id === selectedCategory
         )?.label || "Tout";
+
+  // ==========================
+  // RESET FILTERS
+  // ==========================
 
   const resetFilters = () => {
     setSelectedCategory("all");
     setSelectedSubCategory("all");
+    setCurrentPage(1);
   };
+
+  // ==========================
+  // TOGGLE FILTER
+  // ==========================
 
   const toggleFilter = (key) => {
     setFiltersExpanded((prev) => ({
@@ -272,23 +337,38 @@ export default function Shop() {
     }));
   };
 
+  // ==========================
+  // ACTIVE FILTERS
+  // ==========================
+
   const activeFilters = [
     selectedCategory !== "all" &&
       CATEGORIES.find(
-        (category) => category.id === selectedCategory
+        (category) =>
+          category.id === selectedCategory
       )?.label,
 
-    selectedSubCategory !== "all" && selectedSubCategory,
+    selectedSubCategory !== "all" &&
+      selectedSubCategory,
   ].filter(Boolean);
 
-  const renderCategoryIcon = (category, isSelected = false) => {
+  // ==========================
+  // CATEGORY ICON
+  // ==========================
+
+  const renderCategoryIcon = (
+    category,
+    isSelected = false
+  ) => {
     if (category.image) {
       return (
         <img
           src={category.image}
           alt={category.label}
           className={`h-5 w-5 object-contain ${
-            isSelected ? "brightness-0 invert" : ""
+            isSelected
+              ? "brightness-0 invert"
+              : ""
           }`}
         />
       );
@@ -301,11 +381,17 @@ export default function Shop() {
         size={16}
         strokeWidth={1.7}
         className={
-          isSelected ? "text-white" : "text-current"
+          isSelected
+            ? "text-white"
+            : "text-current"
         }
       />
     );
   };
+
+  // ==========================
+  // LOADING
+  // ==========================
 
   if (loading) {
     return (
@@ -321,6 +407,7 @@ export default function Shop() {
       {/* =========================
           SHOP CONTAINER
       ========================= */}
+
       <div className="mx-auto max-w-[1500px] px-3 py-4 sm:px-5 sm:py-6 lg:px-8 xl:px-10">
 
         <div className="overflow-hidden rounded-2xl border border-[#E8DED1] bg-white shadow-[0_15px_50px_rgba(17,17,17,0.05)]">
@@ -328,12 +415,12 @@ export default function Shop() {
           {/* =========================
               HEADER
           ========================= */}
+
           <header className="border-b border-[#EFE7DC] px-5 py-5 sm:px-7 lg:px-8">
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
               <div>
-                
 
                 <h1 className="mt-1.5 font-premium text-3xl font-bold tracking-tight text-velora-dark sm:text-4xl">
                   {pageTitle}
@@ -342,10 +429,13 @@ export default function Shop() {
                 <p className="mt-1.5 max-w-xl text-sm text-velora-textGray">
                   Découvrez nos accessoires premium pour vos compagnons.
                 </p>
+
               </div>
 
               <button
-                onClick={() => setFilterOpen(true)}
+                onClick={() =>
+                  setFilterOpen(true)
+                }
                 className="inline-flex h-10 w-fit items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-4 text-xs font-semibold text-velora-dark transition hover:border-smiley-warning hover:text-velora-gold lg:hidden"
               >
                 <SlidersHorizontal size={15} />
@@ -353,16 +443,19 @@ export default function Shop() {
               </button>
 
             </div>
+
           </header>
 
           {/* =========================
               CONTENT
           ========================= */}
+
           <div className="grid gap-7 px-5 py-6 sm:px-7 lg:grid-cols-[210px_minmax(0,1fr)] lg:px-8">
 
             {/* =========================
                 DESKTOP FILTERS
             ========================= */}
+
             <aside className="hidden lg:block">
 
               <div className="sticky top-24 space-y-5">
@@ -370,77 +463,105 @@ export default function Shop() {
                 <FilterGroup
                   title="Pour"
                   open={filtersExpanded.category}
-                  onToggle={() => toggleFilter("category")}
+                  onToggle={() =>
+                    toggleFilter("category")
+                  }
                   centered
                 >
-                  {CATEGORIES.map((category) => {
-                    const selected =
-                      selectedCategory === category.id;
 
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() =>
-                          setSelectedCategory(category.id)
-                        }
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
-                          selected
-                            ? "bg-smiley-warning text-white shadow-sm"
-                            : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
-                        }`}
-                      >
-                        {renderCategoryIcon(category, selected)}
+                  {CATEGORIES.map(
+                    (category) => {
+                      const selected =
+                        selectedCategory ===
+                        category.id;
 
-                        <span>{category.label}</span>
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={category.id}
+                          onClick={() =>
+                            setSelectedCategory(
+                              category.id
+                            )
+                          }
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                            selected
+                              ? "bg-smiley-warning text-white shadow-sm"
+                              : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
+                          }`}
+                        >
+                          {renderCategoryIcon(
+                            category,
+                            selected
+                          )}
+
+                          <span>
+                            {category.label}
+                          </span>
+
+                        </button>
+                      );
+                    }
+                  )}
+
                 </FilterGroup>
 
                 <div className="h-px bg-[#EFE7DC]" />
 
                 <FilterGroup
                   title="Accessoires"
-                  open={filtersExpanded.subCategory}
+                  open={
+                    filtersExpanded.subCategory
+                  }
                   onToggle={() =>
-                    toggleFilter("subCategory")
+                    toggleFilter(
+                      "subCategory"
+                    )
                   }
                   centered
                 >
-                  {SUB_CATEGORIES.map((subCategory) => {
-                    const selected =
-                      selectedSubCategory === subCategory.id;
 
-                    return (
-                      <button
-                        key={subCategory.id}
-                        onClick={() =>
-                          setSelectedSubCategory(
-                            subCategory.id
-                          )
-                        }
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
-                          selected
-                            ? "bg-smiley-warning text-white shadow-sm"
-                            : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
-                        }`}
-                      >
-                        <img
-                          src={subCategory.icon}
-                          alt={subCategory.label}
-                          className={`h-5 w-5 object-contain ${
+                  {SUB_CATEGORIES.map(
+                    (subCategory) => {
+                      const selected =
+                        selectedSubCategory ===
+                        subCategory.id;
+
+                      return (
+                        <button
+                          key={subCategory.id}
+                          onClick={() =>
+                            setSelectedSubCategory(
+                              subCategory.id
+                            )
+                          }
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
                             selected
-                              ? "brightness-0 invert"
-                              : ""
+                              ? "bg-smiley-warning text-white shadow-sm"
+                              : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
                           }`}
-                        />
+                        >
 
-                        <span>
-                          {subCategory.label}
-                        </span>
-                      </button>
-                    );
-                  })}
+                          <img
+                            src={subCategory.icon}
+                            alt={
+                              subCategory.label
+                            }
+                            className={`h-5 w-5 object-contain ${
+                              selected
+                                ? "brightness-0 invert"
+                                : ""
+                            }`}
+                          />
+
+                          <span>
+                            {subCategory.label}
+                          </span>
+
+                        </button>
+                      );
+                    }
+                  )}
+
                 </FilterGroup>
 
                 {activeFilters.length > 0 && (
@@ -458,34 +579,46 @@ export default function Shop() {
                 )}
 
               </div>
+
             </aside>
 
             {/* =========================
                 PRODUCTS AREA
             ========================= */}
+
             <main className="min-w-0">
 
               {/* TOP CONTROLS */}
+
               <div className="mb-5">
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
                   <div>
                     <p className="text-xs text-velora-textGray">
+
                       <span className="font-semibold text-velora-dark">
-                        {filtered.length}
+                        {pagination.total}
                       </span>{" "}
-                      produit{filtered.length > 1 ? "s" : ""}
+
+                      produit
+                      {pagination.total > 1
+                        ? "s"
+                        : ""}
+
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2">
 
                     {/* VIEW */}
+
                     <div className="hidden items-center rounded-xl border border-[#E7DED2] bg-white p-1 sm:flex">
 
                       <button
-                        onClick={() => setView("grid")}
+                        onClick={() =>
+                          setView("grid")
+                        }
                         className={`flex h-8 w-8 items-center justify-center rounded-lg transition ${
                           view === "grid"
                             ? "bg-velora-gold text-white"
@@ -497,7 +630,9 @@ export default function Shop() {
                       </button>
 
                       <button
-                        onClick={() => setView("list")}
+                        onClick={() =>
+                          setView("list")
+                        }
                         className={`flex h-8 w-8 items-center justify-center rounded-lg transition ${
                           view === "list"
                             ? "bg-velora-gold text-white"
@@ -511,6 +646,7 @@ export default function Shop() {
                     </div>
 
                     {/* SORT */}
+
                     <label className="flex h-10 items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3">
 
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-velora-textGray">
@@ -520,26 +656,34 @@ export default function Shop() {
                       <select
                         value={sortBy}
                         onChange={(e) =>
-                          setSortBy(e.target.value)
+                          setSortBy(
+                            e.target.value
+                          )
                         }
                         className="cursor-pointer bg-transparent text-xs font-semibold text-velora-dark outline-none"
                       >
-                        {SORT_OPTIONS.map((option) => (
-                          <option
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.label}
-                          </option>
-                        ))}
+
+                        {SORT_OPTIONS.map(
+                          (option) => (
+                            <option
+                              key={option.value}
+                              value={option.value}
+                            >
+                              {option.label}
+                            </option>
+                          )
+                        )}
+
                       </select>
 
                     </label>
 
                   </div>
+
                 </div>
 
                 {/* ACTIVE FILTERS */}
+
                 {activeFilters.length > 0 && (
                   <div className="mt-4 flex flex-wrap items-center gap-2">
 
@@ -547,7 +691,8 @@ export default function Shop() {
                       Filtres
                     </span>
 
-                    {selectedCategory !== "all" && (
+                    {selectedCategory !==
+                      "all" && (
                       <FilterChip
                         label={
                           CATEGORIES.find(
@@ -557,16 +702,23 @@ export default function Shop() {
                           )?.label
                         }
                         onClear={() =>
-                          setSelectedCategory("all")
+                          setSelectedCategory(
+                            "all"
+                          )
                         }
                       />
                     )}
 
-                    {selectedSubCategory !== "all" && (
+                    {selectedSubCategory !==
+                      "all" && (
                       <FilterChip
-                        label={selectedSubCategory}
+                        label={
+                          selectedSubCategory
+                        }
                         onClear={() =>
-                          setSelectedSubCategory("all")
+                          setSelectedSubCategory(
+                            "all"
+                          )
                         }
                       />
                     )}
@@ -582,31 +734,36 @@ export default function Shop() {
                 )}
 
                 {/* ACCESSORIES NAV */}
+
                 <div className="mt-4 flex flex-wrap gap-1.5 border-y border-[#EFE7DC] py-3">
 
-                  {SUB_CATEGORIES.map((subCategory) => {
-                    const selected =
-                      selectedSubCategory ===
-                      subCategory.id;
+                  {SUB_CATEGORIES.map(
+                    (subCategory) => {
+                      const selected =
+                        selectedSubCategory ===
+                        subCategory.id;
 
-                    return (
-                      <button
-                        key={subCategory.id}
-                        onClick={() =>
-                          setSelectedSubCategory(
-                            subCategory.id
-                          )
-                        }
-                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                          selected
-                            ? "bg-[#F6EFE6] text-velora-dark"
-                            : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
-                        }`}
-                      >
-                        {subCategory.shortLabel}
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={subCategory.id}
+                          onClick={() =>
+                            setSelectedSubCategory(
+                              subCategory.id
+                            )
+                          }
+                          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                            selected
+                              ? "bg-[#F6EFE6] text-velora-dark"
+                              : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
+                          }`}
+                        >
+                          {
+                            subCategory.shortLabel
+                          }
+                        </button>
+                      );
+                    }
+                  )}
 
                 </div>
 
@@ -615,7 +772,8 @@ export default function Shop() {
               {/* =========================
                   EMPTY STATE
               ========================= */}
-              {filtered.length === 0 ? (
+
+              {products.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-[#EFE7DC] bg-[#F8F4EF] px-5 py-16 text-center">
 
                   <h3 className="font-premium text-2xl font-bold text-velora-dark">
@@ -636,9 +794,11 @@ export default function Shop() {
                 </div>
               ) : (
                 <>
+
                   {/* =========================
                       PRODUCTS GRID
                   ========================= */}
+
                   <div
                     className={
                       view === "grid"
@@ -646,25 +806,41 @@ export default function Shop() {
                         : "grid grid-cols-1 gap-5 xl:grid-cols-2"
                     }
                   >
-                    {paginatedProducts.map((product) => (
-                      <ProductCard
-                        key={product.id || product._id}
-                        product={product}
-                      />
-                    ))}
+
+                    {products.map(
+                      (product) => (
+                        <ProductCard
+                          key={
+                            product.id ||
+                            product._id
+                          }
+                          product={product}
+                        />
+                      )
+                    )}
+
                   </div>
 
                   {/* =========================
                       PAGINATION
                   ========================= */}
-                  {totalPages >= 1 && (
+
+                  {pagination.pages > 1 && (
                     <div className="mt-9 flex items-center justify-center gap-1">
 
+                      {/* PREVIOUS */}
+
                       <button
-                        disabled={currentPage === 1}
+                        disabled={
+                          currentPage === 1
+                        }
                         onClick={() =>
                           setCurrentPage(
-                            (page) => page - 1
+                            (page) =>
+                              Math.max(
+                                page - 1,
+                                1
+                              )
                           )
                         }
                         className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
@@ -672,82 +848,104 @@ export default function Shop() {
                         ←
                       </button>
 
+                      {/* PAGE NUMBERS */}
+
                       {Array.from({
-                        length: totalPages,
-                      }).map((_, index) => {
-                        const pageNum = index + 1;
+                        length:
+                          pagination.pages,
+                      }).map(
+                        (_, index) => {
+                          const pageNum =
+                            index + 1;
 
-                        const showPage =
-                          pageNum === 1 ||
-                          pageNum === totalPages ||
-                          Math.abs(
-                            pageNum - currentPage
-                          ) <= 1 ||
-                          (currentPage <= 3 &&
-                            pageNum <= 3) ||
-                          (currentPage >
-                            totalPages - 3 &&
-                            pageNum >
-                              totalPages - 3);
-
-                        if (!showPage) {
-                          if (
-                            pageNum === 2 &&
-                            currentPage > 3
-                          ) {
-                            return (
-                              <span
-                                key={`ellipsis-${index}`}
-                                className="px-1 text-velora-textGray"
-                              >
-                                …
-                              </span>
-                            );
-                          }
-
-                          if (
+                          const showPage =
+                            pageNum === 1 ||
                             pageNum ===
-                              totalPages - 1 &&
-                            currentPage <
-                              totalPages - 2
-                          ) {
-                            return (
-                              <span
-                                key={`ellipsis-${index}`}
-                                className="px-1 text-velora-textGray"
-                              >
-                                …
-                              </span>
-                            );
+                              pagination.pages ||
+                            Math.abs(
+                              pageNum -
+                                currentPage
+                            ) <= 1 ||
+                            (currentPage <= 3 &&
+                              pageNum <= 3) ||
+                            (currentPage >
+                              pagination.pages -
+                                3 &&
+                              pageNum >
+                                pagination.pages -
+                                  3);
+
+                          if (!showPage) {
+                            if (
+                              pageNum === 2 &&
+                              currentPage > 3
+                            ) {
+                              return (
+                                <span
+                                  key={`ellipsis-${index}`}
+                                  className="px-1 text-velora-textGray"
+                                >
+                                  …
+                                </span>
+                              );
+                            }
+
+                            if (
+                              pageNum ===
+                                pagination.pages -
+                                  1 &&
+                              currentPage <
+                                pagination.pages -
+                                  2
+                            ) {
+                              return (
+                                <span
+                                  key={`ellipsis-${index}`}
+                                  className="px-1 text-velora-textGray"
+                                >
+                                  …
+                                </span>
+                              );
+                            }
+
+                            return null;
                           }
 
-                          return null;
+                          return (
+                            <button
+                              key={pageNum}
+                              onClick={() =>
+                                setCurrentPage(
+                                  pageNum
+                                )
+                              }
+                              className={`h-9 w-9 rounded-lg text-xs font-semibold transition-all ${
+                                currentPage ===
+                                pageNum
+                                  ? "bg-velora-gold text-white shadow-sm"
+                                  : "border border-[#E7DED2] bg-white text-velora-dark hover:border-velora-gold hover:bg-[#F8F4EF]"
+                              }`}
+                            >
+                              {pageNum}
+                            </button>
+                          );
                         }
+                      )}
 
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() =>
-                              setCurrentPage(pageNum)
-                            }
-                            className={`h-9 w-9 rounded-lg text-xs font-semibold transition-all ${
-                              currentPage === pageNum
-                                ? "bg-velora-gold text-white shadow-sm"
-                                : "border border-[#E7DED2] bg-white text-velora-dark hover:border-velora-gold hover:bg-[#F8F4EF]"
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      })}
+                      {/* NEXT */}
 
                       <button
                         disabled={
-                          currentPage === totalPages
+                          currentPage ===
+                          pagination.pages
                         }
                         onClick={() =>
                           setCurrentPage(
-                            (page) => page + 1
+                            (page) =>
+                              Math.min(
+                                page + 1,
+                                pagination.pages
+                              )
                           )
                         }
                         className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
@@ -757,29 +955,39 @@ export default function Shop() {
 
                     </div>
                   )}
+
                 </>
               )}
 
             </main>
+
           </div>
+
         </div>
+
       </div>
 
       {/* VALUES */}
+
       <ValuesSection />
 
       {/* =========================
           MOBILE FILTER DRAWER
       ========================= */}
+
       <AnimatePresence>
+
         {filterOpen && (
           <>
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-black/40 lg:hidden"
-              onClick={() => setFilterOpen(false)}
+              onClick={() =>
+                setFilterOpen(false)
+              }
             />
 
             <motion.div
@@ -796,6 +1004,7 @@ export default function Shop() {
               <div className="mb-6 flex items-center justify-between">
 
                 <div>
+
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-velora-gold">
                     BestBuddy
                   </p>
@@ -803,10 +1012,13 @@ export default function Shop() {
                   <h3 className="mt-1 font-premium text-2xl font-bold text-velora-dark">
                     Filtres
                   </h3>
+
                 </div>
 
                 <button
-                  onClick={() => setFilterOpen(false)}
+                  onClick={() =>
+                    setFilterOpen(false)
+                  }
                   className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#E7DED2] transition hover:border-velora-gold"
                 >
                   <X size={17} />
@@ -817,34 +1029,41 @@ export default function Shop() {
               <div className="space-y-7">
 
                 <MobileFilterGroup title="Pour">
-                  {CATEGORIES.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => {
-                        setSelectedCategory(
-                          category.id
-                        );
-                        setFilterOpen(false);
-                      }}
-                      className={`flex w-full items-center gap-3 border-b border-[#EFE7DC] py-3 text-sm ${
-                        selectedCategory ===
-                        category.id
-                          ? "font-semibold text-velora-dark"
-                          : "text-velora-textGray"
-                      }`}
-                    >
-                      {renderCategoryIcon(
-                        category,
-                        selectedCategory ===
-                          category.id
-                      )}
 
-                      {category.label}
-                    </button>
-                  ))}
+                  {CATEGORIES.map(
+                    (category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setSelectedCategory(
+                            category.id
+                          );
+                          setFilterOpen(false);
+                        }}
+                        className={`flex w-full items-center gap-3 border-b border-[#EFE7DC] py-3 text-sm ${
+                          selectedCategory ===
+                          category.id
+                            ? "font-semibold text-velora-dark"
+                            : "text-velora-textGray"
+                        }`}
+                      >
+
+                        {renderCategoryIcon(
+                          category,
+                          selectedCategory ===
+                            category.id
+                        )}
+
+                        {category.label}
+
+                      </button>
+                    )
+                  )}
+
                 </MobileFilterGroup>
 
                 <MobileFilterGroup title="Accessoires">
+
                   {SUB_CATEGORIES.map(
                     (subCategory) => (
                       <button
@@ -862,16 +1081,21 @@ export default function Shop() {
                             : "text-velora-textGray"
                         }`}
                       >
+
                         <img
                           src={subCategory.icon}
-                          alt={subCategory.label}
+                          alt={
+                            subCategory.label
+                          }
                           className="h-5 w-5 object-contain"
                         />
 
                         {subCategory.label}
+
                       </button>
                     )
                   )}
+
                 </MobileFilterGroup>
 
                 <button
@@ -886,13 +1110,21 @@ export default function Shop() {
                 </button>
 
               </div>
+
             </motion.div>
+
           </>
         )}
+
       </AnimatePresence>
+
     </div>
   );
 }
+
+// =====================================================
+// FILTER GROUP
+// =====================================================
 
 function FilterGroup({
   title,
@@ -912,7 +1144,9 @@ function FilterGroup({
         } text-[10px] font-bold uppercase tracking-[0.2em] text-[#A65B24]`}
         onClick={onToggle}
       >
+
         <span className="flex items-center gap-2">
+
           {title}
 
           <ChevronDown
@@ -921,10 +1155,13 @@ function FilterGroup({
               open ? "rotate-180" : ""
             }`}
           />
+
         </span>
+
       </button>
 
       <AnimatePresence>
+
         {open && (
           <motion.div
             initial={{
@@ -941,16 +1178,23 @@ function FilterGroup({
             }}
             className="overflow-hidden"
           >
+
             <div className="space-y-1">
               {children}
             </div>
+
           </motion.div>
         )}
+
       </AnimatePresence>
 
     </div>
   );
 }
+
+// =====================================================
+// MOBILE FILTER GROUP
+// =====================================================
 
 function MobileFilterGroup({
   title,
@@ -969,6 +1213,10 @@ function MobileFilterGroup({
   );
 }
 
+// =====================================================
+// FILTER CHIP
+// =====================================================
+
 function FilterChip({
   label,
   onClear,
@@ -978,12 +1226,14 @@ function FilterChip({
       onClick={onClear}
       className="inline-flex items-center gap-2 rounded-lg border border-[#E7DED2] bg-[#F6F4EE] px-2.5 py-1.5 text-xs font-medium text-velora-dark transition hover:border-velora-gold"
     >
+
       {label}
 
       <X
         size={12}
         className="text-red-500"
       />
+
     </button>
   );
 }
