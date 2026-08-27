@@ -75,7 +75,7 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
                 </span>
               </motion.div>
 
-              <motion.h1
+              {/* <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.7 }}
@@ -84,7 +84,21 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
                 Qualité
                 <br />
                 <span className="italic font-normal text-velora-gold">premium</span>
-              </motion.h1>
+              </motion.h1> */}
+              <motion.h1
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.3, duration: 0.7 }}
+  className="font-premium text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-3 md:mb-4"
+>
+  <span className="whitespace-nowrap sm:whitespace-normal">
+    Qualité{" "}
+    <span className="italic font-normal text-velora-gold">
+      premium
+    </span>
+  </span>
+</motion.h1>
+              
 
                 <motion.p
                 initial={{ opacity: 0, y: 15 }}
@@ -149,14 +163,7 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
           </div>
         </div>
 
-        {/* <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-        >
-          <div className="w-px h-12 bg-gradient-to-b from-velora-gold to-transparent" />
-          <span className="text-[10px] tracking-widest text-velora-textGray uppercase">Défiler</span>
-        </motion.div> */}
+      
         <motion.div
   animate={{ y: [0, 8, 0] }}
   transition={{ repeat: Infinity, duration: 1.5 }}
@@ -174,11 +181,6 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
     gap-1
   "
 >
-  <div className="w-px h-8 sm:h-10 md:h-12 bg-gradient-to-b from-velora-gold to-transparent" />
-
-  <span className="text-[9px] sm:text-[10px] tracking-widest text-velora-textGray uppercase whitespace-nowrap">
-    Défiler
-  </span>
 </motion.div>
       </section>
 
@@ -510,7 +512,6 @@ className="order-2 relative pl-5">
   
   {/* MÊME LIGNE QUE LE HOME */}
 <div className="absolute left-0 top-0 h-32 w-px bg-gradient-to-b from-transparent via-velora-gold to-transparent opacity-40" />
-  {/* ==================== INTRO ==================== */}
   <div className="mb-6">
 
     <div className="mb-3 flex items-center gap-3">
@@ -572,129 +573,10 @@ className="order-2 relative pl-5">
   </div>
 
 </motion.div>
-
   </div>
-
-
   </div>
 </section>
-
-
-{/* ==================== TECHNOLOGIE & CONFORT ==================== */}
-
-      {/* <section className="bg-velora-cream py-8 md:py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16 xl:px-16">
-          <div className="mb-8 text-center">
-            <div className="mb-3 inline-flex items-center gap-2">
-              <div className="h-px w-8 bg-velora-gold" />
-              <span className="text-xs font-semibold tracking-widest uppercase text-velora-gold">
-                Best Sellers
-              </span>
-              <div className="h-px w-8 bg-velora-gold" />
-            </div>
-            <h2 className="font-premium text-3xl font-bold text-velora-dark">
-              Les coups de cœur de la boutique
-            </h2>
-          </div>
-
-          {products.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                {paginatedProducts.map((product) => (
-                  <ProductCard key={product.id || product._id} product={product} />
-                ))}
-              </div>
-
-              {totalPages >= 1 && (
-                <div className="mt-10 flex items-center justify-center gap-0.5 sm:gap-1">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((page) => page - 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#E7DED2] text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ←
-                  </button>
-
-                  {Array.from({ length: totalPages }).map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentPage(index + 1)}
-                      className={`h-8 w-8 rounded-sm text-xs font-semibold transition-all ${
-                        currentPage === index + 1
-                          ? 'bg-velora-gold text-white'
-                          : 'border border-[#E7DED2] text-velora-dark hover:border-velora-gold'
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage((page) => page + 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#E7DED2] text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    →
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="rounded-lg border border-[#E7DED2] bg-white px-6 py-10 text-center text-sm text-velora-textGray">
-              Aucun produit disponible pour le moment.
-            </div>
-          )}
-        </div>
-      </section> */}
-
       <ValuesSection />
-
-{/* <section className="pt-10 pb-10 bg-velora-dark text-velora-cream">
-          <div className="max-w-2xl mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="inline-flex items-center gap-2 mb-4">
-              <div className="h-px w-8 bg-velora-gold" />
-              <span className="text-xs font-semibold tracking-widest uppercase text-velora-gold">Newsletter</span>
-              <div className="h-px w-8 bg-velora-gold" />
-            </div>
-            <h2 className="font-premium text-3xl font-bold text-velora-cream mb-3">Rejoignez l'univers SMILEY WOOF</h2>
-            <p className="text-velora-cream/70 mb-8">
-              Inscrivez-vous et bénéficiez de -10% sur votre première commande.
-            </p>
-            {subscribed ? (
-              <div className="text-velora-gold font-medium">✓ Merci ! Votre code de réduction vous a été envoyé par email.</div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.tn"
-                  required
-                  className="w-full bg-velora-cream/90 border border-velora-cream/70 text-velora-dark placeholder:text-velora-textGray px-4 py-3 text-sm outline-none focus:border-velora-gold transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="bg-velora-gold text-velora-dark px-6 py-3 text-sm font-semibold tracking-widest uppercase hover:bg-velora-goldHover transition-colors whitespace-nowrap"
-                >
-                  S'inscrire
-                </button>
-              </form>
-            )}
-          </motion.div>
-        </div>
-      </section> */}
-     {/* <div className="max-w-7xl mx-auto px-6">
-  <div className="border-t border-velora-gold/5"></div>
-</div> */}
-
-
-
     </div>
   );
 }
