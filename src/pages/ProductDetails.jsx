@@ -416,8 +416,7 @@ export default function ProductDetails() {
       type="button"
       onClick={handleAddToCart}
       disabled={!inStock}
-      className="flex h-12 sm:h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-smiley-warning px-5 text-sm font-semibold text-white  shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-    >
+className="flex h-[52px] sm:h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-smiley-warning px-5 py-3 sm:py-0 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"    >
       <ShoppingBag size={17} strokeWidth={1.8} />
       Ajouter au panier
     </button>
