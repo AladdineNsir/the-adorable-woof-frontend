@@ -381,47 +381,48 @@ export default function ProductDetails() {
 
 
   {/* Quantity + Add to cart */}
-  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+{/* Quantity + Add to cart */}
+<div className="mt-7 flex flex-row items-stretch gap-3 sm:flex-row">
 
-    {/* Quantity */}
-    <div className="flex h-12 w-fit items-center rounded-lg border border-[#DED7CF] bg-white">
+  {/* Quantity */}
+  <div className="flex h-12 w-fit items-center rounded-lg border border-[#DED7CF] bg-white">
 
-      <button
-        type="button"
-        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-        aria-label="Réduire la quantité"
-        className="flex h-12 w-11 items-center justify-center text-[#4A4540] transition hover:bg-[#F8F5F0]"
-      >
-        <Minus size={15} strokeWidth={1.8} />
-      </button>
-
-      <div className="flex h-7 min-w-[38px] items-center justify-center border-x border-[#E7E0D8] text-sm font-semibold text-[#292929]">
-        {quantity}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => setQuantity((q) => q + 1)}
-        aria-label="Augmenter la quantité"
-        className="flex h-12 w-11 items-center justify-center text-[#4A4540] transition hover:bg-[#F8F5F0]"
-      >
-        <Plus size={15} strokeWidth={1.8} />
-      </button>
-
-    </div>
-
-
-    {/* Add to cart */}
     <button
       type="button"
-      onClick={handleAddToCart}
-      disabled={!inStock}
-className="flex h-[52px] sm:h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-smiley-warning px-5 py-3 sm:py-0 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"    >
-      <ShoppingBag size={17} strokeWidth={1.8} />
-      Ajouter au panier
+      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+      aria-label="Réduire la quantité"
+      className="flex h-12 w-11 items-center justify-center text-[#4A4540] transition hover:bg-[#F8F5F0]"
+    >
+      <Minus size={15} strokeWidth={1.8} />
+    </button>
+
+    <div className="flex h-7 min-w-[38px] items-center justify-center border-x border-[#E7E0D8] text-sm font-semibold text-[#292929]">
+      {quantity}
+    </div>
+
+    <button
+      type="button"
+      onClick={() => setQuantity((q) => q + 1)}
+      aria-label="Augmenter la quantité"
+      className="flex h-12 w-11 items-center justify-center text-[#4A4540] transition hover:bg-[#F8F5F0]"
+    >
+      <Plus size={15} strokeWidth={1.8} />
     </button>
 
   </div>
+
+  {/* Add to cart */}
+  <button
+    type="button"
+    onClick={handleAddToCart}
+    disabled={!inStock}
+    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-smiley-warning px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+  >
+    <ShoppingBag size={17} strokeWidth={1.8} />
+    Ajouter au panier
+  </button>
+
+</div>
 
 
   {/* Trust / Benefits */}
