@@ -11,7 +11,6 @@ import { API_BASE_URL, resolveAssetUrl } from "../config/api";
 const fallbackSizes = ["XS", "S", "M", "L"];
 const fallbackColors = [{ name: "Noir", code: "#111111" }];
 
-const resolveImage = resolveAssetUrl;
 
 const formatPrice = (price) => `${Number(price || 0).toFixed(0)} DT`;
 
@@ -51,11 +50,26 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
+  // const gallery = useMemo(() => {
+  //   if (!product) return [];
+  //   const images = [product.image, ...(product.images || [])].map(resolveImage).filter(Boolean);
+  //   return [...new Set(images)];
+  // }, [product]);
   const gallery = useMemo(() => {
-    if (!product) return [];
-    const images = [product.image, ...(product.images || [])].map(resolveImage).filter(Boolean);
-    return [...new Set(images)];
-  }, [product]);
+  if (!product) return [];
+
+  const rawImages = product.images?.length
+    ? product.images
+    : product.image
+      ? [product.image]
+      : [];
+
+  const images = rawImages
+    .map((image) => resolveAssetUrl(image))
+    .filter(Boolean);
+
+  return [...new Set(images)];
+}, [product]);
 
   const currentImage = gallery[imageIndex] || gallery[0] || "";
   const hasMultipleImages = gallery.length > 1;
@@ -113,9 +127,8 @@ export default function ProductDetails() {
   </Link>
 </div> */}
 
-<div className="grid items-stretch gap-8 px-4 pb-8 lg:grid-cols-2 lg:gap-10">            {/* LEFT: Gallery */}
-<div className="flex h-full flex-col">
-<div className="flex-1 overflow-hidden rounded-2xl bg-transparent">
+<div className="grid items-start gap-2 px-2 pt-3 pb-4 sm:gap-4 sm:px-4 sm:pt-4 sm:pb-5 lg:grid-cols-2 lg:gap-5 lg:px-6 lg:pt-5 lg:pb-6">   <div className="flex flex-col">
+  <div className="flex-1 overflow-hidden rounded-2xl bg-transparent">
                   <div className="relative">
                     {/* PRICE + STOCK — bottom right of image */}
 <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
@@ -167,16 +180,25 @@ export default function ProductDetails() {
                     </>
                   )}
 
-                  <div className="w-full h-[360px] sm:h-[430px] lg:h-[500px] overflow-hidden bg-transparent">
-                    <img src={currentImage} alt={product.name} 
-                    className="w-full h-full object-cover block" />
+<div className="w-full h-[330px] sm:h-[400px] lg:h-[460px] overflow-hidden bg-transparent">                    {/* <img src={currentImage} alt={product.name} 
+                    className="w-full h-full object-cover block" /> */}
+                    <img
+  src={currentImage}
+  alt={product.name}
+  className="w-full h-full object-cover block"
+  loading="eager"
+  onError={(e) => {
+    console.error("Erreur image produit:", currentImage);
+    e.currentTarget.style.display = "none";
+  }}
+/>
                   </div>
                 </div>
               </div>
 
             {gallery.length > 1 && (
-  <div className="mt-4 flex justify-center gap-3 overflow-x-auto">
-    {gallery.map((image, index) => (
+<div className="mt-2 flex justify-center gap-2 overflow-x-auto sm:mt-3 sm:gap-3">
+      {gallery.map((image, index) => (
       <button
         key={index}
         type="button"

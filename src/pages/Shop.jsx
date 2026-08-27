@@ -426,9 +426,7 @@ export default function Shop() {
                   {pageTitle}
                 </h1>
 
-                <p className="mt-1.5 max-w-xl text-sm text-velora-textGray">
-                  Découvrez nos accessoires premium pour vos compagnons.
-                </p>
+                
 
               </div>
 
