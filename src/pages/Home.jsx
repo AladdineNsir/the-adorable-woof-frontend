@@ -139,9 +139,9 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
                   transition={{ delay: 0.9, duration: 0.5 }}
                   className="absolute bottom-6 right-6"
                 >
-                  <Link to="/shop" className="inline-flex items-center justify-center bg-velora-gold text-white px-3 py-2 rounded-md text-xs font-medium tracking-wide hover:bg-velora-goldHover transition-all duration-300">
+                  {/* <Link to="/shop" className="inline-flex items-center justify-center bg-velora-gold text-white px-3 py-2 rounded-md text-xs font-medium tracking-wide hover:bg-velora-goldHover transition-all duration-300">
                     Shop Now
-                  </Link>
+                  </Link> */}
                 </motion.div>
 
                 <div className="absolute top-8 -right-4 h-32 w-px bg-gradient-to-b from-transparent via-velora-gold to-transparent opacity-40" />
@@ -149,14 +149,37 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
           </div>
         </div>
 
-        <motion.div
+        {/* <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
           className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
         >
           <div className="w-px h-12 bg-gradient-to-b from-velora-gold to-transparent" />
           <span className="text-[10px] tracking-widest text-velora-textGray uppercase">Défiler</span>
-        </motion.div>
+        </motion.div> */}
+        <motion.div
+  animate={{ y: [0, 8, 0] }}
+  transition={{ repeat: Infinity, duration: 1.5 }}
+  className="
+    absolute
+    bottom-6
+    sm:bottom-10
+    md:bottom-16
+    lg:bottom-24
+    left-1/2
+    -translate-x-1/2
+    flex
+    flex-col
+    items-center
+    gap-1
+  "
+>
+  <div className="w-px h-8 sm:h-10 md:h-12 bg-gradient-to-b from-velora-gold to-transparent" />
+
+  <span className="text-[9px] sm:text-[10px] tracking-widest text-velora-textGray uppercase whitespace-nowrap">
+    Défiler
+  </span>
+</motion.div>
       </section>
 
 

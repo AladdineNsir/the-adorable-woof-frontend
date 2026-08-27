@@ -32,35 +32,31 @@ export default function ValuesSection() {
   ];
 
   return (
-    <section className="w-full bg-white py-5 sm:py-6 md:py-8">
-      {/* Container principal */}
-      <div className="w-full px-3 sm:px-5 md:px-8 lg:px-16 xl:px-16">
+    <section className="w-full bg-white py-3 sm:py-6 md:py-8">
 
-        {/* =========================================
-            TITRE
-        ========================================= */}
+      <div className="w-full px-2.5 sm:px-5 md:px-8 lg:px-16">
+
+        {/* TITRE */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-4 sm:mb-5 md:mb-6 flex justify-center"
+          className="mb-3 sm:mb-5 md:mb-6 flex justify-center"
         >
-          <div className="inline-flex items-center gap-2">
-            <div className="h-px w-6 sm:w-8 bg-velora-gold" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2">
+            <div className="h-px w-5 sm:w-8 bg-velora-gold" />
 
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
+            <span className="text-[9px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-velora-gold">
               Nos Valeurs
             </span>
 
-            <div className="h-px w-6 sm:w-8 bg-velora-gold" />
+            <div className="h-px w-5 sm:w-8 bg-velora-gold" />
           </div>
         </motion.div>
 
-        {/* =========================================
-            CARDS
-        ========================================= */}
-        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
+        {/* CARDS */}
+        <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-5">
 
           {values.map((value, i) => {
             const Icon = value.icon;
@@ -70,7 +66,7 @@ export default function ValuesSection() {
                 key={value.title}
                 initial={{
                   opacity: 0,
-                  y: 24,
+                  y: 15,
                 }}
                 whileInView={{
                   opacity: 1,
@@ -80,18 +76,18 @@ export default function ValuesSection() {
                   once: true,
                 }}
                 transition={{
-                  duration: 0.4,
-                  delay: i * 0.1,
+                  duration: 0.35,
+                  delay: i * 0.08,
                 }}
                 className="
                   w-full
-                  rounded-xl
+                  rounded-lg
                   border
                   border-velora-gold/20
-                  px-4
-                  py-5
+                  px-3
+                  py-2.5
                   sm:px-5
-                  sm:py-6
+                  sm:py-5
                   md:p-6
                   text-center
                   transition-all
@@ -106,12 +102,13 @@ export default function ValuesSection() {
                 <div
                   className="
                     mx-auto
-                    mb-3
+                    mb-1.5
                     flex
-                    h-10
-                    w-10
-                    sm:h-11
-                    sm:w-11
+                    h-7
+                    w-7
+                    sm:mb-3
+                    sm:h-10
+                    sm:w-10
                     md:h-12
                     md:w-12
                     items-center
@@ -122,20 +119,22 @@ export default function ValuesSection() {
                   "
                 >
                   <Icon
-                    size={17}
-                    className="text-velora-gold sm:size-[18px]"
+                    size={13}
+                    className="text-velora-gold sm:size-[17px] md:size-[18px]"
                   />
                 </div>
 
                 {/* TITLE */}
                 <h3
                   className="
-                    mb-1
+                    mb-0.5
                     font-premium
-                    text-sm
-                    sm:text-base
+                    text-[11px]
+                    sm:mb-1
+                    sm:text-sm
+                    md:text-base
                     font-bold
-                    leading-snug
+                    leading-tight
                     text-velora-dark
                   "
                 >
@@ -146,10 +145,11 @@ export default function ValuesSection() {
                 <p
                   className="
                     mx-auto
-                    max-w-[280px]
-                    text-xs
-                    sm:text-sm
-                    leading-relaxed
+                    max-w-[260px]
+                    text-[9px]
+                    sm:text-xs
+                    md:text-sm
+                    leading-[1.35]
                     text-velora-textGray
                   "
                 >
