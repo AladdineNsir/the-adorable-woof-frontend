@@ -415,8 +415,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: -18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:p-6"
-            >
+className="hidden sm:block rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:p-6"            >
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
                   Contact
