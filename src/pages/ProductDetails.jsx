@@ -143,15 +143,15 @@ export default function ProductDetails() {
     className={`flex h-[30px] w-[76px] items-center justify-center gap-1.5 border border-[#D9D5CF] rounded-lg text-[10px] font-semibold ${
       
       inStock
-        ? "bg-[#F2F8F3] text-[#245B6B]"
-        : "bg-[#FBF1F1] text-[#A45A5A]"
+  ? "bg-[#EAF7EE] text-[#16803C]"
+  : "bg-[#FBF1F1] text-[#A45A5A]"
     }`}
   >
     <span
       className={`h-1.5 w-1.5 shrink-0 rounded-full ${
         inStock
-          ? "bg-[#245B6B]"
-          : "bg-[#B86666]"
+  ? "bg-[#16803C]"
+  : "bg-[#B86666]"
       }`}
     />
 
@@ -180,19 +180,18 @@ export default function ProductDetails() {
                     </>
                   )}
 
-<div className="w-full h-[330px] sm:h-[400px] lg:h-[460px] overflow-hidden bg-transparent">                    {/* <img src={currentImage} alt={product.name} 
-                    className="w-full h-full object-cover block" /> */}
-                    <img
-  src={currentImage}
-  alt={product.name}
-  className="w-full h-full object-cover block"
-  loading="eager"
-  onError={(e) => {
-    console.error("Erreur image produit:", currentImage);
-    e.currentTarget.style.display = "none";
-  }}
-/>
-                  </div>
+<div className="w-full h-[330px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-transparent">
+  <img
+    src={currentImage}
+    alt={product.name}
+    className="w-full h-full object-contain block"
+    loading="eager"
+    onError={(e) => {
+      console.error("Erreur image produit:", currentImage);
+      e.currentTarget.style.display = "none";
+    }}
+  />
+</div>
                 </div>
               </div>
 

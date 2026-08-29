@@ -56,13 +56,14 @@ Une jeune marque tunisienne, créée pour célébrer le lien unique qui nous uni
               </div>
 
 <div className="absolute top-4 left-4 w-20 h-20 sm:-top-5 sm:-left-5 sm:w-32 sm:h-32 bg-velora-cream border border-velora-gold/30 rounded-xl flex flex-col items-center justify-center text-center">   
-             <span className="font-premium text-lg sm:text-3xl font-bold text-velora-gold">
-  2026
-</span>
+             
 
 <span className="text-[8px] sm:text-[10px] text-velora-dark uppercase tracking-[0.12em]">
-  Fondée à Nabeul
+  Fondée 
 </span> 
+<span className="font-premium text-lg sm:text-3xl font-bold text-velora-gold">
+  2026
+</span>
 </div>
             </motion.div>
           </div>
