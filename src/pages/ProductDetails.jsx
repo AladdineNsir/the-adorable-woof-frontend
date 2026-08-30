@@ -71,7 +71,7 @@ export default function ProductDetails() {
   return [...new Set(images)];
 }, [product]);
 
-  const currentImage = gallery[imageIndex] || gallery[0] || "";
+  const currentImage = gallery[imageIndex] || gallery[0] || null;
   const hasMultipleImages = gallery.length > 1;
 
   const nextImage = () => {
@@ -102,7 +102,14 @@ export default function ProductDetails() {
 
   const colors = product.colors?.length ? product.colors : fallbackColors;
   const sizes = product.sizes?.length ? product.sizes : fallbackSizes;
-  const inStock = product.stock === undefined || Number(product.stock) > 0;
+  // const inStock = product.stock === undefined || Number(product.stock) > 0;
+  const stockCount =
+  product.stock === undefined
+    ? null
+    : Number(product.stock);
+
+const inStock =
+  stockCount === null || stockCount > 0;
   const categoryLabel = product.category?.name || product.category || "Chats";
   const discount = product.oldPrice > product.price ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null;
 
@@ -128,7 +135,7 @@ export default function ProductDetails() {
 </div> */}
 
 <div className="grid items-start gap-2 px-2 pt-3 pb-4 sm:gap-4 sm:px-4 sm:pt-4 sm:pb-5 lg:grid-cols-2 lg:gap-5 lg:px-6 lg:pt-5 lg:pb-6">   <div className="flex flex-col">
-  <div className="flex-1 overflow-hidden rounded-2xl bg-transparent">
+  <div className="flex-1 overflow-hidden rounded-[22px] border border-[#E8DED1] bg-[#FAF8F4] shadow-[0_12px_32px_rgba(17,17,17,0.04)]">
                   <div className="relative">
                     {/* PRICE + STOCK — bottom right of image */}
 <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
@@ -140,23 +147,29 @@ export default function ProductDetails() {
 
   {/* STOCK */}
   <div
-    className={`flex h-[30px] w-[76px] items-center justify-center gap-1.5 border border-[#D9D5CF] rounded-lg text-[10px] font-semibold ${
-      
-      inStock
-  ? "bg-[#EAF7EE] text-[#16803C]"
-  : "bg-[#FBF1F1] text-[#A45A5A]"
-    }`}
+  className={`flex h-[30px] w-auto min-w-[76px] items-center justify-center gap-1.5 border border-[#D9D5CF] rounded-lg text-[10px] font-semibold ${
+  !inStock
+    ? "bg-[#FBF1F1] text-[#A45A5A]"
+    : stockCount !== null && stockCount <= 5
+    ? "bg-[#FFF4E8] text-[#C95318]"
+    : "bg-[#EAF7EE] text-[#16803C]"
+}`}
   >
-    <span
-      className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-        inStock
-  ? "bg-[#16803C]"
-  : "bg-[#B86666]"
-      }`}
-    />
+   <span
+  className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+    !inStock
+      ? "bg-[#B86666]"
+      : stockCount !== null && stockCount <= 5
+      ? "bg-[#C95318]"
+      : "bg-[#16803C]"
+  }`}
+/>
 
-    {inStock ? "En stock" : "Rupture"}
-  </div>
+{!inStock
+  ? "Rupture"
+  : stockCount !== null && stockCount <= 5
+  ? `Plus que ${stockCount}`
+  : "En stock"}  </div>
 
 </div>
                   {hasMultipleImages && (
@@ -180,17 +193,22 @@ export default function ProductDetails() {
                     </>
                   )}
 
-<div className="w-full h-[330px] sm:h-[400px] lg:h-[460px] flex items-center justify-center bg-transparent">
-  <img
-    src={currentImage}
-    alt={product.name}
-    className="w-full h-full object-contain block"
-    loading="eager"
-    onError={(e) => {
-      console.error("Erreur image produit:", currentImage);
-      e.currentTarget.style.display = "none";
-    }}
-  />
+<div className="aspect-square w-full overflow-hidden rounded-[18px] bg-[#FAF8F4] p-3 sm:p-4">
+  {currentImage ? (
+    <img
+      src={currentImage}
+      alt={product.name}
+className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loading="eager"
+      onError={(e) => {
+        console.error("Erreur image produit:", currentImage);
+        e.currentTarget.style.display = "none";
+      }}
+    />
+  ) : (
+    <div className="flex h-full w-full items-center justify-center rounded-[14px] text-sm text-velora-textGray">
+      Image indisponible
+    </div>
+  )}
 </div>
                 </div>
               </div>
@@ -202,17 +220,19 @@ export default function ProductDetails() {
         key={index}
         type="button"
         onClick={() => setImageIndex(index)}
-        className={`flex-none overflow-hidden rounded-xl transition ${
+        className={`flex-none overflow-hidden rounded-xl border transition-all duration-200 ${
           imageIndex === index
-            ? "border border-smiley-warning"
-            : "border border-[#E8DED1]"
+            ? "border-[#C89B5A] shadow-[0_0_0_1px_rgba(200,155,90,0.2)]"
+            : "border-[#E8DED1] hover:border-[#C89B5A]/70"
         }`}
       >
-        <img
-          src={image}
-          alt={`${product.name} ${index + 1}`}
-          className="block h-16 w-20 object-cover"
-        />
+        <div className="h-16 w-20 overflow-hidden rounded-lg bg-[#FAF8F4] p-1.5">
+          <img
+            src={image}
+            alt={`${product.name} ${index + 1}`}
+            className="mx-auto h-full w-full rounded-md object-contain"
+          />
+        </div>
       </button>
     ))}
   </div>
@@ -319,10 +339,10 @@ export default function ProductDetails() {
             key={size}
             type="button"
             onClick={() => setSelectedSize(size)}
-            className={`flex h-10 min-w-[44px] items-center justify-center rounded-md border px-3 text-xs font-semibold transition-all duration-200 ${
+            className={`flex h-11 w-[54px] items-center justify-center rounded-md border text-xs font-semibold transition-all duration-200 ${
               selectedSize === size
-                ? "border-[#smiley-warning] bg-smiley-warning text-white"
-                : "border-[#E2DCD4] bg-white text-[#4B4743] hover:border-smiley-warning"
+                ? "border-[#C89B5A] bg-[#C89B5A] text-white shadow-[0_0_0_1px_rgba(200,155,90,0.15)]"
+                : "border-[#E2DCD4] bg-white text-[#4B4743] hover:border-[#C89B5A] hover:text-[#C89B5A]"
             }`}
           >
             {size}
@@ -357,12 +377,11 @@ export default function ProductDetails() {
               backgroundColor: color.code || color.hex,
             }}
             aria-label={`Choisir ${color.name}`}
-            
-            className={`relative h-9 w-9 rounded-md border transition-all duration-200 ${
-  selectedColor?.name === color.name
-    ? "border-smiley-warning ring-1 ring-smiley-warning ring-offset-1"
-    : "border-[#DED7CF] hover:border-smiley-warning hover:scale-105"
-}`}
+            className={`relative h-10 w-10 rounded-md border transition-all duration-200 ${
+              selectedColor?.name === color.name
+                ? "border-[#C89B5A] ring-1 ring-[#C89B5A] ring-offset-1"
+                : "border-[#DED7CF] hover:border-[#C89B5A] hover:scale-105"
+            }`}
           >
             {selectedColor?.name === color.name && (
               <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow-sm">

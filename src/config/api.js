@@ -57,7 +57,7 @@ export const resolveAssetUrl = (
   src,
   width = 800
 ) => {
-  if (!src) return "";
+  if (!src || typeof src !== "string") return "";
 
   // Image Cloudinary
   if (src.includes("res.cloudinary.com")) {
@@ -69,6 +69,11 @@ export const resolveAssetUrl = (
 
   // Image externe classique
   if (src.startsWith("http")) {
+    return src;
+  }
+
+  // Assets publics du frontend
+  if (src.startsWith("/assets/")) {
     return src;
   }
 

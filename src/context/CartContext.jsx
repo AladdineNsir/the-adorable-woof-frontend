@@ -139,14 +139,16 @@ export const CartProvider = ({ children }) => {
         product.price + extraCost;
 
       // Produit déjà présent
-      if (existingItemIndex > -1) {
-        const newCart = [...prevCart];
-
-        newCart[existingItemIndex].quantity +=
-          quantity;
-
-        return newCart;
-      }
+     if (existingItemIndex > -1) {
+  return prevCart.map((item, index) =>
+    index === existingItemIndex
+      ? {
+          ...item,
+          quantity: item.quantity + quantity,
+        }
+      : item
+  );
+}
 
       // Nouveau produit
       return [

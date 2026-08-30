@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ShoppingBasket } from "lucide-react";
 import { resolveAssetUrl } from "../config/api";
 
 const resolveImage = resolveAssetUrl;
@@ -8,7 +8,16 @@ const resolveImage = resolveAssetUrl;
 // const fallbackColors = ['#111111', '#7A5A44', '#D8C7B2'];
 
 export default function ProductCard({ product }) {
-  const imageSrc = product.image || resolveImage(product.images?.[0]);
+  const fallbackImage =
+    product.category === "chats"
+      ? "/assets/chat2.png"
+      : "/assets/chien2.png";
+
+  const imageSrc =
+    product.image ||
+    resolveImage(product.images?.[0]) ||
+    resolveImage(fallbackImage);
+
   const productId = product.id || product._id;
   const colorSwatches = (product.colors || [])
     .map((color) => color.code || color.hex || color.name)
@@ -16,17 +25,16 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="group overflow-hidden rounded-xl border border-[#E8DED1] bg-white shadow-[0_6px_24px_rgba(17,17,17,0.035)] transition-all duration-300 ease-out transform hover:-translate-y-0.5 hover:border-velora-gold/60">
-      <div className="relative flex aspect-square items-center justify-center bg-[#FCFAF7] p-4 sm:p-5">
+      <div className="relative aspect-square overflow-hidden rounded-t-xl border-b border-[#E8DED1] bg-[#FAF8F4] p-3 sm:p-4">
         <Link
           to={`/product/${productId}`}
-          className="absolute inset-0 flex items-center justify-center overflow-hidden"
+          className="flex h-full w-full items-center justify-center overflow-hidden rounded-[14px]"
         >
           {imageSrc ? (
             <img
               src={imageSrc}
               alt={product.name}
-              className="h-[90%] w-[90%] object-contain transition-transform duration-500 group-hover:scale-105"
-            />
+className="h-full w-full rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.02]"         />
           ) : (
             <div className="text-xs text-velora-textGray">
               Image indisponible
@@ -68,7 +76,24 @@ export default function ProductCard({ product }) {
         <div className="mt-4 flex items-start justify-between gap-2">
           <div className="flex flex-col items-start gap-1.5">
             <p className="text-base sm:text-lg font-bold text-velora-dark">{Number(product.price ?? 0).toFixed(0)} DT</p>
-            <span className={`inline-flex rounded-md px-2 py-1 text-[10px] font-semibold ${product.available ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>{product.available ? 'En stock' : 'Rupture'}</span>
+            {/* <span className={`inline-flex rounded-md px-2 py-1 text-[10px] font-semibold ${product.available ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>{product.available ? 'En stock' : 'Rupture'}</span> */}
+            <span
+  className={`inline-flex rounded-md px-2 py-1 text-[10px] font-semibold ${
+    !product.available || product.stock <= 0
+      ? "bg-red-50 text-red-600"
+      : product.stock <= 5
+      ? "bg-orange-50 text-orange-700"
+      : "bg-emerald-50 text-emerald-700"
+  }`}
+>
+  {!product.available || product.stock <= 0
+    ? "Rupture de stock"
+    : product.stock <= 5
+    ? `Plus que ${product.stock} en stock`
+    : "En stock"}
+</span>
+          
+          
           </div>
 
           <Link
@@ -77,7 +102,8 @@ export default function ProductCard({ product }) {
             aria-label={`Voir ${product.name}`}
           >
             <ShoppingCart size={14} />
-            Voir
+            
+            
           </Link>
         </div>
       </div>

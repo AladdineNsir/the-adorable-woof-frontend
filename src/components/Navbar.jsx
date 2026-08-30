@@ -25,7 +25,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
-  const { getItemsCount } = useCart();
+const { cart } = useCart();
   const { user, logout } = useAuth();
 
   const navigate = useNavigate();
@@ -445,11 +445,11 @@ export default function Navbar() {
             >
               <ShoppingBag size={18} />
 
-              {getItemsCount() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-velora-gold/60 text-white font-bold text-[9px] w-4 h-4 rounded-full flex items-center justify-center border border-velora-cream">
-                  {getItemsCount()}
-                </span>
-              )}
+              {cart.length > 0 && (
+  <span className="absolute -top-2 -right-2 bg-velora-gold/60 text-white font-bold text-[13px] w-4 h-4 rounded-full flex items-center justify-center border border-velora-cream">
+    {cart.length}
+  </span>
+)}
             </Link>
           )}
 

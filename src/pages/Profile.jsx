@@ -235,7 +235,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-5 sm:p-6">
+              {/* <div className="rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-5 sm:p-6">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-velora-gold">Suivi</p>
@@ -247,7 +247,7 @@ export default function Profile() {
                     Voir
                   </Link>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </section>
         </div>

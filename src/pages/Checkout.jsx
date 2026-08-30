@@ -219,7 +219,13 @@ export default function Checkout() {
               ) : (
                 cart.map((item) => (
                   <div key={item.cartItemId} className="flex gap-3 items-center">
-                    <img src={item.images?.[0]} alt={item.name} className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg object-cover border border-[#E8DED1]" />
+                    {item.images?.[0] ? (
+                      <img src={item.images[0]} alt={item.name} className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg object-cover border border-[#E8DED1]" />
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-[#E8DED1] bg-[#FCFAF7] text-[#C96A26]">
+                        <Package size={22} />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-semibold text-velora-dark truncate">{item.name}</h3>
                       <p className="text-xs text-velora-textGray">Qté : {item.quantity}</p>

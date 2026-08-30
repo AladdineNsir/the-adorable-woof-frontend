@@ -86,7 +86,19 @@ const normalizeProduct = (product) => {
   const rawImage =
     product.image || product.images?.[0] || "";
 
-  const image = resolveAssetUrl(rawImage);
+  const rawCategory =
+    typeof product.category === "object"
+      ? product.category?.name || ""
+      : product.category || "";
+
+  const fallbackImage =
+    String(rawCategory).toLowerCase() === "chats"
+      ? "/assets/chat2.png"
+      : "/assets/chien2.png";
+
+  const image =
+    resolveAssetUrl(rawImage) ||
+    resolveAssetUrl(fallbackImage);
 
   const rawSubCategory =
     typeof product.subCategory === "object"
@@ -108,11 +120,6 @@ const normalizeProduct = (product) => {
     cat: "chats",
     cats: "chats",
   };
-
-  const rawCategory =
-    typeof product.category === "object"
-      ? product.category?.name || ""
-      : product.category || "";
 
   return {
     id: product.id || product._id,

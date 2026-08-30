@@ -149,8 +149,7 @@ setOrderResult(data);
 
               <div className="flex items-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-3 py-2 text-sm font-semibold text-velora-dark">
                 <ShoppingBag size={16} className="text-velora-gold" />
-                <span>{itemCount} article{itemCount > 1 ? "s" : ""}</span>
-              </div>
+<span>{cart.length} article{cart.length > 1 ? "s" : ""}</span>            </div>
             </div>
           </div>
 
@@ -192,9 +191,7 @@ setOrderResult(data);
                       {/* <h2 className="font-premium text-xl font-bold text-velora-dark">
                         Articles selectionnes
                       </h2> */}
-                      <p className="mt-1 text-xs text-velora-textGray">
-                        Modifiez les quantites avant validation.
-                      </p>
+                      
                     </div>
 
                     <Link
@@ -209,7 +206,11 @@ setOrderResult(data);
                     <motion.article key={item.cartItemId} layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-[#E8DED1] bg-white transition-all duration-300 hover:border-velora-gold/50">
                       <div className="grid gap-3 p-3 md:grid-cols-[88px_minmax(0,1fr)_118px_118px_36px] md:items-center">
                         <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] md:h-24 md:w-24">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                          {item.image ? (
+                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                          ) : (
+                            <Package size={22} className="text-[#C96A26]" />
+                          )}
                         </div>
 
                         <div className="min-w-0">
@@ -258,7 +259,6 @@ setOrderResult(data);
             >
               <div className="flex h-full flex-col overflow-hidden rounded-xl border border-[#E8DED1] bg-white shadow-[0_8px_30px_rgba(17,17,17,0.04)]">
                 <div className="border-b border-[#E8DED1] p-5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-velora-gold">Resume</p>
                   <h2 className="mt-2 text-xl sm:text-2xl font-premium font-bold text-velora-dark">Votre commande</h2>
                 </div>
 

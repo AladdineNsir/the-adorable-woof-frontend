@@ -234,9 +234,9 @@ function OrderCard({ order, isOpen, onToggle }) {
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-                <h3 className="text-base font-bold tracking-wide text-velora-dark sm:text-lg">
-                  #{orderNumber}
-                </h3>
+  <h3 className="text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
+  #{orderNumber}
+</h3>
 
                 <span className="hidden h-3.5 w-px bg-[#E7DED2] sm:block" />
 
@@ -258,7 +258,7 @@ function OrderCard({ order, isOpen, onToggle }) {
             </div>
 
             {/* ITEMS */}
-            <div className="hidden min-w-[80px] text-right sm:block">
+            <div className="hidden min-w-[80px] text-center sm:block">
               <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
                 Articles
               </p>
@@ -269,7 +269,7 @@ function OrderCard({ order, isOpen, onToggle }) {
             </div>
 
             {/* TOTAL */}
-            <div className="min-w-[90px] text-right">
+            <div className="min-w-[90px] text-center">
               <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
                 Total
               </p>
@@ -549,9 +549,7 @@ export default function MyOrders() {
               {/* HEADER */}
 
               <div className="mb-5">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
-                  Commandes
-                </p>
+              
 
                 <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                   <div>
