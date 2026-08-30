@@ -105,15 +105,37 @@ className="h-full w-full rounded-[10px] object-contain transition-transform dura
           
           </div>
 
-          <Link
+          {/* <Link
             to={`/product/${productId}`}
             className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-3 text-xs sm:text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:bg-velora-gold hover:text-white"
             aria-label={`Voir ${product.name}`}
           >
             <ShoppingCart size={14} />
-            
-            
-          </Link>
+          </Link> */}
+          <Link
+  to={`/product/${productId}`}
+  className="group/cart relative inline-flex h-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white px-3 text-xs sm:text-sm font-semibold text-velora-dark transition-all duration-200 hover:border-velora-gold hover:bg-velora-gold hover:text-white"
+  aria-label={`Voir ${product.name}`}
+>
+  <ShoppingCart
+    size={14}
+    className="transition-transform duration-200 group-hover/cart:scale-105"
+  />
+
+  {/* Tooltip */}
+  <span
+    className="pointer-events-none absolute bottom-full right-0 mb-2
+               whitespace-nowrap rounded-md bg-velora-dark px-2.5 py-1.5
+               text-[10px] font-semibold text-white
+               opacity-0 translate-y-1
+               shadow-lg
+               transition-all duration-200
+               group-hover/cart:translate-y-0
+               group-hover/cart:opacity-100"
+  >
+    Ajouter au panier
+  </span>
+</Link>
         </div>
       </div>
     </article>

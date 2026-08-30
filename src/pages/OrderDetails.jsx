@@ -162,9 +162,9 @@ const steps = [
   return (
     <div className="rounded-xl border border-[#E8DED1] bg-white">
       <div className="border-b border-[#EFE7DC] px-5 py-4 sm:px-6">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
+        {/* <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
           Suivi
-        </p>
+        </p> */}
 
         <h2 className="mt-2 font-premium text-xl font-bold text-velora-dark sm:text-2xl">
           Évolution de la commande
@@ -293,10 +293,8 @@ function ShippingAddress({ address }) {
 ========================================================= */
 
 function OrderItems({ items = [] }) {
-  const count = items.reduce(
-    (sum, item) => sum + Number(item.quantity || 1),
-    0
-  );
+
+  const count = items.length;
 
   return (
     <div className="rounded-xl border border-[#E8DED1] bg-white">
@@ -418,9 +416,9 @@ function OrderSummary({ summary, paymentMethod }) {
         <div className="border-b border-[#EFE7DC] px-5 py-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
+              {/* <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
                 Résumé
-              </p>
+              </p> */}
 
               <h2 className="mt-2 font-premium text-xl font-bold text-velora-dark">
                 Total commande
@@ -612,12 +610,7 @@ export default function OrderDetails() {
 
   const orderNumber = getOrderNumber(order._id);
 
-  const itemCount =
-    order.orderItems?.reduce(
-      (sum, item) =>
-        sum + Number(item.quantity || 1),
-      0
-    ) || 0;
+  const itemCount = order.orderItems?.length || 0;
 
   const delivered =
     order.deliveryStatus === "Livré";
@@ -650,9 +643,9 @@ export default function OrderDetails() {
             <div className="flex flex-col gap-5 rounded-xl border border-[#E8DED1] bg-white px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
 
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
+                {/* <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
                   Détail de la commande
-                </p>
+                </p> */}
 
                 <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
                   <h1 className="font-premium text-2xl font-bold text-velora-dark sm:text-3xl">
@@ -672,25 +665,25 @@ export default function OrderDetails() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
-                    Articles
-                  </p>
+                <div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5 text-center">
+  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
+    Articles
+  </p>
 
-                  <p className="mt-1 text-sm font-bold text-velora-dark">
-                    {itemCount}
-                  </p>
-                </div>
+  <p className="mt-1 text-sm font-bold text-velora-dark">
+    {itemCount}
+  </p>
+</div>
 
-                <div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
-                    Total
-                  </p>
+<div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5 text-center">
+  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
+    Total
+  </p>
 
-                  <p className="mt-1 text-sm font-bold text-velora-dark">
-                    {money(summary.total)} DT
-                  </p>
-                </div>
+  <p className="mt-1 text-sm font-bold text-velora-dark">
+    {money(summary.total)} DT
+  </p>
+</div>
 
                 <StatusBadge
                   type={delivered ? "success" : "warning"}

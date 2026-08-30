@@ -17,7 +17,7 @@ export default function About() {
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-velora-gold">Notre Histoire</span>
               <div className="h-px w-6 sm:w-8 bg-velora-gold opacity-80" />
             </div>
-            <h1 className="font-premium text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Pensé avec amour. Créé pour eux.</h1>
+            <h1 className="font-premium text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Pensé avec amour, créé pour eux</h1>
             <p className="text-white/80 text-sm sm:text-base leading-6">Des accessoires conçus avec soin pour offrir à chaque compagnon le parfait équilibre entre confort, style et qualité.</p>
           </motion.div>
         </div>

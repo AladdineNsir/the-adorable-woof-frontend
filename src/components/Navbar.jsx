@@ -5,6 +5,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import {
   User,
+ShoppingBasket,
   ShoppingBag,
   ChevronDown,
   Package,
@@ -420,6 +421,7 @@ const { cart } = useCart();
                       </>
                     )}
 
+
                     {/* LOGOUT */}
                     <button
                       onClick={handleLogout}
@@ -443,8 +445,7 @@ const { cart } = useCart();
               className="hover:text-velora-gold transition-colors duration-200 relative flex-shrink-0"
               aria-label="Panier"
             >
-              <ShoppingBag size={18} />
-
+<ShoppingBasket size={18} />
               {cart.length > 0 && (
   <span className="absolute -top-2 -right-2 bg-velora-gold/60 text-white font-bold text-[13px] w-4 h-4 rounded-full flex items-center justify-center border border-velora-cream">
     {cart.length}

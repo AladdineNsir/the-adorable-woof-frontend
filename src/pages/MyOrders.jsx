@@ -179,113 +179,404 @@ function Status({ children }) {
    ORDER CARD
 ========================================================= */
 
-function OrderCard({ order, isOpen, onToggle }) {
+// function OrderCard({ order, isOpen, onToggle }) {
+//   const orderNumber =
+//     order._id?.slice(-8)?.toUpperCase() || "COMMANDE";
+
+//   const itemsCount = order.orderItems?.length || 0;
+
+//   const isDelivered = order.deliveryStatus === "Livré";
+
+//   const status =
+//     order.phoneVerificationStatus || "En attente d'appel";
+
+//   return (
+//     <motion.article
+//       layout
+//       initial={{ opacity: 0, y: 10 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       transition={{ duration: 0.3 }}
+//       className={`
+//         overflow-hidden
+//         rounded-xl
+//         border
+//         bg-white
+//         transition-all
+//         duration-300
+//         ${
+//           isOpen
+//             ? "border-[#C96A26]/30 shadow-[0_12px_35px_rgba(35,25,18,0.07)]"
+//             : "border-[#E8DED1] shadow-[0_4px_18px_rgba(35,25,18,0.025)] hover:border-[#C96A26]/25"
+//         }
+//       `}
+//     >
+//       {/* =====================================================
+//           CLOSED / HEADER
+//       ===================================================== */}
+
+//       <button
+//         type="button"
+//         onClick={onToggle}
+//         aria-expanded={isOpen}
+//         className="w-full text-left"
+//       >
+//         <div className="px-5 py-5 sm:px-6">
+//           <div className="flex items-center gap-5">
+
+//             {/* LEFT */}
+//             <div className="min-w-0 flex-1">
+//               <div className="flex items-center gap-2">
+//                 <span className="h-1.5 w-1.5 rounded-full bg-[#C96A26]" />
+
+//                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
+//                   Commande
+//                 </span>
+//               </div>
+
+//               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+//   <h3 className="text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
+//   #{orderNumber}
+// </h3>
+
+//                 <span className="hidden h-3.5 w-px bg-[#E7DED2] sm:block" />
+
+//                 <span className="flex items-center gap-1.5 text-[11px] text-velora-textGray">
+//                   <CalendarDays size={12} />
+
+//                   {order.createdAt
+//                     ? formatDate(order.createdAt)
+//                     : "Date inconnue"}
+//                 </span>
+//               </div>
+//             </div>
+
+//             {/* STATUS */}
+//             <div className="hidden min-w-[150px] md:block">
+//               <Status delivered={isDelivered}>
+//                 {status}
+//               </Status>
+//             </div>
+
+//             {/* ITEMS */}
+//             <div className="hidden min-w-[80px] text-center sm:block">
+//               <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
+//                 Articles
+//               </p>
+
+//               <p className="mt-1 text-sm font-semibold text-velora-dark">
+//                 {itemsCount}
+//               </p>
+//             </div>
+
+//             {/* TOTAL */}
+//             <div className="min-w-[90px] text-center">
+//               <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
+//                 Total
+//               </p>
+
+//               <p className="mt-1 text-base font-bold text-velora-dark sm:text-lg">
+//                 {Number(order.totalPrice || 0).toFixed(2)}
+//                 <span className="ml-1 text-[9px] font-semibold uppercase tracking-wider text-velora-textGray">
+//                   DT
+//                 </span>
+//               </p>
+//             </div>
+
+//             {/* CHEVRON */}
+//             <motion.div
+//               animate={{ rotate: isOpen ? 180 : 0 }}
+//               transition={{ duration: 0.25 }}
+//               className="
+//                 flex
+//                 h-8
+//                 w-8
+//                 shrink-0
+//                 items-center
+//                 justify-center
+//                 rounded-full
+//                 border
+//                 border-[#E7DED2]
+//                 bg-[#FCFAF7]
+//                 text-velora-dark
+//               "
+//             >
+//               <ChevronDown size={15} />
+//             </motion.div>
+//           </div>
+
+//           {/* MOBILE STATUS */}
+//           <div className="mt-4 flex items-center justify-between border-t border-[#F1EBE3] pt-3 md:hidden">
+//             <Status delivered={isDelivered}>
+//               {status}
+//             </Status>
+
+//             <span className="text-[10px] text-velora-textGray">
+//               {itemsCount}{" "}
+//               {itemsCount > 1 ? "articles" : "article"}
+//             </span>
+//           </div>
+//         </div>
+//       </button>
+
+//       {/* =====================================================
+//           EXPANDED CONTENT
+//       ===================================================== */}
+
+//       <AnimatePresence initial={false}>
+//         {isOpen && (
+//           <motion.div
+//             initial={{ height: 0, opacity: 0 }}
+//             animate={{ height: "auto", opacity: 1 }}
+//             exit={{ height: 0, opacity: 0 }}
+//             transition={{
+//               height: { duration: 0.3 },
+//               opacity: { duration: 0.2 },
+//             }}
+//             className="overflow-hidden"
+//           >
+//             <div className="border-t border-[#EFE7DC]">
+
+//               {/* DETAILS GRID */}
+
+//               <div className="grid grid-cols-1 sm:grid-cols-3">
+
+//                 {/* ARTICLES */}
+
+//                 <div className="px-5 py-5 sm:border-r sm:border-[#EFE7DC] sm:px-6">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
+//                       <ReceiptText
+//                         size={16}
+//                         className="text-[#C96A26]"
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
+//                         Articles
+//                       </p>
+
+//                       <p className="mt-1 text-sm font-semibold text-velora-dark">
+//                         {itemsCount}{" "}
+//                         {itemsCount > 1
+//                           ? "articles"
+//                           : "article"}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {/* PAIEMENT */}
+
+//                 <div className="border-t border-[#EFE7DC] px-5 py-5 sm:border-r sm:border-t-0 sm:px-6">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
+//                       <CheckCircle2
+//                         size={16}
+//                         className="text-[#C96A26]"
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
+//                         Paiement
+//                       </p>
+
+//                       <p className="mt-1 text-sm font-semibold text-velora-dark">
+//                         À la livraison
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {/* LIVRAISON */}
+
+//                 <div className="border-t border-[#EFE7DC] px-5 py-5 sm:border-t-0 sm:px-6">
+//                   <div className="flex items-center gap-3">
+//                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
+//                       <Truck
+//                         size={16}
+//                         className="text-[#C96A26]"
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
+//                         Livraison
+//                       </p>
+
+//                       <p className="mt-1 text-sm font-semibold text-velora-dark">
+//                         {order.deliveryStatus || "En cours"}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* FOOTER */}
+
+//               <div className="flex flex-col gap-4 border-t border-[#EFE7DC] bg-[#FCFAF7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+
+//                 <div>
+//                   <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
+//                     Statut
+//                   </p>
+
+//                   <div className="mt-1">
+//                     <Status delivered={isDelivered}>
+//                       {status}
+//                     </Status>
+//                   </div>
+//                 </div>
+
+//                 <Link
+//                   to={`/account/orders/${order._id}`}
+//                   onClick={(e) => e.stopPropagation()}
+//                   className="
+//                     inline-flex
+//                     h-9
+//                     items-center
+//                     justify-center
+//                     gap-2
+//                     rounded-lg
+//                     bg-[#C96A26]
+//                     px-4
+//                     text-xs
+//                     font-semibold
+//                     text-white
+//                     transition-all
+//                     duration-200
+//                     hover:bg-[#B85E20]
+//                   "
+//                 >
+//                   Voir les détails
+//                   <ArrowRight size={14} />
+//                 </Link>
+//               </div>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </motion.article>
+//   );
+// }
+function OrderCard({ order }) {
+  const navigate = useNavigate();
+
   const orderNumber =
     order._id?.slice(-8)?.toUpperCase() || "COMMANDE";
 
   const itemsCount = order.orderItems?.length || 0;
-
-  const isDelivered = order.deliveryStatus === "Livré";
 
   const status =
     order.phoneVerificationStatus || "En attente d'appel";
 
   return (
     <motion.article
-      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`
+      onClick={() => navigate(`/account/orders/${order._id}`)}
+      className="
+        group
+        cursor-pointer
         overflow-hidden
         rounded-xl
-        border
+        border border-[#E8DED1]
         bg-white
         transition-all
         duration-300
-        ${
-          isOpen
-            ? "border-[#C96A26]/30 shadow-[0_12px_35px_rgba(35,25,18,0.07)]"
-            : "border-[#E8DED1] shadow-[0_4px_18px_rgba(35,25,18,0.025)] hover:border-[#C96A26]/25"
-        }
-      `}
+        hover:-translate-y-[1px]
+        hover:border-[#C96A26]/30
+        hover:shadow-[0_10px_30px_rgba(35,25,18,0.06)]
+      "
     >
-      {/* =====================================================
-          CLOSED / HEADER
-      ===================================================== */}
+      <div className="px-5 py-5 sm:px-6">
+        <div className="flex items-center gap-4 sm:gap-5">
 
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        className="w-full text-left"
-      >
-        <div className="px-5 py-5 sm:px-6">
-          <div className="flex items-center gap-5">
+          {/* LEFT */}
+          <div className="min-w-0 flex-1">
 
-            {/* LEFT */}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#C96A26]" />
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#C96A26]" />
 
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
-                  Commande
-                </span>
-              </div>
-
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-  <h3 className="text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
-  #{orderNumber}
-</h3>
-
-                <span className="hidden h-3.5 w-px bg-[#E7DED2] sm:block" />
-
-                <span className="flex items-center gap-1.5 text-[11px] text-velora-textGray">
-                  <CalendarDays size={12} />
-
-                  {order.createdAt
-                    ? formatDate(order.createdAt)
-                    : "Date inconnue"}
-                </span>
-              </div>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
+                Commande
+              </span>
             </div>
 
-            {/* STATUS */}
-            <div className="hidden min-w-[150px] md:block">
-              <Status delivered={isDelivered}>
-                {status}
-              </Status>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+
+              <h3 className="text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
+                #{orderNumber}
+              </h3>
+
+              <span className="hidden h-3.5 w-px bg-[#E7DED2] sm:block" />
+
+              <span className="flex items-center gap-1.5 text-[11px] text-velora-textGray">
+                <CalendarDays size={12} />
+
+                {order.createdAt
+                  ? formatDate(order.createdAt)
+                  : "Date inconnue"}
+              </span>
+
             </div>
+          </div>
 
-            {/* ITEMS */}
-            <div className="hidden min-w-[80px] text-center sm:block">
-              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
-                Articles
-              </p>
+          {/* STATUS */}
+          <div className="hidden min-w-[150px] md:block">
+            <Status>
+              {status}
+            </Status>
+          </div>
 
-              <p className="mt-1 text-sm font-semibold text-velora-dark">
-                {itemsCount}
-              </p>
-            </div>
+          {/* ARTICLES */}
+          <div className="hidden min-w-[80px] text-center sm:block">
+            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
+              Articles
+            </p>
 
-            {/* TOTAL */}
-            <div className="min-w-[90px] text-center">
-              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
-                Total
-              </p>
+            <p className="mt-1 text-sm font-semibold text-velora-dark">
+              {itemsCount}
+            </p>
+          </div>
 
-              <p className="mt-1 text-base font-bold text-velora-dark sm:text-lg">
-                {Number(order.totalPrice || 0).toFixed(2)}
-                <span className="ml-1 text-[9px] font-semibold uppercase tracking-wider text-velora-textGray">
-                  DT
-                </span>
-              </p>
-            </div>
+          {/* TOTAL */}
+          <div className="min-w-[75px] text-right sm:min-w-[90px] sm:text-center">
+            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
+              Total
+            </p>
 
-            {/* CHEVRON */}
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.25 }}
+            <p className="mt-1 text-base font-bold text-velora-dark sm:text-lg">
+              {Number(order.totalPrice || 0).toFixed(2)}
+
+              <span className="ml-1 text-[9px] font-semibold uppercase tracking-wider text-velora-textGray">
+                DT
+              </span>
+            </p>
+          </div>
+
+          {/* EYE + VOIR LES DÉTAILS */}
+          <div className="flex shrink-0 items-center gap-2">
+
+            <span
+              className="
+                hidden
+                text-[10px]
+                font-semibold
+                text-[#C96A26]
+                opacity-0
+                transition-all
+                duration-200
+                group-hover:opacity-100
+                sm:block
+              "
+            >
+              Voir les détails
+            </span>
+
+            <div
               className="
                 flex
                 h-8
@@ -298,165 +589,35 @@ function OrderCard({ order, isOpen, onToggle }) {
                 border-[#E7DED2]
                 bg-[#FCFAF7]
                 text-velora-dark
+                transition-all
+                duration-200
+                group-hover:border-[#C96A26]
+                group-hover:bg-[#FFF5EA]
+                group-hover:text-[#C96A26]
               "
             >
-              <ChevronDown size={15} />
-            </motion.div>
-          </div>
-
-          {/* MOBILE STATUS */}
-          <div className="mt-4 flex items-center justify-between border-t border-[#F1EBE3] pt-3 md:hidden">
-            <Status delivered={isDelivered}>
-              {status}
-            </Status>
-
-            <span className="text-[10px] text-velora-textGray">
-              {itemsCount}{" "}
-              {itemsCount > 1 ? "articles" : "article"}
-            </span>
-          </div>
-        </div>
-      </button>
-
-      {/* =====================================================
-          EXPANDED CONTENT
-      ===================================================== */}
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{
-              height: { duration: 0.3 },
-              opacity: { duration: 0.2 },
-            }}
-            className="overflow-hidden"
-          >
-            <div className="border-t border-[#EFE7DC]">
-
-              {/* DETAILS GRID */}
-
-              <div className="grid grid-cols-1 sm:grid-cols-3">
-
-                {/* ARTICLES */}
-
-                <div className="px-5 py-5 sm:border-r sm:border-[#EFE7DC] sm:px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
-                      <ReceiptText
-                        size={16}
-                        className="text-[#C96A26]"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
-                        Articles
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold text-velora-dark">
-                        {itemsCount}{" "}
-                        {itemsCount > 1
-                          ? "articles"
-                          : "article"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* PAIEMENT */}
-
-                <div className="border-t border-[#EFE7DC] px-5 py-5 sm:border-r sm:border-t-0 sm:px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
-                      <CheckCircle2
-                        size={16}
-                        className="text-[#C96A26]"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
-                        Paiement
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold text-velora-dark">
-                        À la livraison
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* LIVRAISON */}
-
-                <div className="border-t border-[#EFE7DC] px-5 py-5 sm:border-t-0 sm:px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF5EA]">
-                      <Truck
-                        size={16}
-                        className="text-[#C96A26]"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
-                        Livraison
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold text-velora-dark">
-                        {order.deliveryStatus || "En cours"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* FOOTER */}
-
-              <div className="flex flex-col gap-4 border-t border-[#EFE7DC] bg-[#FCFAF7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
-                    Statut
-                  </p>
-
-                  <div className="mt-1">
-                    <Status delivered={isDelivered}>
-                      {status}
-                    </Status>
-                  </div>
-                </div>
-
-                <Link
-                  to={`/account/orders/${order._id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="
-                    inline-flex
-                    h-9
-                    items-center
-                    justify-center
-                    gap-2
-                    rounded-lg
-                    bg-[#C96A26]
-                    px-4
-                    text-xs
-                    font-semibold
-                    text-white
-                    transition-all
-                    duration-200
-                    hover:bg-[#B85E20]
-                  "
-                >
-                  Voir les détails
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
+              <Eye size={15} />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+          </div>
+
+        </div>
+
+        {/* MOBILE STATUS */}
+        <div className="mt-4 flex items-center justify-between border-t border-[#F1EBE3] pt-3 md:hidden">
+
+          <Status>
+            {status}
+          </Status>
+
+          <span className="text-[10px] text-velora-textGray">
+            {itemsCount}{" "}
+            {itemsCount > 1 ? "articles" : "article"}
+          </span>
+
+        </div>
+
+      </div>
     </motion.article>
   );
 }
@@ -471,7 +632,7 @@ export default function MyOrders() {
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [openOrderId, setOpenOrderId] = useState(null);
+  // const [openOrderId, setOpenOrderId] = useState(null);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -634,20 +795,26 @@ export default function MyOrders() {
                     </Link>
                   </div>
                 ) : (
+                  // orders.map((order) => (
+                  //   <OrderCard
+                  //     key={order._id}
+                  //     order={order}
+                  //     isOpen={openOrderId === order._id}
+                  //     onToggle={() =>
+                  //       setOpenOrderId(
+                  //         openOrderId === order._id
+                  //           ? null
+                  //           : order._id
+                  //       )
+                  //     }
+                  //   />
+                  // ))
                   orders.map((order) => (
-                    <OrderCard
-                      key={order._id}
-                      order={order}
-                      isOpen={openOrderId === order._id}
-                      onToggle={() =>
-                        setOpenOrderId(
-                          openOrderId === order._id
-                            ? null
-                            : order._id
-                        )
-                      }
-                    />
-                  ))
+  <OrderCard
+    key={order._id}
+    order={order}
+  />
+))
                 )}
               </div>
             </motion.div>
