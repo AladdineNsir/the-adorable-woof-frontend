@@ -8,6 +8,8 @@ const resolveImage = resolveAssetUrl;
 // const fallbackColors = ['#111111', '#7A5A44', '#D8C7B2'];
 
 export default function ProductCard({ product }) {
+  console.log("PRODUCT SHOP :", product);
+console.log("BADGE SHOP :", product?.badge);
   const fallbackImage =
     product.category === "chats"
       ? "/assets/chat2.png"
@@ -42,11 +44,18 @@ className="h-full w-full rounded-[10px] object-contain transition-transform dura
           )}
         </Link>
 
-        {product.isNew && (
-          <span className="absolute left-3 top-3 rounded-md bg-velora-gold px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
-            Nouveau
-          </span>
-        )}
+{/* Badge produit */}
+{product.badge === "new" && (
+  <span className="absolute left-3 top-3 z-30 rounded-md bg-velora-gold px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+    Nouveau
+  </span>
+)}
+
+{product.badge === "special" && (
+  <span className="absolute left-3 top-3 z-30 rounded-md bg-[#FFCB56]  px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+    Offre spéciale
+  </span>
+)}
       </div>
 
       <div className="p-4">

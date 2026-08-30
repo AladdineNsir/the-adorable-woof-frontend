@@ -53,6 +53,35 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
     }
   };
 
+  const specialProducts = products.filter((product) => product?.badge === "special");
+  const newProducts = products.filter((product) => product?.badge === "new");
+
+  const renderHomeProductCard = (product) => {
+    const productId = product.id || product._id;
+    const imageSrc =
+      product.image ||
+      (Array.isArray(product.images) && product.images[0] ? product.images[0] : null) ||
+      (product.category === "chats" ? "/assets/chat2.png" : "/assets/chien2.png");
+
+    return (
+      <Link
+        key={productId}
+        to={`/product/${productId}`}
+        className="group block h-full w-full"
+      >
+        <div className="h-full overflow-hidden rounded-[18px] border border-[#E9DFD4] bg-[#FAF8F4] shadow-[0_8px_24px_rgba(17,17,17,0.025)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(17,17,17,0.06)]">
+          <div className="overflow-hidden rounded-[18px] p-2 sm:p-3">
+            <img
+              src={imageSrc}
+              alt={product.name}
+              className="aspect-square w-full rounded-[14px] object-contain transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            />
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
   return (
     <div className="overflow-x-hidden bg-velora-cream text-velora-dark">
 <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center bg-velora-cream pt-4 pb-8 md:pb-4">        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-16 w-full">
@@ -433,6 +462,104 @@ const [catImage, setCatImage] = useState("/assets/mlahwa9.png");
 
   </div>
 </section>
+
+{/* =========================
+    NOUVEAUTÉS
+========================= */}
+{/* {newProducts.length > 0 && (
+  <section className="bg-velora-cream py-10 sm:py-12 lg:py-14">
+    <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-14">
+      
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.5 }}
+        className="mb-7 sm:mb-9 text-center"
+      >
+        <div className="mx-auto flex items-center justify-center gap-3">
+          <span className="h-px w-10 sm:w-14 bg-velora-gold/70" />
+
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-velora-gold">
+            Nouveautés
+          </span>
+
+          <span className="h-px w-10 sm:w-14 bg-velora-gold/70" />
+        </div>
+
+        <p className="mt-2 text-xs sm:text-sm text-velora-textGray">
+          Découvrez nos dernières créations
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+        {newProducts.slice(0, 4).map((product, index) => (
+          <motion.div
+            key={product.id || product._id}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{
+              duration: 0.45,
+              delay: index * 0.07,
+            }}
+          >
+            {renderHomeProductCard(product)}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+)} */}
+
+{/* =========================
+    OFFRES SPÉCIALES
+========================= */}
+{/* {specialProducts.length > 0 && (
+  <section className="bg-velora-cream pt-2 pb-10 sm:pb-12 lg:pb-14">
+    <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-14">
+
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.5 }}
+        className="mb-7 sm:mb-9 text-center"
+      >
+        <div className="mx-auto flex items-center justify-center gap-3">
+          <span className="h-px w-10 sm:w-14 bg-[#FFCB56]" />
+
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-[#D79F28]">
+            Offres spéciales
+          </span>
+
+          <span className="h-px w-10 sm:w-14 bg-[#FFCB56]" />
+        </div>
+
+        <p className="mt-2 text-xs sm:text-sm text-velora-textGray">
+          Des offres choisies pour leur faire plaisir
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+        {specialProducts.slice(0, 4).map((product, index) => (
+          <motion.div
+            key={product.id || product._id}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{
+              duration: 0.45,
+              delay: index * 0.07,
+            }}
+          >
+            {renderHomeProductCard(product)}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+)} */}
 
 
 <section className="bg-velora-cream py-4 sm:py-4 md:py-4 lg:py-4">

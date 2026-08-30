@@ -127,6 +127,7 @@ const normalizeProduct = (product) => {
     name: product.name,
     price: product.price ?? 0,
     image,
+    badge: product.badge || "",
     category:
       categoryMap[String(rawCategory).toLowerCase()] ||
       "chiens",

@@ -137,6 +137,19 @@ const inStock =
 <div className="grid items-start gap-2 px-2 pt-3 pb-4 sm:gap-4 sm:px-4 sm:pt-4 sm:pb-5 lg:grid-cols-2 lg:gap-5 lg:px-6 lg:pt-5 lg:pb-6">   <div className="flex flex-col">
   <div className="flex-1 overflow-hidden rounded-[22px] border border-[#E8DED1] bg-[#FAF8F4] shadow-[0_12px_32px_rgba(17,17,17,0.04)]">
                   <div className="relative">
+
+  {/* Badge produit */}
+  {product.badge === "new" && (
+    <span className="absolute left-4 top-4 z-30 rounded-md bg-velora-gold px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+      Nouveau
+    </span>
+  )}
+
+  {product.badge === "special" && (
+    <span className="absolute left-4 top-4 z-30 rounded-md bg-[#FFCB56] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+      Offre spéciale
+    </span>
+  )}                    
                     {/* PRICE + STOCK — bottom right of image */}
 <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
 
@@ -251,7 +264,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
   </div>
 
   {/* Product title + description */}
-  <div>
+  {/* <div>
     <h1 className="font-premium text-black text-xl sm:text-2xl font-medium leading-tight tracking-[-0.02em] ">
   {product.name}
 </h1>
@@ -261,7 +274,30 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       {product.description ||
         "Un collier élégant et confortable pour votre compagnon, léger et ajustable."}
     </p>
-  </div>
+  </div> */}
+  <div>
+  {/* Badge produit */}
+  {/* {product.badge === "new" && (
+    <span className="mb-3 inline-flex rounded-md bg-velora-gold px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+      Nouveau
+    </span>
+  )} */}
+
+  {/* {product.badge === "special" && (
+    <span className="mb-3 inline-flex rounded-md bg-[#C96B4B] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+      Offre spéciale
+    </span>
+  )} */}
+
+  <h1 className="font-premium text-black text-xl sm:text-2xl font-medium leading-tight tracking-[-0.02em]">
+    {product.name}
+  </h1>
+
+  <p className="mt-3 max-w-xl text-sm leading-6 text-[#77716B]">
+    {product.description ||
+      "Un collier élégant et confortable pour votre compagnon, léger et ajustable."}
+  </p>
+</div>
 
   {/* Price / Stock */}
   {/* <div className="mt-5 flex items-center justify-between border-y border-[#EFE7DC] py-4">

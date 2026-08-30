@@ -45,9 +45,10 @@ export default function ProductForm({ product = null, isEdit = false }) {
     colors: [],
     materials: [],
     isCustomizable: false,
-    isFeatured: false,
-    isBestSeller: false,
-    isNewArrival: false,
+    // isFeatured: false,
+    // isBestSeller: false,
+    // isNewArrival: false,
+    badge: "",
     isActive: true,
   });
 
@@ -376,14 +377,84 @@ export default function ProductForm({ product = null, isEdit = false }) {
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-3">
+      {/* <div className="mt-6 grid grid-cols-1 gap-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
           <Option name="isNewArrival" checked={form.isNewArrival} onChange={handleChange}>Nouveau</Option>
           <Option name="isFeatured" checked={form.isFeatured} onChange={handleChange}>Vedette</Option>
           <Option name="isBestSeller" checked={form.isBestSeller} onChange={handleChange}>Best seller</Option>
           <Option name="isCustomizable" checked={form.isCustomizable} onChange={handleChange}>Personnalisable</Option>
           <Option name="isActive" checked={form.isActive} onChange={handleChange}>Produit actif</Option>
-        </div>
+        </div> */}
+        <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
+  <div className="rounded-lg border border-[#E7DED2] bg-[#FCFAF7] p-4">
+  <label className={labelClass}>
+    Badge produit
+  </label>
+
+  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#E7DED2] bg-white px-4 py-3">
+      <input
+        type="radio"
+        name="badge"
+        value="new"
+        checked={form.badge === "new"}
+        onChange={handleChange}
+        className="accent-[#C96B4B]"
+      />
+      <span className="text-sm font-semibold text-velora-dark">
+        Nouveau
+      </span>
+    </label>
+
+    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#E7DED2] bg-white px-4 py-3">
+      <input
+        type="radio"
+        name="badge"
+        value="special"
+        checked={form.badge === "special"}
+        onChange={handleChange}
+        className="accent-[#C96B4B]"
+      />
+      <span className="text-sm font-semibold text-velora-dark">
+        Offre spéciale
+      </span>
+    </label>
+  </div>
+
+  {form.badge && (
+    <button
+      type="button"
+      onClick={() =>
+        setForm((prev) => ({
+          ...prev,
+          badge: "",
+        }))
+      }
+      className="mt-3 text-xs font-semibold text-velora-textGray underline hover:text-velora-dark"
+    >
+      Aucun badge
+    </button>
+  )}
+</div>
+
+  <div className="flex flex-col gap-3">
+    {/* <Option
+      name="isCustomizable"
+      checked={form.isCustomizable}
+      onChange={handleChange}
+    >
+      Nauveau
+    </Option> */}
+
+    <Option
+      name="isActive"
+      checked={form.isActive}
+      onChange={handleChange}
+    >
+      Produit actif
+    </Option>
+  </div>
+</div>
 
         <div className="mt-7 border-t border-[#EFE7DC] pt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
           <button
@@ -401,7 +472,7 @@ export default function ProductForm({ product = null, isEdit = false }) {
             {loading ? "Enregistrement..." : isEdit ? "Modifier le produit" : "Ajouter le produit"}
           </button>
         </div>
-      </div>
+      
     </form>
   );
 }
