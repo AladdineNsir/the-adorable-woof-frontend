@@ -194,7 +194,7 @@ export default function Profile() {
             >
               <div>
                <h1 className="mt-2 font-premium text-2xl sm:text-3xl lg:text-4xl font-bold text-velora-dark">
-                  Bonjour, {user?.name?.split(" ")[0] || "client"}
+                  {/* Bonjour, {user?.name?.split(" ")[0] || "client"} */}
                 </h1>
                 
               </div>

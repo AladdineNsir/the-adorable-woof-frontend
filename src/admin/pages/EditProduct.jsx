@@ -45,7 +45,7 @@ export default function EditProduct() {
     <>
       <AdminPageHeader
         title="Modifier le produit"
-        description="Mettez à jour les informations, images et options du produit."
+        description=""
         breadcrumb={["Produits", "Modifier"]}
         backTo="/admin/products"
       />

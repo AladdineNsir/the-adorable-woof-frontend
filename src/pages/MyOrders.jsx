@@ -21,6 +21,8 @@ import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { getMyOrders } from "../services/orderApi";
 
+const ORDERS_PER_PAGE = 5;
+
 /* =========================================================
    DATE
 ========================================================= */
@@ -632,14 +634,34 @@ export default function MyOrders() {
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [openOrderId, setOpenOrderId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: ORDERS_PER_PAGE,
+    total: 0,
+    pages: 1,
+  });
 
   useEffect(() => {
     const loadOrders = async () => {
       try {
-        const data = await getMyOrders();
+        setLoading(true);
+        const data = await getMyOrders({
+          page: currentPage,
+          limit: ORDERS_PER_PAGE,
+        });
 
-        setOrders(data.orders || data || []);
+        const result = Array.isArray(data) ? data : data.orders || [];
+
+        setOrders(result);
+        setPagination(
+          data.pagination || {
+            page: currentPage,
+            limit: ORDERS_PER_PAGE,
+            total: result.length,
+            pages: Math.max(Math.ceil(result.length / ORDERS_PER_PAGE), 1),
+          }
+        );
       } catch (error) {
         console.log(error);
       } finally {
@@ -648,7 +670,7 @@ export default function MyOrders() {
     };
 
     loadOrders();
-  }, []);
+  }, [currentPage]);
 
   const summary = useMemo(() => {
     const pending = orders.filter(
@@ -795,26 +817,76 @@ export default function MyOrders() {
                     </Link>
                   </div>
                 ) : (
-                  // orders.map((order) => (
-                  //   <OrderCard
-                  //     key={order._id}
-                  //     order={order}
-                  //     isOpen={openOrderId === order._id}
-                  //     onToggle={() =>
-                  //       setOpenOrderId(
-                  //         openOrderId === order._id
-                  //           ? null
-                  //           : order._id
-                  //       )
-                  //     }
-                  //   />
-                  // ))
                   orders.map((order) => (
-  <OrderCard
-    key={order._id}
-    order={order}
-  />
-))
+                    <OrderCard
+                      key={order._id}
+                      order={order}
+                    />
+                  ))
+                )}
+
+                {pagination.pages > 1 && (
+                  <div className="mt-8 flex items-center justify-center gap-1">
+                    <button
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      ←
+                    </button>
+
+                    {Array.from({ length: pagination.pages }).map((_, index) => {
+                      const pageNum = index + 1;
+                      const showPage =
+                        pageNum === 1 ||
+                        pageNum === pagination.pages ||
+                        Math.abs(pageNum - currentPage) <= 1 ||
+                        (currentPage <= 3 && pageNum <= 3) ||
+                        (currentPage > pagination.pages - 3 && pageNum > pagination.pages - 3);
+
+                      if (!showPage) {
+                        if (pageNum === 2 && currentPage > 3) {
+                          return (
+                            <span key={`ellipsis-${index}`} className="px-1 text-velora-textGray">
+                              …
+                            </span>
+                          );
+                        }
+
+                        if (pageNum === pagination.pages - 1 && currentPage < pagination.pages - 2) {
+                          return (
+                            <span key={`ellipsis-${index}`} className="px-1 text-velora-textGray">
+                              …
+                            </span>
+                          );
+                        }
+
+                        return null;
+                      }
+
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`h-9 w-9 rounded-lg text-xs font-semibold transition-all ${
+                            currentPage === pageNum
+                              ? "bg-velora-gold text-white shadow-sm"
+                              : "border border-[#E7DED2] bg-white text-velora-dark hover:border-velora-gold hover:bg-[#F8F4EF]"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+
+                    <button
+                      disabled={currentPage === pagination.pages}
+                      onClick={() => setCurrentPage((page) => Math.min(page + 1, pagination.pages))}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-xs transition hover:border-velora-gold disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      →
+                    </button>
+                  </div>
                 )}
               </div>
             </motion.div>

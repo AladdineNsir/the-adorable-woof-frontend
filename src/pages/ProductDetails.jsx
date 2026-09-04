@@ -375,11 +375,11 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
             key={size}
             type="button"
             onClick={() => setSelectedSize(size)}
-            className={`flex h-11 w-[54px] items-center justify-center rounded-md border text-xs font-semibold transition-all duration-200 ${
-              selectedSize === size
-                ? "border-[#C89B5A] bg-[#C89B5A] text-white shadow-[0_0_0_1px_rgba(200,155,90,0.15)]"
-                : "border-[#E2DCD4] bg-white text-[#4B4743] hover:border-[#C89B5A] hover:text-[#C89B5A]"
-            }`}
+            className={`relative h-10 w-10 rounded-md border transition-all duration-200 ${
+  selectedSize === size
+    ? "border-[#C89B5A] bg-[#C89B5A] text-white ring-1 ring-[#C89B5A] ring-offset-1"
+    : "border-[#DED7CF] bg-white text-[#4B4743] hover:border-[#C89B5A] hover:scale-105"
+}`}
           >
             {size}
           </button>

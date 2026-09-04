@@ -198,7 +198,7 @@ setOrderResult(data);
                       to="/shop"
                       className="hidden text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold transition hover:text-velora-dark sm:inline-flex"
                     >
-                      Continuer
+                      Continuer mes achats
                     </Link>
                   </div>
 

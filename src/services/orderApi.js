@@ -21,10 +21,13 @@ export const createOrder = async (order) => {
 // MY ORDERS
 // =======================
 
-export const getMyOrders = async () => {
+export const getMyOrders = async (params = {}) => {
   const { data } = await axios.get(
     `${API_URL}/mine`,
-    authHeaders()
+    {
+      ...authHeaders(),
+      params,
+    }
   );
 
   return data;

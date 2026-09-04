@@ -28,7 +28,7 @@ export default function AdminPageHeader({
           </div> */}
 
           {/* TITRE */}
-          <h1 className="mt-3 font-premium text-2xl sm:text-3xl lg:text-4xl font-bold text-velora-dark">
+          <h1 className="mt-3 font-premium text-2xl sm:text-3xl lg:text-4xl font-bold text-smiley-warning">
             {title}
           </h1>
 
