@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 
 import { register } from "../services/authApi";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export default function Register() {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      return alert("Les mots de passe ne correspondent pas.");
+      return toast.error("Les mots de passe ne correspondent pas.");
     }
 
     
@@ -53,10 +54,10 @@ export default function Register() {
         password: form.password,
       });
 
-      alert("Compte créé avec succès.");
+      toast.success("Compte créé avec succès.");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.message || "Erreur.");
+      toast.error(error.response?.data?.message || "Erreur.");
     } finally {
       setLoading(false);
     }

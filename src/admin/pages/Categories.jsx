@@ -15,7 +15,7 @@ import AdminPageHeader from "../components/AdminPageHeader";
 import Pagination from "../components/Pagination";
 import { getCategories, deleteCategory } from "../services/categoryApi";
 
-const CATEGORIES_PER_PAGE = 10;
+const CATEGORIES_PER_PAGE = 8;
 
 /* =========================================================
    STATUS BADGE
@@ -165,7 +165,6 @@ export default function Categories() {
 
       <AdminPageHeader
         title="Catégories"
-        description="Organisez vos produits avec une structure claire et facile à gérer."
         breadcrumb={["Catégories"]}
         action={
           <Link
@@ -174,13 +173,16 @@ export default function Categories() {
               group
               inline-flex h-11 items-center gap-2
               rounded-xl
-              bg-gradient-to-r from-[#C96A26] to-[#A3541E]
+              justify-center
+              bg-[#C96A26]
               px-5
               text-sm font-semibold text-white
-              shadow-[0_6px_18px_rgba(201,106,38,0.16)]
+              shadow-[0_5px_16px_rgba(201,106,38,0.18)]
               transition-all duration-200
               hover:-translate-y-0.5
-              hover:shadow-[0_10px_24px_rgba(201,106,38,0.22)]
+              hover:bg-[#B85D20]
+              hover:shadow-[0_8px_22px_rgba(201,106,38,0.24)]
+              active:translate-y-0
             "
           >
             <Plus
@@ -198,15 +200,15 @@ export default function Categories() {
           SEARCH / SUMMARY
       ===================================================== */}
 
-      <section className="border-y border-[#E7DED2] bg-[#FCFAF7]">
+      <section className="border-b border-[#E7DED2] bg-[#FCFAF7]">
         <div className="px-4 py-4 sm:px-6 lg:px-8">
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
             {/* SEARCH */}
 
             <label
               className="
-                relative flex h-11 w-full
+                relative flex h-11 min-w-0 w-full flex-1
                 items-center
                 rounded-xl
                 border border-[#E7DED2]
@@ -214,10 +216,10 @@ export default function Categories() {
                 px-3.5
                 shadow-[0_4px_14px_rgba(17,17,17,0.025)]
                 transition-all duration-200
-                focus-within:border-[#C96A26]
+                focus-within:border-velora-gold
+                focus-within:bg-white
                 focus-within:ring-4
-                focus-within:ring-[#C96A26]/5
-                lg:max-w-xl
+                focus-within:ring-velora-gold/10
               "
             >
               <Search
@@ -265,34 +267,6 @@ export default function Categories() {
               )}
             </label>
 
-            {/* COUNT */}
-
-            <div className="flex items-center justify-between gap-4 lg:justify-end">
-              <div className="flex items-center gap-2">
-                <div
-                  className="
-                    flex h-9 w-9
-                    items-center justify-center
-                    rounded-lg
-                    border border-[#E7DED2]
-                    bg-white
-                    text-[#C96A26]
-                  "
-                >
-                  <FolderTree size={16} strokeWidth={1.8} />
-                </div>
-
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">
-                    Catégories
-                  </p>
-
-                  <p className="text-sm font-semibold text-velora-dark">
-                    {filteredCategories.length}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -302,6 +276,22 @@ export default function Categories() {
       ===================================================== */}
 
       <div className="p-4 sm:p-6 lg:p-7">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFF7EE] text-[#C96A26]">
+            <FolderTree size={16} strokeWidth={1.8} />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-velora-dark">
+              Catalogue catégories
+            </p>
+            <p className="text-xs text-[#8D8176]">
+              {filteredCategories.length} catégorie
+              {filteredCategories.length > 1 ? "s" : ""}
+            </p>
+          </div>
+        </div>
+
         {loading ? (
           /* =================================================
              LOADING

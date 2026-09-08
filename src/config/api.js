@@ -23,7 +23,7 @@ export const authHeaders = () => {
 
 export const optimizeCloudinaryUrl = (
   src,
-  width = 800
+  width = "auto"
 ) => {
   if (!src) return "";
 
@@ -35,17 +35,15 @@ export const optimizeCloudinaryUrl = (
     return src;
   }
 
-  // Évite d'ajouter plusieurs fois les transformations
-  if (
-    src.includes("f_auto") ||
-    src.includes("q_auto")
-  ) {
+  if (src.includes("f_auto") && src.includes("q_auto") && /(?:^|,)w_[^,/]*/.test(src)) {
     return src;
   }
 
+  const transformation = `f_auto,q_auto,w_${width}`;
+
   return src.replace(
     "/image/upload/",
-    `/image/upload/f_auto,q_auto,w_${width}/`
+    `/image/upload/${transformation}/`
   );
 };
 
@@ -55,7 +53,7 @@ export const optimizeCloudinaryUrl = (
 
 export const resolveAssetUrl = (
   src,
-  width = 800
+  width = "auto"
 ) => {
   if (!src || typeof src !== "string") return "";
 

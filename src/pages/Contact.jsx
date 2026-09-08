@@ -14,6 +14,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ValuesSection from "../components/ValuesSection";
 import { API_BASE_URL } from "../config/api";
+import toast from "react-hot-toast";
 
 const ORANGE = "#C96A26";
 
@@ -58,7 +59,6 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
       );
     }
 
-    console.log("✅ Message envoyé :", data.message);
 
     setSent(true);
 
@@ -71,7 +71,7 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
   } catch (error) {
     console.error("❌ Erreur Contact :", error);
 
-    alert(
+    toast.error(
       error.message ||
         "Une erreur est survenue lors de l'envoi du message."
     );
@@ -79,7 +79,6 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
     setLoading(false);
   }
 };
-
   const contactInfo = [
     {
       icon: MapPin,
@@ -157,7 +156,7 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
               initial={{ opacity: 0, x: -18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-className="hidden sm:block rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:p-6"            >
+className="rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:p-6"            >
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
                   Contact
@@ -192,6 +191,7 @@ className="hidden sm:block rounded-xl border border-[#E8DED1] bg-white p-5 shado
                   </div>
                 ))}
               </div>
+
             </motion.section>
 
             {/* =========================

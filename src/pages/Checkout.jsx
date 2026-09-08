@@ -4,6 +4,8 @@ import { Truck, CreditCard, User, MapPin } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { createOrder } from "../services/orderApi";
 import { getProfile } from "../services/authApi";
+import toast from "react-hot-toast";
+import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout } from "../analytics/analytics";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -73,6 +75,9 @@ export default function Checkout() {
     setLoading(true);
 
     try {
+      trackBeginCheckout(cart, total);
+      trackAddShippingInfo(cart, total);
+      trackAddPaymentInfo(cart, total);
       // API après
 
       await createOrder({
@@ -81,15 +86,16 @@ export default function Checkout() {
         paymentMethod: "Paiement à la livraison",
         shippingPrice,
         totalPrice: total,
+        trackingAttribution: getTrackingAttribution(),
       });
 
       clearCart();
 
-      alert("Commande enregistrée avec succès.");
+      toast.success("Commande enregistrée avec succès.");
 
       navigate("/order-success");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || "Impossible de créer la commande.");
     } finally {
       setLoading(false);
     }

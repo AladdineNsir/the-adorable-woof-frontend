@@ -52,7 +52,13 @@ export const createSubCategory =
     const { data } = await axios.post(
       API_URL,
       subCategory,
-      authHeaders()
+      {
+        ...authHeaders(),
+        headers: {
+          ...authHeaders().headers,
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
 
     return data;
@@ -67,7 +73,13 @@ export const updateSubCategory =
     const { data } = await axios.put(
       `${API_URL}/${id}`,
       subCategory,
-      authHeaders()
+      {
+        ...authHeaders(),
+        headers: {
+          ...authHeaders().headers,
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
 
     return data;

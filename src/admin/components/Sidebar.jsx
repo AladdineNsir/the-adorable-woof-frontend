@@ -4,10 +4,12 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  Settings,
   ShoppingCart,
   Tags,
   Users,
   X,
+  BarChart3,
 } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -21,6 +23,8 @@ const menu = [
   { title: "Sous-catégories", icon: FolderTree, path: "/admin/subcategories" },
   { title: "Commandes", icon: ShoppingCart, path: "/admin/orders" },
   { title: "Clients", icon: Users, path: "/admin/clients" },
+  { title: "Paramètres", icon: Settings, path: "/admin/settings" },
+  { title: "Tracking", icon: BarChart3, path: "/admin/tracking" },
 ];
 
 export default function Sidebar({
@@ -63,7 +67,7 @@ export default function Sidebar({
 
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#E7DED2] bg-white py-5 shadow-[4px_0_20px_rgba(17,17,17,0.025)] overflow-hidden transition-[width] duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#E7DED2] bg-white shadow-[4px_0_20px_rgba(17,17,17,0.025)] overflow-hidden transition-[width] duration-300 ease-in-out",
           sidebarOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0",
           !sidebarOpen && collapsed ? "lg:w-[72px]" : "",
           !sidebarOpen && !collapsed ? "lg:w-[280px]" : "",
@@ -72,7 +76,7 @@ export default function Sidebar({
       >
         <div
           className={[
-            "flex h-[72px] items-center border-b border-[#EFE7DC] px-4 transition-all duration-300 ease-in-out",
+            "flex h-[68px] shrink-0 items-center border-b border-[#E7DED2] px-4 transition-all duration-300 ease-in-out",
             isDesktopCollapsed ? "justify-center px-2" : "justify-center",
           ].join(" ")}
         >
@@ -95,7 +99,7 @@ export default function Sidebar({
               <img
                 src="/assets/1.png"
                 alt="The aDoraBle woof co."
-                className="h-10 w-full max-w-[180px] object-contain transition-all duration-300 ease-in-out"
+                className="h-10 w-full max-w-[220px] object-contain transition-all duration-300 ease-in-out"
               />
             )}
           </Link>

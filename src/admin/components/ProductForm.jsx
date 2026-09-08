@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Toast from "../../components/Toast";
 import {
   Check,
@@ -104,10 +104,27 @@ useEffect(() => {
   const [existingImages, setExistingImages] = useState([]);
 
 
-  const [colorInput, setColorInput] = useState({
-    name: "",
-    code: "#000000",
-  });
+const [colorInput, setColorInput] = useState({
+  name: "",
+  type: "color",
+  code: "#000000",
+  image: null,
+});
+
+  const imagePreviewUrls = useMemo(
+    () =>
+      images.map((image) => ({
+        file: image,
+        url: URL.createObjectURL(image),
+      })),
+    [images]
+  );
+
+  useEffect(() => {
+    return () => {
+      imagePreviewUrls.forEach(({ url }) => URL.revokeObjectURL(url));
+    };
+  }, [imagePreviewUrls]);
 
   const [form, setForm] = useState({
     name: "",
@@ -131,6 +148,22 @@ useEffect(() => {
     badge: "",
     isActive: true,
   });
+
+  const colorPreviewUrls = useMemo(
+    () =>
+      new Map(
+        form.colors
+          .filter((color) => color.type === "image" && color.image instanceof File)
+          .map((color) => [color.name, URL.createObjectURL(color.image)])
+      ),
+    [form.colors]
+  );
+
+  useEffect(() => {
+    return () => {
+      colorPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [colorPreviewUrls]);
 
   /* =========================================================
      LOAD CATEGORIES
@@ -221,27 +254,6 @@ useEffect(() => {
      SIZES
   ========================================================= */
 
-  const addSize = () => {
-    const value = sizeInput.trim();
-
-    if (!value) return;
-
-    if (
-      form.sizes.some(
-        (size) => size.toLowerCase() === value.toLowerCase()
-      )
-    ) {
-      return;
-    }
-
-    setForm((prev) => ({
-      ...prev,
-      sizes: [...prev.sizes, value],
-    }));
-
-    setSizeInput("");
-  };
-
   const removeSize = (size) => {
     setForm((prev) => ({
       ...prev,
@@ -254,31 +266,50 @@ useEffect(() => {
   ========================================================= */
 
   const addColor = () => {
-    const name = colorInput.name.trim();
-    const code = colorInput.code || "#000000";
+  const name = colorInput.name.trim();
 
-    if (!name) return;
+  if (!name) return;
 
-    setForm((prev) => ({
-      ...prev,
-      colors: [
-        ...prev.colors.filter(
-          (color) =>
-            color.name.toLowerCase() !== name.toLowerCase()
-        ),
-        {
+  if (colorInput.type === "image" && !colorInput.image) {
+    setToastMessage("Choisissez une image pour ce motif.");
+    setToastType("error");
+    setToastVisible(true);
+    return;
+  }
+
+  const newColor =
+    colorInput.type === "image"
+      ? {
           name,
-          code,
-        },
-      ],
-    }));
+          type: "image",
+          code: "",
+          image: colorInput.image,
+        }
+      : {
+          name,
+          type: "color",
+          code: colorInput.code || "#000000",
+          image: null,
+        };
 
-    setColorInput({
-      name: "",
-      code,
-    });
-  };
+  setForm((prev) => ({
+    ...prev,
+    colors: [
+      ...prev.colors.filter(
+        (color) =>
+          color.name.toLowerCase() !== name.toLowerCase()
+      ),
+      newColor,
+    ],
+  }));
 
+  setColorInput({
+    name: "",
+    type: "color",
+    code: "#000000",
+    image: null,
+  });
+};
   const removeColor = (name) => {
     setForm((prev) => ({
       ...prev,
@@ -372,6 +403,13 @@ if (!form.price || Number(form.price) < 0) {
   return;
 }
 
+if (!form.description.trim()) {
+  setToastMessage("La description du produit est obligatoire.");
+  setToastType("error");
+  setToastVisible(true);
+  return;
+}
+
 if (!form.category) {
   setToastMessage("Veuillez sélectionner une catégorie.");
   setToastType("error");
@@ -397,9 +435,23 @@ if (form.sizes.length === 0 || form.colors.length === 0) {
 
     try {
       const formData = new FormData();
+      const colorImages = [];
+      const colors = form.colors.map((color) => {
+        if (color.type !== "image" || !(color.image instanceof File)) {
+          return color;
+        }
+
+        const imageIndex = colorImages.push(color.image) - 1;
+
+        return {
+          ...color,
+          image: "",
+          imageIndex,
+        };
+      });
 
       Object.keys(form).forEach((key) => {
-        const value = form[key];
+        const value = key === "colors" ? colors : form[key];
 
         formData.append(
           key,
@@ -411,6 +463,10 @@ if (form.sizes.length === 0 || form.colors.length === 0) {
 
       images.forEach((image) => {
         formData.append("images", image);
+      });
+
+      colorImages.forEach((image) => {
+        formData.append("colorImages", image);
       });
 
       formData.append(
@@ -425,29 +481,18 @@ if (form.sizes.length === 0 || form.colors.length === 0) {
   setToastType("success");
   setToastVisible(true);
 } else {
-  // await createProduct(formData);
-   const createdProduct = await createProduct(formData);
-
-  console.log("✅ PRODUIT CRÉÉ :", createdProduct);
-  console.log("📦 STOCK RETOURNÉ :", createdProduct?.stock);
+    await createProduct(formData);
 
   setToastMessage("Produit ajouté avec succès.");
   setToastType("success");
   setToastVisible(true);
 }
     } catch (error) {
-      console.error("❌ ERREUR PRODUCT");
-      console.error("STATUS :", error.response?.status);
-      console.error("DATA :", error.response?.data);
-      console.error("MESSAGE :", error.response?.data?.message);
-      console.error("FULL ERROR :", error);
-
   setToastMessage(
   error.response?.data?.message ||
     "Erreur lors de l'enregistrement du produit."
 );
 setToastType("error");
-setToastVisible(true);
 setToastVisible(true);
     } finally {
       setLoading(false);
@@ -538,7 +583,7 @@ setToastVisible(true);
                 htmlFor="description"
                 className={labelClass}
               >
-                Description
+                Description *
               </label>
 
               <textarea
@@ -547,6 +592,7 @@ setToastVisible(true);
                 value={form.description}
                 onChange={handleChange}
                 rows={5}
+                required
                 placeholder="Décrivez brièvement le produit..."
                 className={`${textAreaClass} resize-y`}
               />
@@ -847,29 +893,13 @@ setToastVisible(true);
                       key={image}
                       className="group overflow-hidden rounded-xl border border-[#E7DED2] bg-[#FCFAF7]"
                     >
-                      {/* <div className="relative aspect-square overflow-hidden bg-[#F8F4EE]">
-                        <img
-                          src={resolveAssetUrl(image)}
-                          alt="Produit"
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            removeExistingImage(image)
-                          }
-                          className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-white/95 text-red-600 shadow-sm transition hover:bg-red-50"
-                          title="Supprimer"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div> */}
                       <div className="relative aspect-square overflow-hidden bg-[#F8F4EE]">
 
   <img
     src={resolveAssetUrl(image)}
     alt="Produit"
+    loading="lazy"
+    decoding="async"
     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
   />
 
@@ -957,8 +987,7 @@ setToastVisible(true);
               </div>
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {images.map((image, index) => {
-  const previewUrl = URL.createObjectURL(image);
+                {imagePreviewUrls.map(({ file: image, url: previewUrl }, index) => {
 
   return (
     <div
@@ -970,6 +999,7 @@ setToastVisible(true);
   <img
     src={previewUrl}
     alt={image.name}
+    decoding="async"
     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
   />
 
@@ -1105,92 +1135,189 @@ setToastVisible(true);
 
           <div className="p-5 sm:p-6">
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_52px_auto]">
+            <div className="space-y-4">
 
-              <input
-                value={colorInput.name}
-                onChange={(e) =>
-                  setColorInput((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addColor();
-                  }
+  {/* Nom + type */}
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_180px_auto]">
+
+    <input
+      value={colorInput.name}
+      onChange={(e) =>
+        setColorInput((prev) => ({
+          ...prev,
+          name: e.target.value,
+        }))
+      }
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          addColor();
+        }
+      }}
+      placeholder="Ex : Noir, Caramel, Motif floral..."
+      className={inputClass}
+    />
+
+    <select
+      value={colorInput.type}
+      onChange={(e) =>
+        setColorInput((prev) => ({
+          ...prev,
+          type: e.target.value,
+          image: null,
+        }))
+      }
+      className={inputClass}
+    >
+      <option value="color">Couleur</option>
+      <option value="image">Motif / Image</option>
+    </select>
+
+    <button
+      type="button"
+      onClick={addColor}
+      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-5 text-sm font-semibold text-velora-dark transition-all hover:border-[#C96A26] hover:text-[#C96A26]"
+    >
+      <Plus size={16} />
+      Ajouter
+    </button>
+
+  </div>
+
+  {/* Type = couleur */}
+  {colorInput.type === "color" && (
+    <div className="flex items-center gap-3">
+
+      <div className="relative h-11 w-[52px] overflow-hidden rounded-xl border border-[#E7DED2] bg-white p-1">
+        <input
+          type="color"
+          value={colorInput.code}
+          onChange={(e) =>
+            setColorInput((prev) => ({
+              ...prev,
+              code: e.target.value,
+            }))
+          }
+          className="h-full w-full cursor-pointer rounded-lg border-0 bg-transparent"
+          title="Choisir la couleur"
+        />
+      </div>
+
+      <span className="text-xs font-medium text-velora-textGray">
+        {colorInput.code}
+      </span>
+
+    </div>
+  )}
+
+  {/* Type = image */}
+  {colorInput.type === "image" && (
+    <div className="rounded-xl border border-dashed border-[#DCCFC1] bg-[#FCFAF7] p-4">
+
+      <label className="flex cursor-pointer items-center gap-3">
+
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8D8C8] bg-white text-[#C96A26]">
+          <ImagePlus size={19} />
+        </div>
+
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-velora-dark">
+            {colorInput.image
+              ? colorInput.image.name
+              : "Choisir une image / un motif"}
+          </p>
+
+          <p className="mt-0.5 text-[11px] text-velora-textGray">
+            PNG, JPG ou WEBP
+          </p>
+        </div>
+
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/jpg,image/webp"
+          onChange={(e) =>
+            setColorInput((prev) => ({
+              ...prev,
+              image: e.target.files?.[0] || null,
+            }))
+          }
+          className="hidden"
+        />
+
+      </label>
+
+    </div>
+  )}
+
+  {/* Liste des couleurs / motifs */}
+  <div className="min-h-[42px]">
+
+    {form.colors.length === 0 ? (
+      <div className="flex items-center rounded-xl border border-dashed border-[#E3D8CC] px-4 py-3">
+        <p className="text-xs text-velora-textGray">
+          Aucune couleur ou motif ajouté.
+        </p>
+      </div>
+    ) : (
+      <div className="flex flex-wrap gap-2">
+
+        {form.colors.map((color) => (
+          <button
+            key={`${color.name}-${color.code}-${color.image || ""}`}
+            type="button"
+            onClick={() => removeColor(color.name)}
+            className="group flex items-center gap-2 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-3 py-2 text-xs font-bold text-velora-dark transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+          >
+
+            {/* Aperçu couleur */}
+            {color.type !== "image" ? (
+              <span
+                className="h-5 w-5 rounded-md border border-[#D6CABC] shadow-inner"
+                style={{
+                  backgroundColor: color.code,
                 }}
-                placeholder="Ex : Noir, Caramel..."
-                className={inputClass}
               />
+            ) : (
+              <span className="h-5 w-5 overflow-hidden rounded-md border border-[#D6CABC] bg-white">
+                {color.image ? (
+                  <img
+                    src={
+                      colorPreviewUrls.get(color.name) ||
+                      resolveAssetUrl(color.image)
+                    }
+                    alt={color.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <ImagePlus
+                    size={13}
+                    className="m-auto mt-1 text-[#9A8D80]"
+                  />
+                )}
+              </span>
+            )}
 
-              <div className="relative h-11 overflow-hidden rounded-xl border border-[#E7DED2] bg-white p-1">
-                <input
-                  type="color"
-                  value={colorInput.code}
-                  onChange={(e) =>
-                    setColorInput((prev) => ({
-                      ...prev,
-                      code: e.target.value,
-                    }))
-                  }
-                  className="h-full w-full cursor-pointer rounded-lg border-0 bg-transparent"
-                  title="Choisir la couleur"
-                />
-              </div>
+            <span>
+              {color.name}
+            </span>
 
-              <button
-                type="button"
-                onClick={addColor}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-5 text-sm font-semibold text-velora-dark transition-all hover:border-[#C96A26] hover:text-[#C96A26]"
-              >
-                <Plus size={16} />
-                Ajouter
-              </button>
+            <X
+              size={13}
+              className="text-[#9A8D80] group-hover:text-red-500"
+            />
 
-            </div>
+          </button>
+        ))}
 
-            <div className="mt-4 min-h-[42px]">
+      </div>
+    )}
 
-              {form.colors.length === 0 ? (
-                <div className="flex items-center rounded-xl border border-dashed border-[#E3D8CC] px-4 py-3">
-                  <p className="text-xs text-velora-textGray">
-                    Aucune couleur ajoutée.
-                  </p>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
+  </div>
 
-                  {form.colors.map((color) => (
-                    <button
-                      key={`${color.name}-${color.code}`}
-                      type="button"
-                      onClick={() =>
-                        removeColor(color.name)
-                      }
-                      className="group flex items-center gap-2 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-3 py-2 text-xs font-bold text-velora-dark transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-                    >
-                      <span
-                        className="h-4 w-4 rounded-md border border-[#D6CABC] shadow-inner"
-                        style={{
-                          backgroundColor: color.code,
-                        }}
-                      />
+</div>
 
-                      {color.name}
-
-                      <X
-                        size={13}
-                        className="text-[#9A8D80] group-hover:text-red-500"
-                      />
-                    </button>
-                  ))}
-
-                </div>
-              )}
-
-            </div>
           </div>
         </section>
 
@@ -1239,9 +1366,6 @@ setToastVisible(true);
             Badge produit
           </h2>
 
-          {/* <p className="mt-0.5 text-xs text-velora-textGray">
-            Affichez une indication visuelle sur le produit.
-          </p> */}
         </div>
 
         <div className="p-5 sm:p-6">

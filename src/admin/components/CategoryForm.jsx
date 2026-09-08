@@ -61,6 +61,12 @@ export default function CategoryForm({ category = null, isEdit = false }) {
   });
 
   useEffect(() => {
+    if (!image || !preview.startsWith("blob:")) return;
+
+    return () => URL.revokeObjectURL(preview);
+  }, [image, preview]);
+
+  useEffect(() => {
     if (category) {
       setForm({
         name: category.name || "",
@@ -79,6 +85,13 @@ export default function CategoryForm({ category = null, isEdit = false }) {
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+      toast.error("Choisissez une image valide de 5 Mo maximum.");
+      e.target.value = "";
+      return;
+    }
+
     setImage(file);
     setPreview(URL.createObjectURL(file));
   };
@@ -91,16 +104,18 @@ export default function CategoryForm({ category = null, isEdit = false }) {
       const categoryData = {
         name: form.name,
         description: form.description,
-        isActive: form.isActive,
-        image: "",
+        isActive: String(form.isActive),
       };
+      const payload = new FormData();
+      Object.entries(categoryData).forEach(([key, value]) => payload.append(key, value));
+      if (image) payload.append("image", image);
 
       if (isEdit) {
-        await updateCategory(category._id, categoryData);
+        await updateCategory(category._id, payload);
         toast.success("Catégorie modifiée avec succès.");
         navigate("/admin/categories");
       } else {
-        await createCategory(categoryData);
+        await createCategory(payload);
         toast.success("Catégorie ajoutée avec succès.");
         navigate("/admin/categories");
       }
@@ -167,6 +182,7 @@ export default function CategoryForm({ category = null, isEdit = false }) {
                   <input
                     id="category-image"
                     type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
                     onChange={handleImage}
                     aria-label="Choisir une image"
                     className="hidden"
@@ -251,11 +267,12 @@ export default function CategoryForm({ category = null, isEdit = false }) {
         </div>
       </section>
 
-      <div className="flex flex-col-reverse gap-2.5 pt-2 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-3 rounded-2xl border border-[#E7DED2] bg-white p-4 shadow-[0_8px_30px_rgba(17,17,17,0.035)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="h-10 w-full rounded-lg border border-[#E7DED2] bg-white px-4 text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:bg-[#FFFDF9] hover:text-velora-gold sm:w-auto"
+          disabled={loading}
+          className="h-11 w-full rounded-xl border border-[#E7DED2] bg-white px-6 text-sm font-semibold text-velora-dark transition-all hover:border-[#C96A26] hover:bg-[#FFFDF9] hover:text-[#C96A26] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           Annuler
         </button>
@@ -263,7 +280,7 @@ export default function CategoryForm({ category = null, isEdit = false }) {
         <button
           type="submit"
           disabled={loading}
-          className="h-10 w-full rounded-lg bg-[#C96A26] px-5 text-sm font-semibold text-white shadow-[0_5px_16px_rgba(201,106,38,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#B85D20] hover:shadow-[0_8px_22px_rgba(201,106,38,0.24)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#C96A26] px-7 text-sm font-bold text-white shadow-[0_8px_20px_rgba(201,106,38,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#B85D20] hover:shadow-[0_10px_24px_rgba(201,106,38,0.24)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           {loading ? "Enregistrement..." : isEdit ? "Modifier la catégorie" : "Ajouter la catégorie"}
         </button>

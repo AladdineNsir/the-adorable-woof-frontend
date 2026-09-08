@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Cat,
@@ -16,8 +16,10 @@ import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import ValuesSection from "../components/ValuesSection";
 import { API_BASE_URL, resolveAssetUrl } from "../config/api";
+import { PageSkeleton } from "../components/LoadingSkeleton";
 
 const PRODUCTS_PER_PAGE = 16;
+const productsCache = new Map();
 
 const SORT_OPTIONS = [
   { value: "featured", label: "Sélection" },
@@ -97,8 +99,8 @@ const normalizeProduct = (product) => {
       : "/assets/chien2.png";
 
   const image =
-    resolveAssetUrl(rawImage) ||
-    resolveAssetUrl(fallbackImage);
+    resolveAssetUrl(rawImage, 480) ||
+    resolveAssetUrl(fallbackImage, 480);
 
   const rawSubCategory =
     typeof product.subCategory === "object"
@@ -122,6 +124,7 @@ const normalizeProduct = (product) => {
   };
 
   return {
+    slug: product.slug,
     id: product.id || product._id,
     _id: product._id,
     name: product.name,
@@ -160,6 +163,7 @@ export default function Shop() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   const [selectedCategory, setSelectedCategory] =
     useState(
@@ -204,7 +208,24 @@ export default function Shop() {
   // ==========================
 
   useEffect(() => {
+    const controller = new AbortController();
+    const cacheKey = JSON.stringify({
+      page: currentPage,
+      category: selectedCategory,
+      subCategory: selectedSubCategory,
+      sort: sortBy,
+      search: searchQuery.trim(),
+    });
+
     const fetchProducts = async () => {
+      const cached = productsCache.get(cacheKey);
+      if (cached) {
+        setProducts(cached.products);
+        setPagination(cached.pagination);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
 
@@ -241,6 +262,7 @@ export default function Shop() {
           `${API_BASE_URL}/products`,
           {
             params,
+            signal: controller.signal,
           }
         );
 
@@ -249,19 +271,24 @@ export default function Shop() {
             ? data
             : data.products || [];
 
-        setProducts(
-          productsData.map(normalizeProduct)
-        );
+        const normalizedProducts = productsData.map(normalizeProduct);
+        const nextPagination = data.pagination || {
+          page: currentPage,
+          limit: PRODUCTS_PER_PAGE,
+          total: productsData.length,
+          pages: 1,
+        };
 
-        setPagination(
-          data.pagination || {
-            page: currentPage,
-            limit: PRODUCTS_PER_PAGE,
-            total: productsData.length,
-            pages: 1,
-          }
-        );
+        productsCache.set(cacheKey, {
+          products: normalizedProducts,
+          pagination: nextPagination,
+        });
+
+        setProducts(normalizedProducts);
+
+        setPagination(nextPagination);
       } catch (error) {
+        if (error.name === "CanceledError" || error.name === "AbortError") return;
         console.error(
           "Erreur chargement produits:",
           error
@@ -281,6 +308,8 @@ export default function Shop() {
     };
 
     fetchProducts();
+
+    return () => controller.abort();
   }, [
     currentPage,
     selectedCategory,
@@ -303,14 +332,6 @@ export default function Shop() {
   ]);
 
   // ==========================
-  // RESET SUBCATEGORY
-  // ==========================
-
-  useEffect(() => {
-    setSelectedSubCategory("all");
-  }, [selectedCategory]);
-
-  // ==========================
   // PAGE TITLE
   // ==========================
 
@@ -325,13 +346,26 @@ export default function Shop() {
         )?.label || "Tout";
 
   // ==========================
-  // RESET FILTERS
+  // FILTER ACTIONS
   // ==========================
 
+  const selectCategory = (category) => {
+    startTransition(() => {
+      setSelectedCategory(category);
+      setSelectedSubCategory("all");
+      setCurrentPage(1);
+    });
+  };
+
+  const selectSubCategory = (subCategory) => {
+    startTransition(() => {
+      setSelectedSubCategory(subCategory);
+      setCurrentPage(1);
+    });
+  };
+
   const resetFilters = () => {
-    setSelectedCategory("all");
-    setSelectedSubCategory("all");
-    setCurrentPage(1);
+    selectCategory("all");
   };
 
   // ==========================
@@ -401,16 +435,15 @@ export default function Shop() {
   // LOADING
   // ==========================
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F7F3EC] font-premium text-xl text-velora-dark">
-        Chargement de la collection...
-      </div>
-    );
+  if (loading && products.length === 0) {
+    return <PageSkeleton />;
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F3EC] pb-0">
+    <div
+      className="min-h-screen bg-[#F7F3EC] pb-0"
+      aria-busy={loading || isPending}
+    >
 
       {/* =========================
           SHOP CONTAINER
@@ -485,7 +518,7 @@ export default function Shop() {
                         <button
                           key={category.id}
                           onClick={() =>
-                            setSelectedCategory(
+                            selectCategory(
                               category.id
                             )
                           }
@@ -536,7 +569,7 @@ export default function Shop() {
                         <button
                           key={subCategory.id}
                           onClick={() =>
-                            setSelectedSubCategory(
+                            selectSubCategory(
                               subCategory.id
                             )
                           }
@@ -708,7 +741,7 @@ export default function Shop() {
                           )?.label
                         }
                         onClear={() =>
-                          setSelectedCategory(
+                          selectCategory(
                             "all"
                           )
                         }
@@ -722,7 +755,7 @@ export default function Shop() {
                           selectedSubCategory
                         }
                         onClear={() =>
-                          setSelectedSubCategory(
+                          selectSubCategory(
                             "all"
                           )
                         }
@@ -753,7 +786,7 @@ export default function Shop() {
                         <button
                           key={subCategory.id}
                           onClick={() =>
-                            setSelectedSubCategory(
+                            selectSubCategory(
                               subCategory.id
                             )
                           }
@@ -1041,7 +1074,7 @@ export default function Shop() {
                       <button
                         key={category.id}
                         onClick={() => {
-                          setSelectedCategory(
+                          selectCategory(
                             category.id
                           );
                           setFilterOpen(false);
@@ -1075,7 +1108,7 @@ export default function Shop() {
                       <button
                         key={subCategory.id}
                         onClick={() => {
-                          setSelectedSubCategory(
+                          selectSubCategory(
                             subCategory.id
                           );
                           setFilterOpen(false);

@@ -9,6 +9,7 @@ import {
   updateDeliveryStatus,
   updatePhoneStatus,
 } from "../../services/orderApi";
+import { resolveAssetUrl } from "../../config/api";
 
 const phoneStatuses = [
   "En attente d'appel",
@@ -31,12 +32,14 @@ const normalizePhoneStatus = (status) =>
 
 function InfoPanel({ icon: Icon, title, children }) {
   return (
-    <div className="rounded-[20px] border border-[#efe7dc] bg-white p-5 shadow-[0_10px_30px_rgba(17,17,17,0.04)]">
+    <div className="rounded-xl border border-[#E8DED1] bg-white p-4 shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
       <div className="mb-3 flex items-center gap-2">
-        <Icon size={17} className="text-velora-gold" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFF7EE] text-velora-gold">
+          <Icon size={16} />
+        </div>
         <h3 className="text-sm font-semibold text-velora-dark">{title}</h3>
       </div>
-      <div className="text-sm leading-7 text-velora-textGray">{children}</div>
+      <div className="text-sm leading-6 text-velora-textGray">{children}</div>
     </div>
   );
 }
@@ -109,12 +112,34 @@ export default function OrderDetails() {
     <>
       <AdminPageHeader
         title={order.orderNumber || `Commande #${order._id.slice(-8)}`}
-        description="Détail complet de la commande, client, adresse, articles et statuts."
+        description=""
         breadcrumb={["Commandes", "Détail"]}
         backTo="/admin/orders"
       />
 
-      <div className="grid gap-6 p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-7">
+      <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-7">
+        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-3 sm:grid-cols-4 sm:p-4">
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Commande</p>
+            <p className="mt-1 truncate text-sm font-semibold text-velora-dark">{order.orderNumber || "-"}</p>
+          </div>
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Date</p>
+            <p className="mt-1 text-sm font-semibold text-velora-dark">
+              {order.createdAt ? new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(order.createdAt)) : "-"}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Articles</p>
+            <p className="mt-1 text-sm font-semibold text-velora-dark">{order.orderItems?.length || 0}</p>
+          </div>
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Total</p>
+            <p className="mt-1 text-sm font-bold text-velora-gold">{money(order.totalPrice)} DT</p>
+          </div>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-5">
           <div className="grid gap-4 md:grid-cols-3">
             <InfoPanel icon={User} title="Client">
@@ -137,15 +162,30 @@ export default function OrderDetails() {
             </InfoPanel>
           </div>
 
-          <div className="overflow-hidden rounded-[20px] border border-[#efe7dc] bg-white shadow-[0_10px_30px_rgba(17,17,17,0.04)]">
-            <div className="border-b border-[#efe7dc] px-5 py-5 sm:px-6">
-              <h2 className="font-premium text-2xl font-bold text-velora-dark">Articles</h2>
+          <div className="overflow-hidden rounded-xl border border-[#E8DED1] bg-white shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
+            <div className="border-b border-[#EFE7DC] px-5 py-4 sm:px-6">
+              <h2 className="text-base font-bold text-velora-dark">Articles commandés</h2>
+              <p className="mt-1 text-xs text-velora-textGray">Détail des produits et options sélectionnés.</p>
             </div>
             <div className="divide-y divide-[#efe7dc]">
               {order.orderItems?.map((item) => (
-                <div key={`${item.product}-${item.selectedSize}-${item.selectedColor}`} className="grid gap-4 px-5 py-5 transition-colors hover:bg-[#fcfaf7] sm:px-6 md:grid-cols-[minmax(0,1fr)_120px]">
-                  <div>
-                    <p className="font-semibold text-velora-dark">{item.name}</p>
+                  <div key={`${item.product}-${item.selectedSize}-${item.selectedColor}`} className="grid gap-4 px-5 py-4 transition-colors hover:bg-[#FCFAF7] sm:px-6 md:grid-cols-[minmax(0,1fr)_120px]">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E7DED2] bg-[#FCFAF7]">
+                      {item.image ? (
+                        <img
+                          src={resolveAssetUrl(item.image, 160)}
+                          alt={item.name}
+                          loading="lazy"
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <Package size={18} className="text-[#C96A26]" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-velora-dark">{item.name}</p>
                     <div className="mt-2 flex flex-wrap gap-2 text-xs text-velora-textGray">
                       <span>Quantité: {item.quantity}</span>
                       <span>Taille: {item.selectedSize || "-"}</span>
@@ -156,6 +196,7 @@ export default function OrderDetails() {
                       {item.customization?.phoneNumber && (
                         <span>Téléphone: {item.customization.phoneNumber}</span>
                       )}
+                    </div>
                     </div>
                   </div>
                   <p className="text-sm font-semibold text-velora-dark md:text-right">
@@ -168,7 +209,7 @@ export default function OrderDetails() {
         </div>
 
         <aside className="space-y-5">
-          <div className="rounded-[20px] border border-[#efe7dc] bg-white p-5 shadow-[0_10px_30px_rgba(17,17,17,0.04)]">
+          <div className="rounded-xl border border-[#E8DED1] bg-white p-4 shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
             <div className="flex items-center gap-2">
               <Package size={18} className="text-velora-gold" />
               <h3 className="font-semibold text-velora-dark">Statuts</h3>
@@ -211,7 +252,7 @@ export default function OrderDetails() {
             </label>
           </div>
 
-          <div className="rounded-[20px] border border-[#efe7dc] bg-white p-5 shadow-[0_10px_30px_rgba(17,17,17,0.04)]">
+          <div className="rounded-xl border border-[#E8DED1] bg-white p-4 shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
             <div className="mb-5 flex items-center gap-2">
               <ReceiptText size={18} className="text-velora-gold" />
               <h3 className="font-semibold text-velora-dark">Total</h3>
@@ -225,7 +266,7 @@ export default function OrderDetails() {
                 <span>Livraison</span>
                 <strong className="text-velora-dark">{money(totals.shipping)} DT</strong>
               </div>
-              <div className="border-t border-[#efe7dc] pt-4">
+                <div className="border-t border-[#EFE7DC] pt-4">
                 <div className="flex items-center justify-between text-velora-dark">
                   <span className="font-semibold">Total</span>
                   <strong className="text-lg font-bold">{money(totals.total)} DT</strong>
@@ -238,6 +279,7 @@ export default function OrderDetails() {
             {order.invoiceSent ? "Facture envoyée au client." : "Facture non envoyée."}
           </InfoPanel>
         </aside>
+      </div>
       </div>
     </>
   );

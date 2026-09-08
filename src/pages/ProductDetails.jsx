@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { ChevronLeft, ChevronRight, Feather, Minus, Plus, Ruler, ShieldCheck, ShoppingBag, SlidersHorizontal, Sparkles } from "lucide-react";
-import ValuesSection from '../components/ValuesSection';
+import { ChevronLeft, ChevronRight, Minus, Plus, Ruler, ShoppingBag } from "lucide-react";
+import ValuesSection from "../components/ValuesSection";
+import SEO from "../components/SEO";
+import { trackClick, trackViewItem } from "../analytics/analytics";
+import { ProductSkeleton } from "../components/LoadingSkeleton";
 
 import { useCart } from "../context/CartContext";
 import { API_BASE_URL, resolveAssetUrl } from "../config/api";
@@ -16,6 +19,7 @@ const formatPrice = (price) => `${Number(price || 0).toFixed(0)} DT`;
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
 
   const [loading, setLoading] = useState(true);
@@ -40,6 +44,7 @@ export default function ProductDetails() {
       try {
         const { data } = await axios.get(`${API_BASE_URL}/products/${id}`);
         setInitialProductState(data);
+        trackViewItem(data);
       } catch {
         setProduct(null);
       } finally {
@@ -50,11 +55,6 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  // const gallery = useMemo(() => {
-  //   if (!product) return [];
-  //   const images = [product.image, ...(product.images || [])].map(resolveImage).filter(Boolean);
-  //   return [...new Set(images)];
-  // }, [product]);
   const gallery = useMemo(() => {
   if (!product) return [];
 
@@ -85,11 +85,7 @@ export default function ProductDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F7F3EC] font-premium text-xl text-velora-dark">
-        Chargement...
-      </div>
-    );
+    return <ProductSkeleton />;
   }
 
   if (!product) {
@@ -102,7 +98,6 @@ export default function ProductDetails() {
 
   const colors = product.colors?.length ? product.colors : fallbackColors;
   const sizes = product.sizes?.length ? product.sizes : fallbackSizes;
-  // const inStock = product.stock === undefined || Number(product.stock) > 0;
   const stockCount =
   product.stock === undefined
     ? null
@@ -112,16 +107,48 @@ const inStock =
   stockCount === null || stockCount > 0;
   const categoryLabel = product.category?.name || product.category || "Chats";
   const discount = product.oldPrice > product.price ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null;
+  const productDescription = product.description || `Découvrez ${product.name}, un accessoire de qualité pour votre compagnon.`;
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: productDescription,
+    image: gallery,
+    brand: { "@type": "Brand", name: "The Adorable Woof" },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "TND",
+      price: Number(product.price || 0).toFixed(2),
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: window.location.href,
+    },
+  };
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedSize, selectedColor);
+    trackClick("click_add_to_cart", { itemId: String(product._id || product.id), quantity });
     toast.success(`${product.name} ajouté au panier`);
   };
 
+  const handleBuyNow = () => {
+    addToCart(product, quantity, selectedSize, selectedColor);
+    trackClick("click_buy_now", { itemId: String(product._id || product.id), quantity });
+    navigate("/cart?checkout=1");
+  };
+
+
   return (
-    <div className="min-h-[60vh] bg-[#F7F3EC] py-8 sm:py-10 lg:py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16 xl:px-16">
-        <div className="bg-white border border-[#E8DED1] rounded-md shadow-[0_12px_40px_rgba(17,17,17,0.06)] overflow-hidden">
+    <>
+      <SEO
+        title={`${product.name} | The Adorable Woof`}
+        description={productDescription}
+        image={currentImage}
+        type="product"
+        structuredData={productSchema}
+      />
+      <div className="min-h-[60vh] bg-[#F7F3EC] py-8 sm:py-10 lg:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16">
+        <div className="overflow-hidden rounded-2xl border border-[#E8DED1] bg-white shadow-[0_12px_40px_rgba(17,17,17,0.06)]">
 
           {/* Subtle back link */}
          {/* Retour à la boutique — coin droit */}
@@ -191,7 +218,7 @@ const inStock =
                         type="button"
                         onClick={prevImage}
                         aria-label="Image précédente"
-                        className="absolute left-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 border border-[#E8DED1] shadow-sm hover:border-smiley-warning hover:text-velora-gold"
+                        className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E8DED1] bg-white/90 shadow-sm transition hover:border-velora-gold hover:text-velora-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold"
                       >
                         <ChevronLeft size={16} />
                       </button>
@@ -199,7 +226,7 @@ const inStock =
                         type="button"
                         onClick={nextImage}
                         aria-label="Image suivante"
-                        className="absolute right-4 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 border border-[#E8DED1] shadow-sm hover:border-velora-gold hover:text-velora-gold"
+                        className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E8DED1] bg-white/90 shadow-sm transition hover:border-velora-gold hover:text-velora-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold"
                       >
                         <ChevronRight size={16} />
                       </button>
@@ -232,7 +259,11 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       <button
         key={index}
         type="button"
-        onClick={() => setImageIndex(index)}
+        onClick={() => {
+          setImageIndex(index);
+          trackClick("click_product_image", { itemId: String(product._id || product.id) });
+        }}
+        aria-label={`Afficher l'image ${index + 1}`}
         className={`flex-none overflow-hidden rounded-xl border transition-all duration-200 ${
           imageIndex === index
             ? "border-[#C89B5A] shadow-[0_0_0_1px_rgba(200,155,90,0.2)]"
@@ -243,6 +274,8 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
           <img
             src={image}
             alt={`${product.name} ${index + 1}`}
+            loading="lazy"
+            decoding="async"
             className="mx-auto h-full w-full rounded-md object-contain"
           />
         </div>
@@ -259,7 +292,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
 <div className="flex h-full flex-col lg:pt-4">
   {/* Category */}
   <div className="mb-3">
-<span className="inline-flex items-center rounded-lg border border-[#D9D5CF] bg-white px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#4E4741] transition-all duration-200 hover:border-smiley-warning hover:text-smiley-warning">      {categoryLabel}
+<span className="inline-flex items-center rounded-lg border border-[#D9D5CF] bg-white px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#4E4741] transition-all duration-200 hover:border-velora-gold hover:text-velora-gold">      {categoryLabel}
     </span>
   </div>
 
@@ -293,7 +326,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
     {product.name}
   </h1>
 
-  <p className="mt-3 max-w-xl text-sm leading-6 text-[#77716B]">
+  <p className="mt-3 max-w-xl break-words whitespace-pre-line text-sm leading-6 text-[#77716B]">
     {product.description ||
       "Un collier élégant et confortable pour votre compagnon, léger et ajustable."}
   </p>
@@ -355,7 +388,8 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
           </span>
            <Link
           to="/size-guide"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-smiley-warning underline underline-offset-4 transition hover:text-velora-gold"
+          onClick={() => trackClick("click_size_guide")}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-velora-gold underline underline-offset-4 transition hover:text-velora-dark"
         >
           <Ruler size={14} strokeWidth={1.7} />
           Guide des tailles
@@ -397,7 +431,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
           Couleur
         </span>
 
-        <span className="mt-1 block text-xs text-smiley-warning">
+        <span className="mt-1 block text-xs text-velora-gold">
           {selectedColor?.name || "Sélectionnez une couleur"}
         </span>
       </div>
@@ -410,17 +444,31 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
             type="button"
             onClick={() => setSelectedColor(color)}
             style={{
-              backgroundColor: color.code || color.hex,
+              backgroundColor: color.code || color.hex || "#F4EEE7",
             }}
             aria-label={`Choisir ${color.name}`}
-            className={`relative h-10 w-10 rounded-md border transition-all duration-200 ${
+            className={`relative h-12 w-12 overflow-hidden rounded-lg border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B5A] focus-visible:ring-offset-2 ${
               selectedColor?.name === color.name
                 ? "border-[#C89B5A] ring-1 ring-[#C89B5A] ring-offset-1"
                 : "border-[#DED7CF] hover:border-[#C89B5A] hover:scale-105"
             }`}
           >
+            {color.type === "image" && color.image && (
+              <img
+                src={resolveAssetUrl(color.image)}
+                alt={color.name}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
+
+            {color.type === "image" && (
+              <span className="absolute bottom-0 left-0 right-0 z-[1] bg-black/45 px-1 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-white">
+                Motif
+              </span>
+            )}
+
             {selectedColor?.name === color.name && (
-              <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white drop-shadow-sm">
+              <span className="absolute inset-0 z-10 flex items-center justify-center text-sm font-bold text-white drop-shadow-sm">
                 ✓
               </span>
             )}
@@ -436,7 +484,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
 
   {/* Quantity + Add to cart */}
 {/* Quantity + Add to cart */}
-<div className="mt-7 flex flex-row items-stretch gap-3 sm:flex-row">
+<div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row">
 
   {/* Quantity */}
   <div className="flex h-12 w-fit items-center rounded-lg border border-[#DED7CF] bg-white">
@@ -465,74 +513,29 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
 
   </div>
 
-  {/* Add to cart */}
+  {/*
+    <button
+      type="button"
+      onClick={handleAddToCart}
+      disabled={!inStock}
+      className="flex h-12 min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+    >
+      <ShoppingBag size={17} strokeWidth={1.8} />
+      Ajouter au panier
+    </button>
+  */}
+
   <button
     type="button"
-    onClick={handleAddToCart}
+    onClick={handleBuyNow}
     disabled={!inStock}
-    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-smiley-warning px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-velora-goldHover hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+    className="flex h-12 min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-velora-goldHover hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-velora-gold disabled:text-white disabled:opacity-100"
   >
     <ShoppingBag size={17} strokeWidth={1.8} />
-    Ajouter au panier
+    Commander maintenant
   </button>
 
 </div>
-
-
-  {/* Trust / Benefits */}
-  {/* <div className="mt-7 border-t border-[#EFE7DC] pt-5">
-
-    <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4">
-
-      {[
-        {
-          icon: ShieldCheck,
-          title: "Qualité",
-          text: "Matériaux durables",
-        },
-        {
-          icon: Feather,
-          title: "Confort",
-          text: "Léger au quotidien",
-        },
-        {
-          icon: SlidersHorizontal,
-          title: "Ajustable",
-          text: "Adapté à votre compagnon",
-        },
-        {
-          icon: Sparkles,
-          title: "Design",
-          text: "Élégant & moderne",
-        },
-      ].map((item) => {
-        const Icon = item.icon;
-
-        return (
-          <div
-            key={item.title}
-            className="flex flex-col items-center text-center"
-          >
-
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F8F4EE] text-[#5F5750]">
-              <Icon size={17} strokeWidth={1.7} />
-            </div>
-
-            <h4 className="mt-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#3F3A36]">
-              {item.title}
-            </h4>
-
-            <p className="mt-1 text-[10px] leading-4 text-[#928A83]">
-              {item.text}
-            </p>
-
-          </div>
-        );
-      })}
-
-    </div>
-
-  </div> */}
 
 
 </div>
@@ -542,6 +545,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
 
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

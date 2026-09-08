@@ -307,7 +307,7 @@ export default function ProductTable({
 
                   <td className="px-5 py-3.5">
 
-                    <div className="flex justify-center gap-2">
+                    <div className="flex justify-end gap-2">
 
                       {/* MODIFIER */}
 
@@ -321,18 +321,17 @@ export default function ProductTable({
                           justify-center
                           rounded-lg
                           border
-                          border-velora-gold/30
-                          bg-[#FFF7EE]
-                          text-velora-gold
-                          transition-all
-                          duration-200
-                          hover:border-velora-gold
-                          hover:bg-velora-gold
-                          hover:text-white
+                          border-[#E7DED2]
+                          bg-white
+                          text-[#8D8176]
+                          transition-all duration-200
+                          hover:border-[#C96A26]
+                          hover:bg-[#FFF7EE]
+                          hover:text-[#C96A26]
                         "
                         aria-label="Modifier le produit"
                       >
-                        <Edit size={16} />
+                        <Edit size={16} strokeWidth={1.8} />
                       </Link>
 
                       {/* SUPPRIMER */}
@@ -351,17 +350,17 @@ export default function ProductTable({
                           justify-center
                           rounded-lg
                           border
-                          border-red-200
-                          bg-red-50
-                          text-red-600
-                          transition-all
-                          duration-200
-                          hover:border-red-300
-                          hover:bg-red-100
+                          border-[#E7DED2]
+                          bg-white
+                          text-[#8D8176]
+                          transition-all duration-200
+                          hover:border-red-200
+                          hover:bg-red-50
+                          hover:text-red-600
                         "
                         aria-label="Supprimer le produit"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={16} strokeWidth={1.8} />
                       </button>
 
                     </div>

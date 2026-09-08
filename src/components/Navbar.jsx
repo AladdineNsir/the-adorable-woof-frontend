@@ -24,6 +24,7 @@ ShoppingBasket,
 
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { prefetchRoute } from "../config/routePreloads";
 
 export default function Navbar() {
 const { cart } = useCart();
@@ -189,6 +190,7 @@ const { cart } = useCart();
               <NavLink
                 key={item.to}
                 to={item.to}
+                onMouseEnter={() => prefetchRoute(item.to)}
                 onFocus={() => setFocusedIndex(i)}
                 onBlur={() => setFocusedIndex(null)}
                 className="relative inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-full"
@@ -510,6 +512,8 @@ const { cart } = useCart();
               left-0
               right-0
               top-[60px]
+              max-h-[calc(100dvh-60px)]
+              overflow-y-auto
               z-[60]
               md:hidden
               border-t
@@ -530,6 +534,7 @@ const { cart } = useCart();
                   <NavLink
                     key={to}
                     to={to}
+                    onMouseEnter={() => prefetchRoute(to)}
                     onClick={
                       handleMobileNavigation
                     }

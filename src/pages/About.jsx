@@ -3,8 +3,10 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import ValuesSection from '../components/ValuesSection';
+import { useSiteSettings } from '../context/SiteSettingsContext';
 
 export default function About() {
+  const { settings } = useSiteSettings();
 
   return (
     <div className="min-h-screen bg-velora-cream pt-0 overflow-x-hidden">
@@ -43,7 +45,7 @@ Une jeune marque tunisienne, créée pour célébrer le lien unique qui nous uni
               </div>
 
               <div className="mt-6">
-                <Link to="/shop" className="inline-flex items-center gap-2 rounded-lg px-6 py-3 border border-velora-dark/20 text-sm font-semibold text-velora-dark hover:border-velora-gold hover:text-velora-gold hover:bg-white transition-all">
+                <Link to="/shop" className="inline-flex items-center gap-2 rounded-lg px-6 py-3 border border-velora-dark /20 text-sm font-semibold text-velora-dark hover:border-velora-gold hover:text-velora-gold hover:bg-white transition-all">
                   Découvrir la collection
                   <ArrowRight size={16} />
                 </Link>
@@ -52,7 +54,7 @@ Une jeune marque tunisienne, créée pour célébrer le lien unique qui nous uni
 
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative">
               <div className="h-[280px] sm:h-[340px] md:h-[420px] rounded-2xl overflow-hidden bg-[#FCFAF7] shadow-[0_12px_40px_rgba(17,17,17,0.06)]">
-                <img src="/assets/about-velora.png" alt="Fondatrice SMILEY WOOF avec son chien" className="w-full h-full object-cover" />
+                <img src={settings.about.image} alt="Fondatrice SMILEY WOOF avec son chien" className="w-full h-full object-cover" />
               </div>
 
 <div className="absolute top-4 left-4 w-20 h-20 sm:-top-5 sm:-left-5 sm:w-32 sm:h-32 bg-velora-cream border border-velora-gold/30 rounded-xl flex flex-col items-center justify-center text-center">   

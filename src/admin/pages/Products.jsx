@@ -28,7 +28,7 @@ export default function Products() {
 
       const data = await getProducts({
         page,
-        limit: 10,
+        limit: 8,
         search,
         stock,
       });
@@ -90,7 +90,7 @@ export default function Products() {
               strokeWidth={2}
               className="transition-transform duration-200 group-hover:rotate-90"
             /> */}
-            <span>Nouveau produit</span>
+            <span>+ Ajouter</span>
           </Link>
         }
       />
@@ -402,6 +402,26 @@ export default function Products() {
                 products={products}
                 refreshProducts={loadProducts}
               />
+
+              {pagination && pagination.total > 0 && (
+                <div className="mt-4 border-t border-[#EFE7DC] pt-4">
+                  <p className="text-xs text-velora-textGray">
+                    Affichage de{" "}
+                    <span className="font-semibold text-velora-dark">
+                      {(pagination.page - 1) * 8 + 1}
+                    </span>{" "}
+                    à{" "}
+                    <span className="font-semibold text-velora-dark">
+                      {Math.min(pagination.page * 8, pagination.total)}
+                    </span>{" "}
+                    sur{" "}
+                    <span className="font-semibold text-velora-dark">
+                      {pagination.total}
+                    </span>{" "}
+                    produit{pagination.total > 1 ? "s" : ""}
+                  </p>
+                </div>
+              )}
 
               <div className="mt-5">
                 <Pagination

@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import { resolveAssetUrl } from "../config/api";
 import { useAuth } from "./AuthContext";
+import { trackAddToCart } from "../analytics/analytics";
 
 const CartContext = createContext();
 
@@ -44,10 +45,43 @@ export const CartProvider = ({ children }) => {
     const cartKey = getCartKey();
 
     try {
-      const savedCart = localStorage.getItem(cartKey);
+      const parseCart = (key) => {
+        const value = localStorage.getItem(key);
+        if (!value) return [];
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [];
+      };
+
+      const savedCart = parseCart(cartKey);
+
+      if (user) {
+        const guestCart = parseCart("velora_cart_guest");
+        const mergedCart = [...savedCart];
+
+        guestCart.forEach((guestItem) => {
+          const existingIndex = mergedCart.findIndex(
+            (item) => item.cartItemId === guestItem.cartItemId
+          );
+
+          if (existingIndex === -1) {
+            mergedCart.push(guestItem);
+          } else {
+            mergedCart[existingIndex] = {
+              ...mergedCart[existingIndex],
+              quantity:
+                mergedCart[existingIndex].quantity + guestItem.quantity,
+            };
+          }
+        });
+
+        localStorage.setItem(cartKey, JSON.stringify(mergedCart));
+        localStorage.removeItem("velora_cart_guest");
+        setCart(mergedCart);
+        return;
+      }
 
       if (savedCart) {
-        setCart(JSON.parse(savedCart));
+        setCart(savedCart);
       } else {
         setCart([]);
       }
@@ -186,6 +220,7 @@ export const CartProvider = ({ children }) => {
     triggerToast(
       `${product.name} ajouté au panier`
     );
+    trackAddToCart(product, quantity);
   };
 
   // ============================================

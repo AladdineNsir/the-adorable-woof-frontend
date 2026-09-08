@@ -18,7 +18,7 @@ export default function AdminLayout() {
 
       <div
         className={[
-          "min-h-screen transition-[padding] duration-300 ease-in-out",
+          "min-h-screen min-w-0 overflow-x-hidden transition-[padding] duration-300 ease-in-out",
           sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[280px]",
         ].join(" ")}
       >
@@ -28,7 +28,7 @@ export default function AdminLayout() {
           onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
         />
 
-        <main className="px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
+        <main className="min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
           <div className="w-full">
             <Outlet />
           </div>

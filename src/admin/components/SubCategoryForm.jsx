@@ -88,6 +88,13 @@ export default function SubCategoryForm({ subCategory = null, isEdit = false }) 
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+      toast.error("Choisissez une image valide de 5 Mo maximum.");
+      e.target.value = "";
+      return;
+    }
+
     setImage(file);
     setPreview(URL.createObjectURL(file));
   };
@@ -101,15 +108,17 @@ export default function SubCategoryForm({ subCategory = null, isEdit = false }) 
         name: form.name,
         description: form.description,
         category: form.category,
-        isActive: form.isActive,
-        image: "",
+        isActive: String(form.isActive),
       };
+      const payload = new FormData();
+      Object.entries(subCategoryData).forEach(([key, value]) => payload.append(key, value));
+      if (image) payload.append("image", image);
 
       if (isEdit) {
-        await updateSubCategory(subCategory._id, subCategoryData);
+        await updateSubCategory(subCategory._id, payload);
         toast.success("Sous-catégorie modifiée avec succès.");
       } else {
-        await createSubCategory(subCategoryData);
+        await createSubCategory(payload);
         toast.success("Sous-catégorie ajoutée avec succès.");
       }
     } catch (error) {
@@ -199,6 +208,7 @@ export default function SubCategoryForm({ subCategory = null, isEdit = false }) 
                   <input
                     id="image"
                     type="file"
+                    accept="image/jpeg,image/png,image/webp,image/avif"
                     onChange={handleImage}
                     className="hidden"
                   />

@@ -31,7 +31,13 @@ export const createCategory = async (category) => {
   const { data } = await axios.post(
     API_URL,
     category,
-    authHeaders()
+    {
+      ...authHeaders(),
+      headers: {
+        ...authHeaders().headers,
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
 
   return data;
@@ -48,7 +54,13 @@ export const updateCategory = async (
   const { data } = await axios.put(
     `${API_URL}/${id}`,
     category,
-    authHeaders()
+    {
+      ...authHeaders(),
+      headers: {
+        ...authHeaders().headers,
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
 
   return data;

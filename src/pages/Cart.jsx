@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createOrder } from "../services/orderApi";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
@@ -18,6 +18,7 @@ import {
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout, trackRemoveFromCart, trackViewCart } from "../analytics/analytics";
 
 const initialShippingAddress = {
   fullName: "",
@@ -43,6 +44,7 @@ const getUserShippingAddress = (user) => ({
 });
 
 export default function Cart() {
+  const [searchParams] = useSearchParams();
   const {
     cart,
     removeFromCart,
@@ -80,6 +82,18 @@ export default function Cart() {
     }));
   }, [user]);
 
+  useEffect(() => {
+    if (cart.length > 0) trackViewCart(cart);
+  }, [cart]);
+
+  useEffect(() => {
+    if (searchParams.get("checkout") === "1") {
+      window.setTimeout(() => {
+        document.getElementById("checkout-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    }
+  }, [searchParams]);
+
   const handleShippingChange = (e) => {
     const { name, value } = e.target;
 
@@ -113,11 +127,15 @@ export default function Cart() {
 
     try {
       setSubmitting(true);
+      trackBeginCheckout(cart, total);
+      trackAddShippingInfo(cart, total);
+      trackAddPaymentInfo(cart, total);
 
      const data = await createOrder({
   orderItems,
   shippingAddress,
   shippingPrice,
+  trackingAttribution: getTrackingAttribution(),
 });
 
 setOrderResult(data);
@@ -203,7 +221,7 @@ setOrderResult(data);
                   </div>
 
                   {cart.map((item) => (
-                    <motion.article key={item.cartItemId} layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-[#E8DED1] bg-white transition-all duration-300 hover:border-velora-gold/50">
+                    <motion.article key={item.cartItemId} layout initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="relative rounded-xl border border-[#E8DED1] bg-white transition-all duration-300 hover:border-velora-gold/50">
                       <div className="grid gap-3 p-3 md:grid-cols-[88px_minmax(0,1fr)_118px_118px_36px] md:items-center">
                         <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] md:h-24 md:w-24">
                           {item.image ? (
@@ -243,7 +261,7 @@ setOrderResult(data);
                           <p className="mt-0.5 text-sm font-bold text-velora-dark">{formatPrice(item.price * item.quantity)}</p>
                         </div>
 
-                        <button type="button" onClick={() => removeFromCart(item.cartItemId)} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg border border-[#EFE7DC] text-velora-textGray transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 md:static" aria-label="Supprimer l'article"><Trash2 size={14} /></button>
+                        <button type="button" onClick={() => { trackRemoveFromCart(item); removeFromCart(item.cartItemId); }} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg border border-[#EFE7DC] text-velora-textGray transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 md:static" aria-label="Supprimer l'article"><Trash2 size={14} /></button>
                       </div>
                     </motion.article>
                   ))}
@@ -289,7 +307,8 @@ setOrderResult(data);
               </div>
             </motion.aside>
 
-            <form onSubmit={handleSubmit} className="rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:col-span-2">
+            {cart.length > 0 && (
+            <form id="checkout-form" onSubmit={handleSubmit} className="rounded-xl border border-[#E8DED1] bg-white p-5 shadow-[0_8px_30px_rgba(17,17,17,0.04)] sm:col-span-2">
               <div className="mb-5 flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF7EE] text-velora-gold">
                   <PackageCheck size={18} />
@@ -356,6 +375,7 @@ setOrderResult(data);
 
               {/* <p className="mt-4 text-center text-xs leading-5 text-velora-textGray">En validant, vous acceptez nos conditions de vente et notre politique de confidentialite.</p> */}
             </form>
+            )}
           </div>
         </div>
       </div>

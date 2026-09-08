@@ -4,12 +4,14 @@
 
 :root {
   --velora-primary: #C96A26;
+  --velora-primaryHover: #B4571D;
   --velora-primary-soft: #C89B5A;
   --velora-primary-deep: #B5742E;
   --velora-cream: #F8F5EF;
   --velora-ivory: #FAF7F2;
   --velora-white: #FFFFFF;
   --velora-dark: #1F1713;
+  --velora-textGray: #7B675D;
   --velora-text: #4B3A30;
   --velora-text-soft: #7B675D;
   --velora-border: #EFE7DC;
@@ -18,14 +20,42 @@
   --velora-hero-gradient: linear-gradient(135deg, #FAF7F2 0%, #F8F5EF 50%, #FFF8EF 100%);
 }
 
+.bg-velora-gold {
+  background-color: var(--velora-primary) !important;
+}
+
+.hover\:bg-velora-goldHover:hover {
+  background-color: var(--velora-primaryHover) !important;
+}
+
+.text-velora-gold {
+  color: var(--velora-primary) !important;
+}
+
+.text-velora-dark {
+  color: var(--velora-dark) !important;
+}
+
+.text-velora-textGray {
+  color: var(--velora-textGray) !important;
+}
+
+.bg-velora-cream {
+  background-color: var(--velora-cream) !important;
+}
+
+.border-velora-gold {
+  border-color: var(--velora-primary) !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #FAF7F2 0%, #F8F5EF 45%, #FCFAF7 100%);
-  color: #1F1713;
+  background: var(--velora-cream);
+  color: var(--velora-dark);
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
@@ -34,8 +64,8 @@ body {
 }
 
 ::selection {
-  background: rgba(201, 106, 38, 0.18);
-  color: #1F1713;
+  background: transparent;
+  color: inherit;
 }
 
 button,
@@ -58,8 +88,13 @@ img {
 .bg-\[\#FCFAF7\],
 .bg-\[\#FBF8F2\],
 .bg-\[\#FFF7EE\],
-.bg-\[\#FFFDF9\] {
-  background-color: #F8F5EF !important;
+.bg-\[\#FFFDF9\],
+.bg-\[\#FAF7F2\],
+.bg-\[\#F9F7F2\],
+.bg-\[\#F7F1EA\],
+.bg-\[\#FBF4E9\],
+.bg-\[\#F9F5F0\] {
+  background-color: var(--velora-cream) !important;
 }
 
 .hover\:bg-\[\#F7F3EC\]\:hover,
@@ -68,46 +103,100 @@ img {
 .hover\:bg-\[\#FCFAF7\]\:hover,
 .hover\:bg-\[\#FBF8F2\]\:hover,
 .hover\:bg-\[\#FFF7EE\]\:hover,
-.hover\:bg-\[\#FFFDF9\]\:hover {
-  background-color: #F3E7DC !important;
+.hover\:bg-\[\#FFFDF9\]\:hover,
+.hover\:bg-\[\#FAF7F2\]\:hover,
+.hover\:bg-\[\#F9F7F2\]\:hover,
+.hover\:bg-\[\#F7F1EA\]\:hover,
+.hover\:bg-\[\#FBF4E9\]\:hover,
+.hover\:bg-\[\#F9F5F0\]\:hover {
+  background-color: var(--velora-cream) !important;
 }
 
 .border-\[\#E7DED2\],
 .border-\[\#EFE7DC\],
 .border-\[\#E8DED1\],
 .border-\[\#F1E9DF\],
-.border-\[\#F3E7DC\] {
-  border-color: #E7DED2 !important;
+.border-\[\#F3E7DC\],
+.border-\[\#E9E0D6\],
+.border-\[\#F0E9E0\],
+.border-\[\#E7E2DB\],
+.border-\[\#EAE2D9\],
+.border-\[\#E8DED1\] {
+  border-color: var(--velora-border) !important;
 }
 
 .border-\[\#E7DED2\]\:focus-within,
 .focus-within\:border-\[\#E7DED2\]\:focus-within,
-.focus-within\:border-\[\#E7DED2\]\/70\:focus-within {
-  border-color: #C96A26 !important;
+.focus-within\:border-\[\#E7DED2\]\/70\:focus-within,
+.focus-within\:border-\[\#D9CCBE\]\:focus-within {
+  border-color: var(--velora-primary) !important;
 }
 
 .text-\[\#1F1713\],
 .text-\[\#2C231C\],
-.text-\[\#2F2A24\] {
-  color: #1F1713 !important;
+.text-\[\#2F2A24\],
+.text-\[\#1A1512\],
+.text-\[\#1F1713\] {
+  color: var(--velora-dark) !important;
 }
 
 .text-\[\#4A4A4A\],
 .text-\[\#5F5A58\],
-.text-\[\#6B625E\] {
-  color: #7B675D !important;
+.text-\[\#6B625E\],
+.text-\[\#7B675D\],
+.text-\[\#786B5E\],
+.text-\[\#8D8176\],
+.text-\[\#918579\],
+.text-\[\#9B9085\],
+.text-\[\#A59A90\],
+.text-\[\#B8ADA1\],
+.text-\[\#5F5750\],
+.text-\[\#766B62\] {
+  color: var(--velora-textGray) !important;
+}
+
+.text-\[\#C96A26\],
+.text-\[\#C89B5A\],
+.text-\[\#A76228\],
+.text-\[\#A3541E\],
+.text-\[\#C65A11\],
+.text-\[\#E87F24\],
+.text-\[\#B85D20\],
+.text-\[\#C95318\] {
+  color: var(--velora-primary) !important;
 }
 
 .hover\:text-\[\#C89B5A\]\:hover,
 .hover\:text-\[\#C96A26\]\:hover,
 .hover\:text-\[\#A3541E\]\:hover,
 .hover\:text-\[\#C65A11\]\:hover,
-.hover\:text-\[\#E87F24\]\:hover {
-  color: #C96A26 !important;
+.hover\:text-\[\#E87F24\]\:hover,
+.hover\:text-\[\#B85D20\]\:hover,
+.hover\:text-\[\#C95318\]\:hover {
+  color: var(--velora-primary) !important;
 }
 
 .bg-\[\#FFF7EE\] .text-\[\#C89B5A\],
 .bg-\[\#FFF7EE\] .text-\[\#C96A26\],
-.bg-\[\#FFF7EE\] .text-\[\#A3541E\] {
-  color: #C96A26 !important;
+.bg-\[\#FFF7EE\] .text-\[\#A3541E\],
+.bg-\[\#FFF7EE\] .text-\[\#A76228\] {
+  color: var(--velora-primary) !important;
+}
+
+.bg-\[\#C96A26\],
+.bg-\[\#B85D20\],
+.bg-\[\#C89B5A\] {
+  background-color: var(--velora-primary) !important;
+}
+
+.hover\:bg-\[\#B85D20\]\:hover,
+.hover\:bg-\[\#C96A26\]\:hover {
+  background-color: var(--velora-primaryHover) !important;
+}
+
+.border-\[\#C96A26\],
+.border-\[\#D9CCBE\],
+.border-\[\#F1DDC7\],
+.border-\[\#E8D8C8\] {
+  border-color: var(--velora-primary) !important;
 }

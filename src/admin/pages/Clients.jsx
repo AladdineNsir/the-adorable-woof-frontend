@@ -14,6 +14,7 @@ import {
 import toast from "react-hot-toast";
 
 import AdminPageHeader from "../components/AdminPageHeader";
+import Pagination from "../components/Pagination";
 
 import {
   getClients,
@@ -35,6 +36,8 @@ const formatDate = (date) =>
 
 const formatMoney = (value) =>
   `${Number(value || 0).toFixed(2)} DT`;
+
+const CLIENTS_PER_PAGE = 8;
 
 /* =========================================================
    STAT CARD
@@ -115,6 +118,7 @@ function StatCard({
         >
           <Icon size={19} strokeWidth={1.8} />
         </div>
+
       </div>
     </div>
   );
@@ -214,6 +218,7 @@ export default function Clients() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [page, setPage] = useState(1);
 
   /* =======================================================
      CHARGEMENT
@@ -269,6 +274,15 @@ export default function Clients() {
       );
     });
   }, [clients, search]);
+
+  const paginatedClients = filteredClients.slice(
+    (page - 1) * CLIENTS_PER_PAGE,
+    page * CLIENTS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   /* =======================================================
      STATISTIQUES
@@ -346,65 +360,26 @@ export default function Clients() {
     <>
       <AdminPageHeader
         title="Clients"
-        description="Gérez vos clients et consultez leur activité d’achat."
         breadcrumb={["Clients"]}
       />
 
-      <div className="w-full p-4 sm:p-6 lg:p-7">
-
-        {/* =================================================
-            STATISTIQUES
-        ================================================= */}
-
-        <div
-          className="
-            grid
-            grid-cols-1
-            gap-3
-            sm:grid-cols-2
-            xl:grid-cols-3
-            sm:gap-4
-          "
-        >
-          <StatCard
-            icon={Users}
-            label="Clients"
-            value={totalClients}
-            description="Comptes enregistrés"
-          />
-
-          <StatCard
-            icon={ShoppingCart}
-            label="Commandes"
-            value={totalOrders}
-            description="Commandes enregistrées"
-          />
-
-          <StatCard
-            icon={Wallet}
-            label="Total achats"
-            value={formatMoney(totalSpent)}
-            description="Valeur totale des commandes"
-          />
-        </div>
+      <div className="w-full px-4 pb-4 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7">
 
         {/* =================================================
             SEARCH
         ================================================= */}
 
-        <div className="mt-5">
+        <div className="-mx-4 border-b border-[#E7DED2] bg-[#FCFAF7] sm:-mx-6 lg:-mx-7">
           <div
             className="
-              rounded-2xl
-              border border-[#E7DED2]
-              bg-white
-              p-3
-              shadow-[0_8px_28px_rgba(17,17,17,0.035)]
-              sm:p-4
+              px-4 py-4
+              sm:px-6
+              lg:px-8
             "
           >
             <div
               className="
+                mx-auto w-full max-w-7xl
                 flex
                 flex-col
                 gap-3
@@ -422,8 +397,9 @@ export default function Clients() {
                   items-center
                   rounded-xl
                   border border-[#E7DED2]
-                  bg-[#FCFAF7]
+                  bg-white
                   px-3.5
+                  shadow-[0_3px_12px_rgba(17,17,17,0.025)]
                   transition-all duration-200
                   focus-within:border-velora-gold
                   focus-within:bg-white
@@ -482,17 +458,6 @@ export default function Clients() {
                 )}
               </label>
 
-              <div className="flex items-center justify-between sm:justify-end">
-                <span className="text-[11px] text-velora-textGray sm:text-xs">
-                  <strong className="font-semibold text-velora-dark">
-                    {filteredClients.length}
-                  </strong>{" "}
-                  résultat
-                  {filteredClients.length > 1
-                    ? "s"
-                    : ""}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -500,6 +465,22 @@ export default function Clients() {
         {/* =================================================
             CONTENT
         ================================================= */}
+
+        <div className="mt-5 flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFF7EE] text-[#C96A26]">
+            <Users size={16} strokeWidth={1.8} />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-velora-dark">
+              Liste des clients
+            </p>
+            <p className="text-xs text-[#8D8176]">
+              {filteredClients.length} client
+              {filteredClients.length > 1 ? "s" : ""}
+            </p>
+          </div>
+        </div>
 
         <div className="mt-5">
           {loading ? (
@@ -570,29 +551,14 @@ export default function Clients() {
                       Liste des clients
                     </p>
 
-                    <p className="mt-0.5 text-[11px] text-velora-textGray">
-                      Coordonnées et historique d’achat
-                    </p>
                   </div>
 
-                  <div
-                    className="
-                      flex h-9 w-9
-                      items-center justify-center
-                      rounded-xl
-                      border border-[#E7DED2]
-                      bg-white
-                      text-velora-gold
-                    "
-                  >
-                    <Users size={16} />
-                  </div>
                 </div>
 
                 {/* TABLE */}
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[920px]">
+                <div className="overflow-hidden">
+                  <table className="w-full min-w-0">
                     <thead className="border-b border-[#E7DED2]">
                       <tr
                         className="
@@ -647,7 +613,7 @@ export default function Clients() {
                           </td>
                         </tr>
                       ) : (
-                        filteredClients.map(
+                        paginatedClients.map(
                           (client) => (
                             <tr
                               key={client._id}
@@ -893,7 +859,7 @@ export default function Clients() {
                     />
                   </div>
                 ) : (
-                  filteredClients.map((client) => (
+                  paginatedClients.map((client) => (
                     <div
                       key={client._id}
                       className="
@@ -1158,6 +1124,36 @@ export default function Clients() {
             </>
           )}
         </div>
+
+        {!loading && filteredClients.length > 0 && (
+          <>
+            <div className="mt-4 border-t border-[#EFE7DC] pt-4">
+              <p className="text-xs text-velora-textGray">
+                Affichage de{" "}
+                <span className="font-semibold text-velora-dark">
+                  {(page - 1) * CLIENTS_PER_PAGE + 1}
+                </span>{" "}
+                à{" "}
+                <span className="font-semibold text-velora-dark">
+                  {Math.min(page * CLIENTS_PER_PAGE, filteredClients.length)}
+                </span>{" "}
+                sur{" "}
+                <span className="font-semibold text-velora-dark">
+                  {filteredClients.length}
+                </span>{" "}
+                client{filteredClients.length > 1 ? "s" : ""}
+              </p>
+            </div>
+            <Pagination
+              pagination={{
+                page,
+                pages: Math.max(1, Math.ceil(filteredClients.length / CLIENTS_PER_PAGE)),
+                total: filteredClients.length,
+              }}
+              onPageChange={setPage}
+            />
+          </>
+        )}
       </div>
     </>
   );

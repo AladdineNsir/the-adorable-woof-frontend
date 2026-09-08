@@ -1,15 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, ShoppingBasket } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { resolveAssetUrl } from "../config/api";
+import { trackSelectItem } from "../analytics/analytics";
 
 const resolveImage = resolveAssetUrl;
 
-// const fallbackColors = ['#111111', '#7A5A44', '#D8C7B2'];
-
 export default function ProductCard({ product }) {
-  console.log("PRODUCT SHOP :", product);
-console.log("BADGE SHOP :", product?.badge);
   const fallbackImage =
     product.category === "chats"
       ? "/assets/chat2.png"
@@ -20,123 +17,145 @@ console.log("BADGE SHOP :", product?.badge);
     resolveImage(product.images?.[0]) ||
     resolveImage(fallbackImage);
 
-  const productId = product.id || product._id;
-  const colorSwatches = (product.colors || [])
-    .map((color) => color.code || color.hex || color.name)
-    .filter(Boolean);
+  const productUrl = product.slug || product.id || product._id;
+  const colorSwatches = (product.colors || []).filter(
+    (color) => color.code || color.hex || color.image || color.name
+  );
+
+  const stockStatus =
+    !product.available || product.stock <= 0
+      ? {
+          text: "Rupture de stock",
+          className: "bg-[#FDECEC] text-[#B84C47]",
+        }
+      : product.stock <= 5
+      ? {
+          text: `Plus que ${product.stock} en stock`,
+          className: "bg-[#FFF3E6] text-[#A76228]",
+        }
+      : {
+          text: "En stock",
+          className: "bg-[#EEF9F1] text-[#2F7D57]",
+        };
 
   return (
-    <article className="group overflow-hidden rounded-xl border border-[#E8DED1] bg-white shadow-[0_6px_24px_rgba(17,17,17,0.035)] transition-all duration-300 ease-out transform hover:-translate-y-0.5 hover:border-velora-gold/60">
-      <div className="relative aspect-square overflow-hidden rounded-t-xl border-b border-[#E8DED1] bg-[#FAF8F4] p-3 sm:p-4">
+    <article className="group overflow-hidden rounded-[16px] border border-[#E9E0D6] bg-[#FFFDFB] shadow-[0_8px_22px_rgba(17,17,17,0.04)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(17,17,17,0.05)]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[#F8F5F0] p-2.5">
         <Link
-          to={`/product/${productId}`}
-          className="flex h-full w-full items-center justify-center overflow-hidden rounded-[14px]"
+          to={`/produit/${productUrl}`}
+          onClick={() => trackSelectItem(product)}
+          className="flex h-full w-full items-center justify-center overflow-hidden rounded-[12px]"
         >
           {imageSrc ? (
             <img
               src={imageSrc}
               alt={product.name}
-className="h-full w-full rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.02]"         />
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full rounded-[10px] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
           ) : (
-            <div className="text-xs text-velora-textGray">
+            <div className="text-xs text-[var(--velora-textGray)]">
               Image indisponible
             </div>
           )}
         </Link>
 
-{/* Badge produit */}
-{product.badge === "new" && (
-  <span className="absolute left-3 top-3 z-30 rounded-md bg-velora-gold px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
-    Nouveau
-  </span>
-)}
+        {product.badge === "new" && (
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-[var(--velora-primary)] px-2 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+            Nouveau
+          </span>
+        )}
 
-{product.badge === "special" && (
-  <span className="absolute left-3 top-3 z-30 rounded-md bg-[#FFCB56]  px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
-    Offre spéciale
-  </span>
-)}
+        {product.badge === "special" && (
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-[#FFCB56] px-2 py-0.5 text-[7px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+            Offre spéciale
+          </span>
+        )}
       </div>
 
-      <div className="p-4">
-        <div className="mb-2 flex flex-wrap items-center gap-2 text-[9px] font-semibold text-velora-textGray">
-          {colorSwatches.slice(0, 4).map((color, index) => (
-            <span
-              key={`${color}-${index}`}
-              className="h-3.5 w-3.5 rounded-none border border-[#D8C7B2] transition-transform hover:scale-110"
-              style={{ backgroundColor: color }}
-            />
-          ))}
+      <div className="space-y-2 p-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {colorSwatches.slice(0, 4).map((color, index) => (
+              <span
+                key={`${color.name}-${index}`}
+                className="relative h-3.5 w-3.5 overflow-hidden rounded-[4px] border border-[#D8C7B2] bg-white"
+                style={{
+                  backgroundColor: color.code || color.hex || "#F4EEE7",
+                }}
+                title={color.name}
+              >
+                {color.type === "image" && color.image && (
+                  <img
+                    src={resolveImage(color.image)}
+                    alt={color.name}
+                    className="h-full w-full object-cover"
+                  />
+                )}
+              </span>
+            ))}
 
-          {colorSwatches.length === 0 && <span className="text-[9px] font-semibold text-velora-textGray">Couleurs variées</span>}
-          {colorSwatches.length > 4 && <span className="text-[10px] font-semibold text-velora-textGray">+{colorSwatches.length - 4}</span>}
+            {colorSwatches.length === 0 && (
+              <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
+                Couleurs variées
+              </span>
+            )}
+
+            {colorSwatches.length > 4 && (
+              <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
+                +{colorSwatches.length - 4}
+              </span>
+            )}
+          </div>
+
+          <span className="text-[8px] font-semibold uppercase tracking-[0.12em] text-[var(--velora-textGray)]">
+            {product.category || "Produit"}
+          </span>
         </div>
 
-        <Link to={`/product/${productId}`} className="block">
-          <h3 className="text-sm font-semibold text-velora-dark leading-5 line-clamp-2 transition-colors hover:text-velora-gold">{product.name}</h3>
+        <Link to={`/produit/${productUrl}`} className="block" onClick={() => trackSelectItem(product)}>
+          <h3 className="line-clamp-2 text-[12.5px] font-semibold leading-5 text-[var(--velora-dark)] transition-colors hover:text-[var(--velora-primary)]">
+            {product.name}
+          </h3>
         </Link>
 
         {product.description && (
-          <p className="mt-1.5 text-xs leading-5 text-velora-textGray line-clamp-2">
-            {product.description.length > 60 ? `${product.description.slice(0, 60)}…` : product.description}
+          <p className="line-clamp-2 text-[10.5px] leading-5 text-[var(--velora-textGray)]">
+            {product.description.length > 70
+              ? `${product.description.slice(0, 70)}…`
+              : product.description}
           </p>
         )}
 
-        <div className="mt-4 flex items-start justify-between gap-2">
-          <div className="flex flex-col items-start gap-1.5">
-            <p className="text-base sm:text-lg font-bold text-velora-dark">{Number(product.price ?? 0).toFixed(0)} DT</p>
-            {/* <span className={`inline-flex rounded-md px-2 py-1 text-[10px] font-semibold ${product.available ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>{product.available ? 'En stock' : 'Rupture'}</span> */}
-            <span
-  className={`inline-flex rounded-md px-2 py-1 text-[10px] font-semibold ${
-    !product.available || product.stock <= 0
-      ? "bg-red-50 text-red-600"
-      : product.stock <= 5
-      ? "bg-orange-50 text-orange-700"
-      : "bg-emerald-50 text-emerald-700"
-  }`}
->
-  {!product.available || product.stock <= 0
-    ? "Rupture de stock"
-    : product.stock <= 5
-    ? `Plus que ${product.stock} en stock`
-    : "En stock"}
-</span>
-          
-          
+        <div className="flex items-end justify-between gap-2 pt-0.5">
+          <div className="min-w-0">
+            <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-[var(--velora-textGray)]">
+              Prix
+            </p>
+            <p className="mt-1 text-[19px] font-bold leading-none text-[var(--velora-dark)]">
+              {Number(product.price ?? 0).toFixed(0)}
+              <span className="ml-1 text-[11px] font-semibold">DT</span>
+            </p>
           </div>
 
-          {/* <Link
-            to={`/product/${productId}`}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-3 text-xs sm:text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:bg-velora-gold hover:text-white"
+          <Link
+            to={`/produit/${productUrl}`}
+            className="group/cart inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-[var(--velora-dark)] transition-all duration-200 hover:border-[var(--velora-primary)] hover:bg-[var(--velora-primary)] hover:text-white"
             aria-label={`Voir ${product.name}`}
           >
-            <ShoppingCart size={14} />
-          </Link> */}
-          <Link
-  to={`/product/${productId}`}
-  className="group/cart relative inline-flex h-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white px-3 text-xs sm:text-sm font-semibold text-velora-dark transition-all duration-200 hover:border-velora-gold hover:bg-velora-gold hover:text-white"
-  aria-label={`Voir ${product.name}`}
->
-  <ShoppingCart
-    size={14}
-    className="transition-transform duration-200 group-hover/cart:scale-105"
-  />
-
-  {/* Tooltip */}
-  <span
-    className="pointer-events-none absolute bottom-full right-0 mb-2
-               whitespace-nowrap rounded-md bg-velora-dark px-2.5 py-1.5
-               text-[10px] font-semibold text-white
-               opacity-0 translate-y-1
-               shadow-lg
-               transition-all duration-200
-               group-hover/cart:translate-y-0
-               group-hover/cart:opacity-100"
-  >
-    Ajouter au panier
-  </span>
-</Link>
+            <ShoppingCart
+              size={14}
+              className="transition-transform duration-200 group-hover/cart:scale-105"
+            />
+          </Link>
         </div>
+
+        <span
+          className={`inline-flex rounded-full px-2 py-0.5 text-[8px] font-semibold ${stockStatus.className}`}
+        >
+          {stockStatus.text}
+        </span>
       </div>
     </article>
   );

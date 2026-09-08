@@ -6,6 +6,7 @@ import App from "./App";
 import "./index.css";
 
 import { AuthProvider } from "./context/AuthContext";
+import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,7 +16,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     v7_relativeSplatPath: true,
   }}>
       <AuthProvider>
-        <App />
+        <SiteSettingsProvider>
+          <App />
+        </SiteSettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

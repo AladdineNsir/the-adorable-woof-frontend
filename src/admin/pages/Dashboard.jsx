@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import AdminPageHeader from "../components/AdminPageHeader";
 import { getDashboardStats } from "../services/dashboardApi";
 
 const PERIOD_OPTIONS = [
@@ -74,7 +73,7 @@ const getTrendClass = (value) => {
     return "border-[#ECD6D1] bg-[#FBF4F2] text-[#A85749]";
   }
 
-  return "border-[#E7DED2] bg-[#FCFAF7] text-[#8F857A]";
+  return "border-[var(--velora-border)] bg-[var(--velora-cream)] text-[var(--velora-textGray)]";
 };
 
 const getStatusStyle = (status) => {
@@ -96,7 +95,7 @@ const getStatusStyle = (status) => {
     return "border-[#ECD6D1] bg-[#FBF4F2] text-[#A85749]";
   }
 
-  return "border-[#E7DED2] bg-[#FCFAF7] text-[#8F857A]";
+  return "border-[var(--velora-border)] bg-[var(--velora-cream)] text-[var(--velora-textGray)]";
 };
 
 /* =========================================================
@@ -108,7 +107,7 @@ function TrendBadge({ value }) {
 
   if (!Number.isFinite(numericValue)) {
     return (
-      <span className="inline-flex items-center rounded-full border border-[#E7DED2] bg-[#FCFAF7] px-2.5 py-1 text-[10px] font-semibold text-[#8F857A]">
+      <span className="inline-flex items-center rounded-full border border-[var(--velora-border)] bg-[var(--velora-cream)] px-2.5 py-1 text-[10px] font-semibold text-[var(--velora-textGray)]">
         Pas de comparaison
       </span>
     );
@@ -146,8 +145,8 @@ function PrimaryMetric({
     <div
       className={`relative overflow-hidden rounded-2xl border p-5 sm:p-6 ${
         accent
-          ? "border-[#C96A26] bg-[#C96A26] text-white shadow-[0_12px_40px_rgba(201,106,38,0.16)]"
-          : "border-[#E7DED2] bg-white text-velora-dark shadow-[0_8px_30px_rgba(17,17,17,0.035)]"
+          ? "border-[var(--velora-primary)] bg-[var(--velora-primary)] text-white shadow-[0_12px_40px_rgba(201,106,38,0.16)]"
+          : "border-[var(--velora-border)] bg-white text-[var(--velora-dark)] shadow-[0_8px_30px_rgba(17,17,17,0.035)]"
       }`}
     >
       <div className="relative z-10">
@@ -155,7 +154,7 @@ function PrimaryMetric({
           <div>
             <p
               className={`text-[9px] font-bold uppercase tracking-[0.18em] ${
-                accent ? "text-white/70" : "text-[#9B9085]"
+                accent ? "text-white/70" : "text-[var(--velora-textGray)]"
               }`}
             >
               {eyebrow}
@@ -163,7 +162,7 @@ function PrimaryMetric({
 
             <p
               className={`mt-3 font-premium text-3xl font-semibold tracking-tight sm:text-[34px] ${
-                accent ? "text-white" : "text-velora-dark"
+                accent ? "text-white" : "text-[var(--velora-dark)]"
               }`}
             >
               {value}
@@ -174,7 +173,7 @@ function PrimaryMetric({
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
               accent
                 ? "border-white/20 bg-white/10 text-white"
-                : "border-[#E7DED2] bg-[#FFF8F0] text-[#C96A26]"
+                : "border-[var(--velora-border)] bg-[var(--velora-cream)] text-[var(--velora-primary)]"
             }`}
           >
             <Icon size={18} strokeWidth={1.8} />
@@ -187,7 +186,7 @@ function PrimaryMetric({
           {description && (
             <span
               className={`text-[10px] ${
-                accent ? "text-white/65" : "text-[#9B9085]"
+                accent ? "text-white/65" : "text-[var(--velora-textGray)]"
               }`}
             >
               {description}
@@ -205,17 +204,17 @@ function PrimaryMetric({
 
 function SecondaryMetric({ label, value, icon: Icon }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-[#E7DED2] bg-white px-4 py-4 shadow-[0_6px_24px_rgba(17,17,17,0.025)]">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF8F0] text-[#C96A26]">
+    <div className="flex items-center gap-3 rounded-2xl border border-[var(--velora-border)] bg-white px-4 py-4 shadow-[0_6px_24px_rgba(17,17,17,0.025)]">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--velora-cream)] text-[var(--velora-primary)]">
         <Icon size={16} strokeWidth={1.8} />
       </div>
 
       <div className="min-w-0">
-        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#9B9085]">
+        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--velora-textGray)]">
           {label}
         </p>
 
-        <p className="mt-0.5 truncate text-lg font-semibold text-velora-dark">
+        <p className="mt-0.5 truncate text-lg font-semibold text-[var(--velora-dark)]">
           {value}
         </p>
       </div>
@@ -226,16 +225,16 @@ function SecondaryMetric({ label, value, icon: Icon }) {
 function Section({ title, description, action, children, className = "" }) {
   return (
     <section
-      className={`rounded-2xl border border-[#E7DED2] bg-white shadow-[0_8px_30px_rgba(17,17,17,0.03)] ${className}`}
+      className={`rounded-2xl border border-[var(--velora-border)] bg-white shadow-[0_8px_30px_rgba(17,17,17,0.03)] ${className}`}
     >
-      <div className="flex flex-col gap-3 border-b border-[#F0E9E0] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="flex flex-col gap-3 border-b border-[var(--velora-border)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
-          <h2 className="font-premium text-base font-semibold tracking-tight text-velora-dark sm:text-lg">
+          <h2 className="font-premium text-base font-semibold tracking-tight text-[var(--velora-dark)] sm:text-lg">
             {title}
           </h2>
 
           {description && (
-            <p className="mt-0.5 text-[11px] text-[#9B9085]">
+            <p className="mt-0.5 text-[11px] text-[var(--velora-textGray)]">
               {description}
             </p>
           )}
@@ -563,11 +562,6 @@ export default function Dashboard() {
   if (loading && !dashboard) {
     return (
       <>
-        <AdminPageHeader
-          title="Dashboard"
-          description="Vue d'ensemble de votre boutique."
-        />
-
         <main className="p-4 sm:p-6 lg:p-7">
           <div className="mx-auto w-full max-w-[1500px] animate-pulse space-y-5">
             <div className="h-20 rounded-2xl bg-white" />
@@ -600,11 +594,6 @@ export default function Dashboard() {
   if (error) {
     return (
       <>
-        <AdminPageHeader
-          title="Dashboard"
-          description="Vue d'ensemble de votre boutique."
-        />
-
         <main className="p-4 sm:p-6 lg:p-7">
           <div className="mx-auto flex min-h-[420px] max-w-[1500px] items-center justify-center rounded-2xl border border-[#E7DED2] bg-white px-6 text-center shadow-[0_8px_30px_rgba(17,17,17,0.03)]">
             <div>
@@ -638,11 +627,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <AdminPageHeader
-        title="Dashboard"
-        description="Vue d'ensemble de votre boutique."
-      />
-
       <main className="px-4 py-5 sm:px-6 lg:px-7 lg:py-6">
         <div className="mx-auto w-full max-w-[1500px]">
 
@@ -651,53 +635,15 @@ export default function Dashboard() {
           ================================================= */}
 
           <div className="mb-6 flex flex-col gap-5 border-b border-[#E7DED2] pb-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
+            <div className="select-none">
               <div className="mb-2 flex items-center gap-2">
-                <Sparkles
-                  size={14}
-                  className="text-[#C96A26]"
-                  strokeWidth={1.7}
-                />
-
-                <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
-                  Vue générale
-                </span>
+              
               </div>
 
-              <h1 className="font-premium text-2xl font-semibold tracking-tight text-velora-dark sm:text-3xl">
-                Bonjour, Ala 👋
-              </h1>
-
-              <p className="mt-1.5 max-w-xl text-sm leading-5 text-[#8F857A]">
-                Voici ce qui se passe actuellement dans votre boutique
-                The aDoraBle woof co.
-              </p>
+              
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              {/* Date */}
-              <div className="flex min-h-[46px] items-center gap-2.5 rounded-xl border border-[#E7DED2] bg-white px-3.5">
-                <CalendarDays
-                  size={15}
-                  className="text-[#C96A26]"
-                  strokeWidth={1.7}
-                />
-
-                <div>
-                  <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-[#A59A8E]">
-                    Aujourd'hui
-                  </p>
-
-                  <p className="text-xs font-semibold text-velora-dark">
-                    {new Date().toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-
               {/* Year */}
               <select
                 value={filters.year}
@@ -733,14 +679,59 @@ export default function Dashboard() {
                   </option>
                 ))}
               </select>
+
+              {/* Date */}
+              <div className="flex min-h-[46px] items-center gap-2.5 rounded-xl border border-[#E7DED2] bg-white px-3.5">
+                <CalendarDays
+                  size={15}
+                  className="text-[#C96A26]"
+                  strokeWidth={1.7}
+                />
+
+                <div>
+                  <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-[#A59A8E]">
+                    Aujourd'hui
+                  </p>
+
+                  <p className="text-xs font-semibold text-velora-dark">
+                    {new Date().toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* =================================================
-              PRIMARY BUSINESS METRICS
-          ================================================= */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <SecondaryMetric
+              label="Commandes"
+              value={numberFormatter.format(
+                stats.totalOrders || 0
+              )}
+              icon={ShoppingCart}
+            />
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <SecondaryMetric
+              label="Clients"
+              value={numberFormatter.format(
+                stats.totalUsers || 0
+              )}
+              icon={Users}
+            />
+
+            <SecondaryMetric
+              label="Produits"
+              value={numberFormatter.format(
+                stats.totalProducts || 0
+              )}
+              icon={Package}
+            />
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <PrimaryMetric
               eyebrow="Chiffre d'affaires"
               value={formatMoney(stats.totalRevenue)}
@@ -772,40 +763,10 @@ export default function Dashboard() {
           </div>
 
           {/* =================================================
-              SECONDARY METRICS
-          ================================================= */}
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <SecondaryMetric
-              label="Commandes"
-              value={numberFormatter.format(
-                stats.totalOrders || 0
-              )}
-              icon={ShoppingCart}
-            />
-
-            <SecondaryMetric
-              label="Clients"
-              value={numberFormatter.format(
-                stats.totalUsers || 0
-              )}
-              icon={Users}
-            />
-
-            <SecondaryMetric
-              label="Produits"
-              value={numberFormatter.format(
-                stats.totalProducts || 0
-              )}
-              icon={Package}
-            />
-          </div>
-
-          {/* =================================================
               SALES ANALYTICS
           ================================================= */}
 
-          <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[1.65fr_0.85fr]">
+          <div className="mt-5 grid grid-cols-1 gap-5">
             <Section
               title="Évolution des ventes"
               description="Chiffre d'affaires et bénéfice"
@@ -815,21 +776,13 @@ export default function Dashboard() {
               />
             </Section>
 
-            <Section
-              title="Statuts des commandes"
-              description="Répartition sur la période"
-            >
-              <OrderStatus
-                data={dashboard?.orderStatuses || []}
-              />
-            </Section>
           </div>
 
           {/* =================================================
               ORDERS + TOP PRODUCTS
           ================================================= */}
 
-          <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[1.25fr_0.95fr]">
+          <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
 
             {/* Recent orders */}
             <Section
@@ -902,57 +855,15 @@ export default function Dashboard() {
               )}
             </Section>
 
-            {/* Best sellers */}
             <Section
-              title="Produits les plus vendus"
-              description="Top produits par quantité"
+              title="Statuts des commandes"
+              description="Répartition sur la période"
             >
-              {dashboard?.bestSellingProducts?.length ? (
-                <div className="space-y-2">
-                  {dashboard.bestSellingProducts.map(
-                    (product, index) => (
-                      <Link
-                        key={product.productId}
-                        to={`/admin/products/edit/${product.productId}`}
-                        className="group flex items-center gap-3 rounded-xl border border-transparent px-2 py-2.5 transition-all hover:border-[#E7DED2] hover:bg-[#FCFAF7]"
-                      >
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF7EE] text-[10px] font-bold text-[#C96A26]">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-semibold text-velora-dark">
-                            {product.name}
-                          </p>
-
-                          <p className="mt-0.5 text-[10px] text-[#9B9085]">
-                            Produit le plus performant
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-sm font-bold text-velora-dark">
-                            {numberFormatter.format(
-                              product.quantity || 0
-                            )}
-                          </p>
-
-                          <p className="text-[9px] text-[#9B9085]">
-                            vendus
-                          </p>
-                        </div>
-                      </Link>
-                    )
-                  )}
-                </div>
-              ) : (
-                <EmptyState
-                  icon={ShoppingBag}
-                  title="Aucun produit vendu"
-                  text="Les meilleures ventes apparaîtront ici."
-                />
-              )}
+              <OrderStatus
+                data={dashboard?.orderStatuses || []}
+              />
             </Section>
+
           </div>
 
           {/* =================================================
@@ -1027,49 +938,42 @@ export default function Dashboard() {
               )}
             </Section>
 
-            {/* Commercial insights */}
+            {/* Best sellers */}
             <Section
-              title="Analyse commerciale"
-              description="Quelques indicateurs pour piloter la boutique"
+              title="Produits les plus vendus"
+              description="Top produits par quantité"
             >
-              <div className="grid grid-cols-2 gap-3">
-                <Insight
-                  label="Panier moyen"
-                  value={formatMoney(
-                    stats.averageOrderValue || 0
-                  )}
-                  icon={CircleDollarSign}
+              {dashboard?.bestSellingProducts?.length ? (
+                <div className="space-y-2">
+                  {dashboard.bestSellingProducts.map((product, index) => (
+                    <Link
+                      key={product.productId}
+                      to={`/admin/products/edit/${product.productId}`}
+                      className="group flex items-center gap-3 rounded-xl border border-transparent px-2 py-2.5 transition-all hover:border-[#E7DED2] hover:bg-[#FCFAF7]"
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF7EE] text-[10px] font-bold text-[#C96A26]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-semibold text-velora-dark">{product.name}</p>
+                        <p className="mt-0.5 text-[10px] text-[#9B9085]">Produit le plus performant</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-velora-dark">{numberFormatter.format(product.quantity || 0)}</p>
+                        <p className="text-[9px] text-[#9B9085]">vendus</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState
+                  icon={ShoppingBag}
+                  title="Aucun produit vendu"
+                  text="Les meilleures ventes apparaîtront ici."
                 />
-
-                <Insight
-                  label="Nouveaux clients"
-                  value={numberFormatter.format(
-                    stats.newCustomers || 0
-                  )}
-                  icon={Users}
-                />
-
-                <Insight
-                  label="Clients récurrents"
-                  value={numberFormatter.format(
-                    stats.returningCustomers || 0
-                  )}
-                  icon={RefreshCw}
-                />
-
-                <Insight
-                  label="Marge moyenne"
-                  value={
-                    hasCostPrice
-                      ? `${Number(
-                          stats.profitMargin || 0
-                        ).toFixed(1)}%`
-                      : "—"
-                  }
-                  icon={TrendingUp}
-                />
-              </div>
+              )}
             </Section>
+
           </div>
 
           {/* =================================================

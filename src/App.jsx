@@ -1,76 +1,92 @@
-﻿import React from "react";
+﻿import { lazy, Suspense } from "react";
 
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { CartProvider, useCart } from "./context/CartContext";
+import { CartProvider } from "./context/CartContext";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import ScrollToTop from "./components/ScrollToTop";
 
-//import PromoBanner from "./components/PromoBanner";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Dashboard from "./admin/pages/Dashboard";
+import ProductDetails from "./pages/ProductDetails";
 import { Toaster } from "react-hot-toast";
+import { Navigate } from "react-router-dom";
+import SEO from "./components/SEO";
+import AnalyticsProvider from "./analytics/AnalyticsProvider";
+import WhatsAppButton from "./components/WhatsAppButton";
+import { prefetchRoute } from "./config/routePreloads";
+import { PageSkeleton } from "./components/LoadingSkeleton";
 
 /* ================= WEBSITE ================= */
 
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Shop from "./pages/Shop";
-import ProductDetails from "./pages/ProductDetails";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import ContactPage from "./pages/Contact";
-import SizeGuide from "./pages/SizeGuide";
-import OrderSuccess from "./pages/OrderSuccess";
+const Home = lazy(() => { prefetchRoute("/"); return import("./pages/Home"); });
+const About = lazy(() => { prefetchRoute("/about"); return import("./pages/About"); });
+const Shop = lazy(() => { prefetchRoute("/shop"); return import("./pages/Shop"); });
+const Cart = lazy(() => { prefetchRoute("/cart"); return import("./pages/Cart"); });
+const ContactPage = lazy(() => { prefetchRoute("/contact"); return import("./pages/Contact"); });
+const SizeGuide = lazy(() => { prefetchRoute("/size-guide"); return import("./pages/SizeGuide"); });
+const FAQ = lazy(() => { prefetchRoute("/faq"); return import("./pages/FAQ"); });
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 
 /* ================= AUTH ================= */
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+const Login = lazy(() => { prefetchRoute("/login"); return import("./pages/Login"); });
+const Register = lazy(() => { prefetchRoute("/register"); return import("./pages/Register"); });
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 /* ================= USER ================= */
 
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
-import MyOrders from "./pages/MyOrders";
-import OrderDetails from "./pages/OrderDetails";
+const Profile = lazy(() => import("./pages/Profile"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
+const MyOrders = lazy(() => import("./pages/MyOrders"));
+const OrderDetails = lazy(() => import("./pages/OrderDetails"));
 
 /* ================= ADMIN ================= */
 
-import Dashboard from "./admin/pages/Dashboard";
-import AdminLayout from "./admin/layouts/AdminLayout";
-
-import Products from "./admin/pages/Products";
-import AddProduct from "./admin/pages/AddProduct";
-import EditProduct from "./admin/pages/EditProduct";
-
-import Categories from "./admin/pages/Categories";
-import AddCategory from "./admin/pages/AddCategory";
-import EditCategory from "./admin/pages/EditCategory";
-
-import SubCategories from "./admin/pages/SubCategories";
-import AddSubCategory from "./admin/pages/AddSubCategory";
-import EditSubCategory from "./admin/pages/EditSubCategory";
-import AdminOrders from "./admin/pages/Orders";
-import AdminOrderDetails from "./admin/pages/OrderDetails";
-import Clients from "./admin/pages/Clients";
+const AdminLayout = lazy(() => import("./admin/layouts/AdminLayout"));
+const Products = lazy(() => import("./admin/pages/Products"));
+const AddProduct = lazy(() => import("./admin/pages/AddProduct"));
+const EditProduct = lazy(() => import("./admin/pages/EditProduct"));
+const Categories = lazy(() => import("./admin/pages/Categories"));
+const AddCategory = lazy(() => import("./admin/pages/AddCategory"));
+const EditCategory = lazy(() => import("./admin/pages/EditCategory"));
+const SubCategories = lazy(() => import("./admin/pages/SubCategories"));
+const AddSubCategory = lazy(() => import("./admin/pages/AddSubCategory"));
+const EditSubCategory = lazy(() => import("./admin/pages/EditSubCategory"));
+const AdminOrders = lazy(() => import("./admin/pages/Orders"));
+const AdminOrderDetails = lazy(() => import("./admin/pages/OrderDetails"));
+const Clients = lazy(() => import("./admin/pages/Clients"));
+const Settings = lazy(() => import("./admin/pages/Settings"));
+const Tracking = lazy(() => import("./admin/pages/Tracking"));
 
 const queryClient = new QueryClient();
 
-const DummyPage = ({ title }) => (
-  <div className="min-h-[70vh] flex items-center justify-center text-3xl font-bold">
-    {title}
-  </div>
+const NotFoundPage = () => (
+  <main className="flex min-h-[70vh] items-center justify-center bg-[#F7F3EC] px-6 text-center">
+    <div>
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-velora-gold">Erreur 404</p>
+      <h1 className="mt-3 font-premium text-3xl font-bold text-velora-dark">Cette page est introuvable</h1>
+      <p className="mt-3 text-sm text-velora-textGray">Le lien est peut-être expiré ou l’adresse est incorrecte.</p>
+      <a href="/" className="mt-6 inline-flex h-11 items-center rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white">Retour à l’accueil</a>
+    </div>
+  </main>
 );
+
+function LegacyProductRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/produit/${id}`} replace />;
+}
 
 function WebsiteLayout() {
 
   return (
     <>
-      {/* <PromoBanner /> */}
+      <SEO />
       <Navbar />
 
       <main className="flex-grow">
@@ -79,13 +95,18 @@ function WebsiteLayout() {
 
       <Footer />
 
+      <WhatsAppButton />
+
      
     </>
   );
 }
 function AppRoutes() {
   return (
-    <Routes>
+    <Suspense
+      fallback={<PageSkeleton />}
+    >
+      <Routes>
 
       {/* ================= WEBSITE ================= */}
 
@@ -96,9 +117,11 @@ function AppRoutes() {
         <Route path="/shop" element={<Shop />} />
 
         <Route
-          path="/product/:id"
+          path="/produit/:id"
           element={<ProductDetails />}
         />
+
+        <Route path="/product/:id" element={<LegacyProductRedirect />} />
 
         <Route
           path="/cart"
@@ -123,12 +146,7 @@ function AppRoutes() {
                   {/* Personalisation removed */}
         
 
-        <Route
-          path="/faq"
-          element={
-            <DummyPage title="FAQ" />
-          }
-        />
+        <Route path="/faq" element={<FAQ />} />
 
       </Route>
 
@@ -143,6 +161,9 @@ function AppRoutes() {
         path="/register"
         element={<Register />}
       />
+
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       {/* ================= CLIENT ================= */}
 
@@ -168,22 +189,13 @@ function AppRoutes() {
           element={<OrderDetails />}
         />
 
-        <Route
-          path="/checkout"
-          element={<Checkout />}
-        />
+        <Route path="/checkout" element={<Navigate to="/cart" replace />} />
 
         <Route
           path="/order-success"
           element={<OrderSuccess />}
         />
 
-        <Route
-          path="/wishlist"
-          element={
-            <DummyPage title="Wishlist" />
-          }
-        />
 
       </Route>
 
@@ -249,6 +261,8 @@ function AppRoutes() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="orders/:id" element={<AdminOrderDetails />} />
           <Route path="clients" element={<Clients />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="tracking" element={<Tracking />} />
 
         </Route>
 
@@ -257,26 +271,26 @@ function AppRoutes() {
 
       <Route
         path="*"
-        element={
-          <DummyPage title="404 - Page introuvable" />
-        }
+        element={<NotFoundPage />}
       />
 
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <div className="min-h-screen flex flex-col bg-velora-cream">
+    <AnalyticsProvider>
+      <QueryClientProvider client={queryClient}>
+        <CartProvider>
+          <div className="min-h-screen flex flex-col bg-velora-cream">
 
-          <ScrollToTop />
+            <ScrollToTop />
 
-          <AppRoutes />
+            <AppRoutes />
 
-          <Toaster
+            <Toaster
   position="bottom-left"
   toastOptions={{
     duration: 3000,
@@ -306,8 +320,9 @@ export default function App() {
     },
   }}
 />
-        </div>
-      </CartProvider>
-    </QueryClientProvider>
+          </div>
+        </CartProvider>
+      </QueryClientProvider>
+    </AnalyticsProvider>
   );
 }

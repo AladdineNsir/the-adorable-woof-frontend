@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import AdminPageHeader from "../components/AdminPageHeader";
+import Pagination from "../components/Pagination";
 import {
   getOrders,
   updateDeliveryStatus,
@@ -39,6 +40,8 @@ const DELIVERY_STATUSES = [
   "Livré",
   "Retourné",
 ];
+
+const ORDERS_PER_PAGE = 8;
 
 /* =========================================================
    HELPERS
@@ -406,6 +409,16 @@ export default function Orders() {
     });
   }, [orders, search, deliveryFilter]);
 
+  const [page, setPage] = useState(1);
+  const paginatedOrders = filteredOrders.slice(
+    (page - 1) * ORDERS_PER_PAGE,
+    page * ORDERS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, deliveryFilter]);
+
   /* =======================================================
      UPDATE PHONE
   ======================================================= */
@@ -516,74 +529,26 @@ export default function Orders() {
     <>
       <AdminPageHeader
         title="Commandes"
-        description="Suivez, vérifiez et gérez les commandes de votre boutique."
         breadcrumb={["Commandes"]}
       />
 
-      <div className="p-4 sm:p-6 lg:p-7">
-
-        {/* =================================================
-            STATISTIQUES
-        ================================================= */}
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-
-          <StatCard
-            icon={ShoppingBag}
-            label="Total commandes"
-            value={statistics.total}
-            description={`${statistics.revenue.toFixed(2)} DT de chiffre d'affaires`}
-            iconClassName="
-              bg-[#FFF7EE]
-              text-velora-gold
-            "
-          />
-
-          <StatCard
-            icon={Clock3}
-            label="À traiter"
-            value={
-              statistics.pending +
-              statistics.preparation
-            }
-            description={`${statistics.pending} en attente · ${statistics.preparation} en préparation`}
-            iconClassName="
-              bg-[#FFF9EE]
-              text-[#9A7535]
-            "
-          />
-
-          <StatCard
-            icon={CheckCircle2}
-            label="Livrées"
-            value={statistics.delivered}
-            description={`${statistics.shipped} commande${statistics.shipped > 1 ? "s" : ""} expédiée${statistics.shipped > 1 ? "s" : ""}`}
-            iconClassName="
-              bg-[#F3FBF6]
-              text-[#3E8057]
-            "
-          />
-
-        </div>
+      <div className="px-4 pb-4 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7">
 
         {/* =================================================
             FILTRES
         ================================================= */}
 
-        <div className="mt-5">
+        <div className="-mx-4 border-b border-[#E7DED2] bg-[#FCFAF7] sm:-mx-6 lg:-mx-7">
 
           <div
             className="
-              rounded-2xl
-              border border-[#E7DED2]
-              bg-white
-              p-3
-              shadow-[0_8px_28px_rgba(17,17,17,0.035)]
-              sm:p-4
+              px-4 py-4
+              sm:px-6
+              lg:px-8
             "
           >
 
-            <div className="flex flex-col gap-3 lg:flex-row">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 lg:flex-row">
 
               {/* SEARCH */}
 
@@ -596,8 +561,9 @@ export default function Orders() {
                   items-center
                   rounded-xl
                   border border-[#E7DED2]
-                  bg-[#FCFAF7]
+                  bg-white
                   px-3.5
+                  shadow-[0_3px_12px_rgba(17,17,17,0.025)]
                   transition-all
                   duration-200
                   focus-within:border-velora-gold
@@ -657,7 +623,7 @@ export default function Orders() {
 
               {/* DELIVERY FILTER */}
 
-              <div className="relative w-full lg:w-[245px]">
+              <div className="relative w-full lg:w-[190px]">
 
                 <Package
                   size={16}
@@ -686,12 +652,13 @@ export default function Orders() {
                     appearance-none
                     rounded-xl
                     border border-[#E7DED2]
-                    bg-[#FCFAF7]
+                    bg-white
                     pl-9
                     pr-9
                     text-sm
                     font-medium
                     text-velora-dark
+                    shadow-[0_3px_12px_rgba(17,17,17,0.025)]
                     outline-none
                     transition-all
                     duration-200
@@ -736,23 +703,8 @@ export default function Orders() {
 
             {/* FILTER INFO */}
 
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
-
-              <p className="text-xs text-velora-textGray">
-                <span className="font-bold text-velora-dark">
-                  {filteredOrders.length}
-                </span>{" "}
-                commande
-                {filteredOrders.length > 1
-                  ? "s"
-                  : ""}{" "}
-                trouvée
-                {filteredOrders.length > 1
-                  ? "s"
-                  : ""}
-              </p>
-
-              {(search || deliveryFilter) && (
+            {(search || deliveryFilter) && (
+              <div className="mt-3 flex justify-end px-1">
                 <button
                   type="button"
                   onClick={resetFilters}
@@ -768,9 +720,8 @@ export default function Orders() {
                 >
                   Réinitialiser
                 </button>
-              )}
-
-            </div>
+              </div>
+            )}
 
           </div>
 
@@ -780,6 +731,22 @@ export default function Orders() {
             TABLE
         ================================================= */}
 
+        <div className="mt-5 flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFF7EE] text-[#C96A26]">
+            <ShoppingBag size={16} strokeWidth={1.8} />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-velora-dark">
+              Liste des commandes
+            </p>
+            <p className="text-xs text-[#8D8176]">
+              {filteredOrders.length} commande
+              {filteredOrders.length > 1 ? "s" : ""}
+            </p>
+          </div>
+        </div>
+
         <div className="mt-5">
 
           {loading ? (
@@ -788,10 +755,10 @@ export default function Orders() {
               className="
                 flex min-h-[320px]
                 items-center justify-center
-                rounded-2xl
-                border border-[#E7DED2]
+                rounded-xl
+                border border-[#E8DED1]
                 bg-white
-                shadow-[0_8px_28px_rgba(17,17,17,0.035)]
+                shadow-[0_6px_24px_rgba(17,17,17,0.035)]
               "
             >
               <div className="text-center">
@@ -838,24 +805,23 @@ export default function Orders() {
 
               <div className="hidden md:block">
 
-                <div className="overflow-x-auto">
+                <div className="overflow-hidden">
 
                   <table
                     className="
                       w-full
-                      min-w-[980px]
+                      min-w-0
                       table-fixed
                     "
                   >
 
                     <colgroup>
-                      <col className="w-[15%]" />
-                      <col className="w-[19%]" />
-                      <col className="w-[9%]" />
-                      <col className="w-[19%]" />
-                      <col className="w-[19%]" />
-                      <col className="w-[11%]" />
-                      <col className="w-[8%]" />
+                      <col className="w-[17%]" />
+                      <col className="w-[20%]" />
+                      <col className="w-[10%]" />
+                      <col className="w-[20%]" />
+                      <col className="w-[20%]" />
+                      <col className="w-[13%]" />
                     </colgroup>
 
                     <thead
@@ -868,39 +834,35 @@ export default function Orders() {
                       <tr
                         className="
                           text-left
-                          text-[9px]
+                          text-[10px]
                           font-bold
                           uppercase
-                          tracking-[0.16em]
-                          text-[#8D8176]
+                          tracking-[0.12em]
+                          text-velora-textGray
                         "
                       >
 
-                        <th className="px-4 py-3.5">
+                        <th className="px-5 py-3.5">
                           Commande
                         </th>
 
-                        <th className="px-4 py-3.5">
+                        <th className="px-5 py-3.5">
                           Client
                         </th>
 
-                        <th className="px-4 py-3.5">
+                        <th className="px-5 py-3.5">
                           Total
                         </th>
 
-                        <th className="px-4 py-3.5">
+                        <th className="px-5 py-3.5">
                           Téléphone
                         </th>
 
-                        <th className="px-4 py-3.5">
+                        <th className="px-5 py-3.5">
                           Livraison
                         </th>
 
-                        <th className="px-4 py-3.5">
-                          Facture
-                        </th>
-
-                        <th className="px-4 py-3.5 text-center">
+                        <th className="px-5 py-3.5 text-center">
                           Action
                         </th>
 
@@ -908,13 +870,13 @@ export default function Orders() {
 
                     </thead>
 
-                    <tbody className="divide-y divide-[#F1E9DF]">
+                    <tbody>
 
                       {filteredOrders.length === 0 && (
 
                         <tr>
                           <td
-                            colSpan="7"
+                            colSpan="6"
                             className="
                               px-5
                               py-16
@@ -951,7 +913,7 @@ export default function Orders() {
 
                       )}
 
-                      {filteredOrders.map((order) => {
+                      {paginatedOrders.map((order) => {
 
                         const phoneStatus =
                           normalizePhoneStatus(
@@ -990,6 +952,7 @@ export default function Orders() {
                             key={order._id}
                             className="
                               group
+                              border-b border-[#EFE7DC]
                               transition-colors
                               duration-200
                               hover:bg-[#FEFCF9]
@@ -1181,28 +1144,6 @@ export default function Orders() {
 
                             </td>
 
-                            {/* INVOICE */}
-
-                            <td className="px-4 py-4 align-middle">
-
-                              {order.invoiceSent ? (
-
-                                <StatusBadge
-                                  type="delivery"
-                                  status="Envoyée"
-                                />
-
-                              ) : (
-
-                                <StatusBadge
-                                  type="phone"
-                                  status="Non envoyée"
-                                />
-
-                              )}
-
-                            </td>
-
                             {/* ACTION */}
 
                             <td className="px-4 py-4 align-middle">
@@ -1282,7 +1223,7 @@ export default function Orders() {
 
                 )}
 
-                {filteredOrders.map((order) => {
+                {paginatedOrders.map((order) => {
 
                   const phoneStatus =
                     normalizePhoneStatus(
@@ -1437,30 +1378,6 @@ export default function Orders() {
 
                         </div>
 
-                        <div className="text-right">
-
-                          <p className="text-[9px] font-bold uppercase tracking-[0.13em] text-[#9A8D80]">
-                            Facture
-                          </p>
-
-                          <div className="mt-1 flex justify-end">
-
-                            {order.invoiceSent ? (
-                              <StatusBadge
-                                type="delivery"
-                                status="Envoyée"
-                              />
-                            ) : (
-                              <StatusBadge
-                                type="phone"
-                                status="Non envoyée"
-                              />
-                            )}
-
-                          </div>
-
-                        </div>
-
                       </div>
 
                       {/* PHONE */}
@@ -1547,6 +1464,15 @@ export default function Orders() {
           )}
 
         </div>
+
+        <Pagination
+          pagination={{
+            page,
+            pages: Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE)),
+            total: filteredOrders.length,
+          }}
+          onPageChange={setPage}
+        />
 
       </div>
     </>

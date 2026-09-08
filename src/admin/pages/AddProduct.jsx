@@ -5,7 +5,7 @@ export default function AddProduct() {
   return (
     <div className="w-full">
       <AdminPageHeader
-        title="Nouveau produit"
+        title="+ Ajouter"
         description=""
         breadcrumb={["Produits", "Ajouter"]}
         backTo="/admin/products"

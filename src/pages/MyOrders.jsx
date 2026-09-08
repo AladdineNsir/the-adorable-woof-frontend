@@ -20,6 +20,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { getMyOrders } from "../services/orderApi";
+import { trackPurchase } from "../analytics/analytics";
 
 const ORDERS_PER_PAGE = 5;
 
@@ -654,6 +655,9 @@ export default function MyOrders() {
         const result = Array.isArray(data) ? data : data.orders || [];
 
         setOrders(result);
+        result
+          .filter((order) => order.phoneVerificationStatus === "Confirmé au téléphone")
+          .forEach((order) => trackPurchase(order));
         setPagination(
           data.pagination || {
             page: currentPage,

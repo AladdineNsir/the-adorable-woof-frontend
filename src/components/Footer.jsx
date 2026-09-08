@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaBone } from "react-icons/fa";
+import { trackClick } from "../analytics/analytics";
 
 export default function Footer() {
   return (
@@ -26,6 +27,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={label}
+                onClick={() => label === "Instagram" && trackClick("click_instagram")}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition-all duration-300 hover:border-[#C85F1E] hover:bg-[#C85F1E] hover:text-white"
               >
                 <Icon size={16} />

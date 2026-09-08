@@ -6,5 +6,15 @@ export default defineConfig({
 
   build: {
     chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          motion: ["framer-motion"],
+          icons: ["lucide-react", "react-icons"],
+          data: ["axios", "@tanstack/react-query"],
+        },
+      },
+    },
   },
 });
