@@ -6,7 +6,6 @@ import { createOrder } from "../services/orderApi";
 import { getProfile } from "../services/authApi";
 import toast from "react-hot-toast";
 import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout } from "../analytics/analytics";
-import { resolveAssetUrl } from "../config/api";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -117,14 +116,7 @@ export default function Checkout() {
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_380px]">
 
           {/* LEFT: form */}
-          <form id="checkout-form" onSubmit={handleOrder} className="lg:col-span-1 bg-white rounded-xl border border-[#E8DED1] p-5 sm:p-6 lg:p-8 shadow-[0_8px_30px_rgba(17,17,17,0.04)]">
-
-            {profileLoading && (
-              <div className="mb-5 flex items-center gap-2 rounded-lg border border-[#E8DED1] bg-[#FCFAF7] px-3 py-2 text-xs text-velora-textGray" role="status">
-                <span className="h-3 w-3 animate-spin rounded-full border-2 border-velora-gold/30 border-t-velora-gold" />
-                Chargement de vos informations...
-              </div>
-            )}
+          <form onSubmit={handleOrder} className="lg:col-span-1 bg-white rounded-xl border border-[#E8DED1] p-5 sm:p-6 lg:p-8 shadow-[0_8px_30px_rgba(17,17,17,0.04)]">
 
             {/* Informations */}
             <div className="flex items-center gap-3 mb-4">
@@ -234,7 +226,7 @@ export default function Checkout() {
                 cart.map((item) => (
                   <div key={item.cartItemId} className="flex gap-3 items-center">
                     {item.images?.[0] ? (
-                      <img src={resolveAssetUrl(item.images[0], 160)} alt={item.name} loading="lazy" decoding="async" className="h-16 w-16 rounded-lg border border-[#E8DED1] object-cover sm:h-[72px] sm:w-[72px]" />
+                      <img src={item.images[0]} alt={item.name} className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg object-cover border border-[#E8DED1]" />
                     ) : (
                       <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-[#E8DED1] bg-[#FCFAF7] text-[#C96A26]">
                         <Package size={22} />
@@ -258,7 +250,7 @@ export default function Checkout() {
               <div className="flex justify-between pt-3 border-t border-[#EFE7DC] text-lg font-bold text-velora-dark"><span>Total</span><span>{total.toFixed(2)} DT</span></div>
             </div>
 
-            <button type="submit" form="checkout-form" disabled={loading || cart.length === 0} className="w-full h-12 mt-6 rounded-lg bg-velora-gold text-white font-semibold hover:bg-velora-goldHover transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+            <button type="submit" onClick={handleOrder} disabled={loading || cart.length === 0} className="w-full h-12 mt-6 rounded-lg bg-velora-gold text-white font-semibold hover:bg-velora-goldHover transition disabled:opacity-60">
               {loading ? 'Enregistrement...' : 'Confirmer la commande'}
             </button>
 
