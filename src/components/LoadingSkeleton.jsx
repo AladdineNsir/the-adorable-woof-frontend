@@ -1,10 +1,12 @@
 export function PageSkeleton() {
   return (
-    <div className="min-h-[60vh] bg-velora-cream px-4 py-8 sm:px-6 lg:px-8" aria-label="Chargement" role="status">
-      <div className="mx-auto max-w-7xl animate-pulse space-y-5">
-        <div className="h-8 w-48 rounded-lg bg-white/80" />
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 8 }, (_, index) => <div key={index} className="h-64 rounded-2xl border border-[#E7DED2] bg-white/80" />)}
+    <div className="min-h-screen bg-velora-cream" aria-label="Chargement" role="status" aria-busy="true">
+      <div className="h-[68px] border-b border-[#E7DED2] bg-white/80" />
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 w-44 rounded-lg bg-white/80" />
+          <div className="h-3 w-64 rounded bg-white/70" />
+          <div className="min-h-[280px] rounded-2xl border border-[#E7DED2] bg-white/70" />
         </div>
       </div>
     </div>

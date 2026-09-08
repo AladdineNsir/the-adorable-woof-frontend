@@ -223,7 +223,7 @@ export default function Shop() {
       return data;
     },
     staleTime: 1000 * 60 * 3,
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   });
 
   const products = useMemo(
