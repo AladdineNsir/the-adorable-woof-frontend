@@ -21,3 +21,28 @@ export function ProductSkeleton() {
     </div>
   );
 }
+
+export function ErrorState({
+  title = "Une erreur est survenue",
+  message = "Impossible de charger ces informations pour le moment.",
+  onRetry,
+}) {
+  return (
+    <div
+      className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-[#E8DED1] bg-white px-5 py-12 text-center"
+      role="alert"
+    >
+      <h2 className="font-premium text-xl font-bold text-velora-dark">{title}</h2>
+      <p className="mt-2 max-w-md text-sm leading-6 text-velora-textGray">{message}</p>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mt-5 inline-flex h-11 items-center justify-center rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white transition hover:bg-velora-goldHover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2"
+        >
+          Réessayer
+        </button>
+      )}
+    </div>
+  );
+}
