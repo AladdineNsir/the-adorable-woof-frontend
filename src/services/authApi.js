@@ -4,12 +4,17 @@ import { API_BASE_URL, authHeaders } from "../config/api";
 const API_URL = `${API_BASE_URL}/auth`;
 
 export const login = async (user) => {
-  const { data } = await axios.post(`${API_URL}/login`, user);
+  const { data } = await axios.post(`${API_URL}/login`, user, authHeaders());
   return data;
 };
 
 export const register = async (user) => {
-  const { data } = await axios.post(`${API_URL}/register`, user);
+  const { data } = await axios.post(`${API_URL}/register`, user, authHeaders());
+  return data;
+};
+
+export const logout = async () => {
+  const { data } = await axios.post(`${API_URL}/logout`, {}, authHeaders());
   return data;
 };
 

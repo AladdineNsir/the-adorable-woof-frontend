@@ -79,7 +79,7 @@ export default function Topbar({
 
   return (
     <header className="sticky top-0 z-30 border-b border-[#E7DED2] bg-white/95 backdrop-blur-sm">
-      <div className="flex h-[68px] w-full items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex min-w-0 h-[68px] w-full items-center justify-between px-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 lg:gap-4">
           <button
             type="button"
@@ -105,7 +105,7 @@ export default function Topbar({
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <div ref={notificationRef} className="relative">
             <button
               type="button"

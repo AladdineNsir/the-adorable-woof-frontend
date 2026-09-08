@@ -67,7 +67,7 @@ export default function Sidebar({
 
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-[#E7DED2] bg-white shadow-[4px_0_20px_rgba(17,17,17,0.025)] overflow-hidden transition-[width] duration-300 ease-in-out",
+          "fixed inset-y-0 left-0 z-40 flex max-w-[calc(100vw-1rem)] flex-col overflow-hidden border-r border-[#E7DED2] bg-white shadow-[4px_0_20px_rgba(17,17,17,0.025)] transition-[width,transform] duration-300 ease-in-out",
           sidebarOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0",
           !sidebarOpen && collapsed ? "lg:w-[72px]" : "",
           !sidebarOpen && !collapsed ? "lg:w-[280px]" : "",

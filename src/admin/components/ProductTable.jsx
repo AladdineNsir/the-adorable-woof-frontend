@@ -79,7 +79,72 @@ export default function ProductTable({
       ========================================= */}
 
       <div className="overflow-hidden rounded-xl border border-[#E8DED1] bg-white shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
-        <div className="overflow-x-auto">
+        <div className="space-y-3 p-3 sm:hidden">
+          {products.length === 0 && (
+            <p className="px-3 py-10 text-center text-sm text-velora-textGray">
+              Aucun produit trouvé.
+            </p>
+          )}
+
+          {products.map((product) => (
+            <article
+              key={product._id}
+              className="rounded-xl border border-[#EFE7DC] bg-[#FCFAF7] p-3"
+            >
+              <div className="flex min-w-0 items-start gap-3">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[#E7DED2] bg-white p-1">
+                  <img
+                    src={imageUrl(product.images?.[0])}
+                    alt={product.name}
+                    loading="lazy"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate text-sm font-semibold text-velora-dark">
+                    {product.name}
+                  </h3>
+                  <p className="mt-1 truncate text-xs text-velora-textGray">
+                    {product.category?.name || "Sans catégorie"}
+                    {product.subCategory?.name ? ` · ${product.subCategory.name}` : ""}
+                  </p>
+                  <p className="mt-2 text-sm font-bold text-velora-dark">
+                    {Number(product.price || 0).toFixed(2)} DT
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 flex-col items-end gap-1.5">
+                  {product.isActive === false ? <Badge tone="danger">Inactif</Badge> : <Badge tone="success">Actif</Badge>}
+                  {Number(product.stock || 0) <= 0 ? <Badge tone="danger">Rupture</Badge> : <span className="text-xs font-semibold text-velora-textGray">Stock: {product.stock}</span>}
+                </div>
+              </div>
+
+              <div className="mt-3 flex gap-2 border-t border-[#EFE7DC] pt-3">
+                <Link
+                  to={`/admin/products/edit/${product._id}`}
+                  className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-[#E7DED2] bg-white text-xs font-semibold text-velora-dark transition hover:border-[#C96A26] hover:text-[#C96A26]"
+                >
+                  <Edit size={15} strokeWidth={1.8} />
+                  Modifier
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setOpenDelete(true);
+                  }}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-[#8D8176] transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                  aria-label={`Supprimer ${product.name}`}
+                >
+                  <Trash2 size={15} strokeWidth={1.8} />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[850px]">
 
             {/* HEADER */}

@@ -55,7 +55,6 @@ export const createSubCategory =
       {
         ...authHeaders(),
         headers: {
-          ...authHeaders().headers,
           "Content-Type": "multipart/form-data",
         },
       }
@@ -76,7 +75,6 @@ export const updateSubCategory =
       {
         ...authHeaders(),
         headers: {
-          ...authHeaders().headers,
           "Content-Type": "multipart/form-data",
         },
       }

@@ -83,6 +83,7 @@ export default function Products() {
               hover:bg-[#B85D20]
               hover:shadow-[0_8px_22px_rgba(201,106,38,0.24)]
               active:translate-y-0
+              w-full sm:w-auto
             "
           >
             {/* <Plus

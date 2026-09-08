@@ -99,12 +99,16 @@ export default function SEO({ title, description, image, type = "website", struc
 
     setJsonLd("identity", {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": ["Organization", "Brand"],
       name: siteName,
       url: siteUrl,
       logo: imageUrl,
       description: defaultDescription,
       areaServed: "TN",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "TN",
+      },
     });
     setJsonLd("page", structuredData || {
       "@context": "https://schema.org",

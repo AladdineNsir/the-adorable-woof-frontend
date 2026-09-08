@@ -42,13 +42,13 @@ export default function AdminPageHeader({
         </div>
 
         {/* ACTIONS */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex w-full flex-wrap items-center gap-2.5 lg:w-auto lg:justify-end">
 
           {backTo && (
             <Link
               to={backTo}
               aria-label="Retour"
-              className="inline-flex h-10 items-center justify-center rounded-lg px-4 border border-[#E7DED2] bg-white text-velora-dark text-sm font-semibold transition-colors duration-200 hover:border-velora-gold hover:text-velora-gold hover:bg-[#FFFDF9]"
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-[#E7DED2] bg-white px-4 text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:bg-[#FFFDF9] hover:text-velora-gold"
             >
               Retour
             </Link>

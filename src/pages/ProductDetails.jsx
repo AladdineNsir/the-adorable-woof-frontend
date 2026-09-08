@@ -28,6 +28,7 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [imageZoomed, setImageZoomed] = useState(false);
 
   useEffect(() => {
     const setInitialProductState = (item) => {
@@ -36,6 +37,7 @@ export default function ProductDetails() {
       setSelectedColor(item.colors?.[0] || fallbackColors[0]);
       setImageIndex(0);
       setQuantity(1);
+      setImageZoomed(false);
     };
 
     const fetchProduct = async () => {
@@ -114,7 +116,10 @@ const inStock =
     name: product.name,
     description: productDescription,
     image: gallery,
+    sku: String(product._id || product.id || id),
+    category: categoryLabel,
     brand: { "@type": "Brand", name: "The Adorable Woof" },
+    itemCondition: "https://schema.org/NewCondition",
     offers: {
       "@type": "Offer",
       priceCurrency: "TND",
@@ -233,12 +238,18 @@ const inStock =
                     </>
                   )}
 
-<div className="aspect-square w-full overflow-hidden rounded-[18px] bg-[#FAF8F4] p-3 sm:p-4">
+<button
+  type="button"
+  onClick={() => setImageZoomed((previous) => !previous)}
+  className="group relative block aspect-square w-full overflow-hidden rounded-[18px] bg-[#FAF8F4] p-3 text-left sm:p-4"
+  aria-label={imageZoomed ? "Réduire l'image" : "Agrandir l'image"}
+>
   {currentImage ? (
     <img
       src={currentImage}
       alt={product.name}
-className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loading="eager"
+      className={`h-full w-full rounded-[14px] object-contain transition-transform duration-300 ${imageZoomed ? "scale-[1.35]" : "scale-[1.10]"}`}
+      loading="eager"
       onError={(e) => {
         console.error("Erreur image produit:", currentImage);
         e.currentTarget.style.display = "none";
@@ -249,7 +260,10 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       Image indisponible
     </div>
   )}
-</div>
+  <span className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+    {imageZoomed ? "Réduire" : "Agrandir"}
+  </span>
+</button>
                 </div>
               </div>
 
@@ -264,6 +278,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
           trackClick("click_product_image", { itemId: String(product._id || product.id) });
         }}
         aria-label={`Afficher l'image ${index + 1}`}
+        aria-current={imageIndex === index ? "true" : undefined}
         className={`flex-none overflow-hidden rounded-xl border transition-all duration-200 ${
           imageIndex === index
             ? "border-[#C89B5A] shadow-[0_0_0_1px_rgba(200,155,90,0.2)]"
@@ -513,7 +528,6 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
 
   </div>
 
-  {/*
     <button
       type="button"
       onClick={handleAddToCart}
@@ -523,18 +537,36 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       <ShoppingBag size={17} strokeWidth={1.8} />
       Ajouter au panier
     </button>
-  */}
 
   <button
     type="button"
     onClick={handleBuyNow}
     disabled={!inStock}
-    className="flex h-12 min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-velora-goldHover hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-velora-gold disabled:text-white disabled:opacity-100"
+    className="flex h-12 min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-velora-gold px-5 text-sm font-semibold text-white transition-all duration-200 hover:bg-velora-goldHover hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-velora-gold disabled:text-white disabled:opacity-60"
   >
     <ShoppingBag size={17} strokeWidth={1.8} />
     Commander maintenant
   </button>
 
+</div>
+
+<div className="fixed inset-x-3 bottom-3 z-30 flex gap-2 rounded-xl border border-[#E8DED1] bg-white/95 p-2 shadow-[0_12px_30px_rgba(17,17,17,0.14)] backdrop-blur lg:hidden">
+  <button
+    type="button"
+    onClick={handleAddToCart}
+    disabled={!inStock}
+    className="flex h-11 flex-1 items-center justify-center rounded-lg border border-velora-gold px-3 text-xs font-semibold text-velora-gold transition hover:bg-[#FFF7EE] disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Ajouter au panier
+  </button>
+  <button
+    type="button"
+    onClick={handleBuyNow}
+    disabled={!inStock}
+    className="flex h-11 flex-1 items-center justify-center rounded-lg bg-velora-gold px-3 text-xs font-semibold text-white transition hover:bg-velora-goldHover disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Commander
+  </button>
 </div>
 
 

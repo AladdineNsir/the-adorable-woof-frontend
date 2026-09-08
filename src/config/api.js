@@ -5,17 +5,9 @@ export const API_BASE_URL =
 export const SERVER_URL =
   API_BASE_URL.replace(/\/api\/?$/, "");
 
-export const authHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return token
-    ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    : {};
-};
+export const authHeaders = () => ({
+  withCredentials: true,
+});
 
 /* =========================================
    CLOUDINARY IMAGE OPTIMIZATION
@@ -57,24 +49,41 @@ export const resolveAssetUrl = (
 ) => {
   if (!src || typeof src !== "string") return "";
 
-  // Image Cloudinary
   if (src.includes("res.cloudinary.com")) {
-    return optimizeCloudinaryUrl(
-      src,
-      width
-    );
+    return optimizeCloudinaryUrl(src, width);
   }
 
-  // Image externe classique
   if (src.startsWith("http")) {
     return src;
   }
 
-  // Assets publics du frontend
   if (src.startsWith("/assets/")) {
     return src;
   }
 
-  // Anciennes images locales /uploads
   return `${SERVER_URL}${src}`;
+};
+
+export const buildResponsiveImageSet = (src, widths = [360, 768, 1200], format = "auto") => {
+  if (!src || typeof src !== "string") {
+    return { src: "", srcSet: "", sizes: "(max-width: 640px) 100vw, 50vw" };
+  }
+
+  if (src.includes("res.cloudinary.com")) {
+    const srcSet = widths
+      .map((width) => `${optimizeCloudinaryUrl(src, width).replace(/q_auto/, `${format},q_auto`)} ${width}w`)
+      .join(", ");
+
+    return {
+      src: optimizeCloudinaryUrl(src, 768),
+      srcSet,
+      sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+    };
+  }
+
+  return {
+    src,
+    srcSet: "",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  };
 };

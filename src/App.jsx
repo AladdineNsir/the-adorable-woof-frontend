@@ -64,7 +64,20 @@ const Clients = lazy(() => import("./admin/pages/Clients"));
 const Settings = lazy(() => import("./admin/pages/Settings"));
 const Tracking = lazy(() => import("./admin/pages/Tracking"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      retry: (failureCount, error) => {
+        if (failureCount >= 2) return false;
+        return !error?.response || error.response.status >= 500;
+      },
+    },
+  },
+});
 
 const NotFoundPage = () => (
   <main className="flex min-h-[70vh] items-center justify-center bg-[#F7F3EC] px-6 text-center">

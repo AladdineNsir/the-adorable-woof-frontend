@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import ValuesSection from "../components/ValuesSection";
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import { buildResponsiveImageSet } from "../config/api";
 import { trackClick } from "../analytics/analytics";
 
 const reveal = (direction = 0, delay = 0) => ({
@@ -19,6 +20,7 @@ export default function Home() {
     settings.home.heroImage === "/assets/d1.png"
       ? "/assets/d1-1200.webp"
       : settings.home.heroImage;
+  const heroImageSet = buildResponsiveImageSet(heroImage, [480, 768, 1200], "auto");
   const collections = [
     {
       key: "harnais",
@@ -81,7 +83,9 @@ export default function Home() {
           <motion.div {...reveal(40, 0.08)} className="order-1 lg:order-2">
             <div className="h-[320px] overflow-hidden rounded-2xl border border-velora-gold/30 shadow-[0_18px_40px_rgba(77,54,35,0.12)] sm:h-[390px] lg:h-[460px]">
               <img
-                src={heroImage}
+                src={heroImageSet.src}
+                srcSet={heroImageSet.srcSet}
+                sizes={heroImageSet.sizes}
                 alt="Accessoires Velora pour animaux"
                 fetchPriority="high"
                 decoding="async"
@@ -115,12 +119,19 @@ export default function Home() {
                   onClick={() => trackClick("click_category", { category: collection.key })}
                   className="group relative block h-[320px] overflow-hidden rounded-[22px] border border-[#E7D8C8] bg-[#E7D8C8] shadow-[0_14px_35px_rgba(77,54,35,0.12)] transition-transform duration-300 hover:-translate-y-1 sm:h-[390px]"
                 >
-                  <img
-                    src={collection.image}
-                    alt={collection.title}
-                    loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
+                  {(() => {
+                    const imgMeta = buildResponsiveImageSet(collection.image, [360, 640, 960], "auto");
+                    return (
+                      <img
+                        src={imgMeta.src}
+                        srcSet={imgMeta.srcSet}
+                        sizes={imgMeta.sizes}
+                        alt={collection.title}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
+                    );
+                  })()}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#211710]/85 via-[#211710]/15 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
                     <h3 className="font-premium text-3xl font-semibold text-white sm:text-4xl">

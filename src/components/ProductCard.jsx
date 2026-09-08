@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { resolveAssetUrl } from "../config/api";
+import { buildResponsiveImageSet, resolveAssetUrl } from "../config/api";
 import { trackSelectItem } from "../analytics/analytics";
 
 const resolveImage = resolveAssetUrl;
@@ -16,6 +16,7 @@ export default function ProductCard({ product }) {
     product.image ||
     resolveImage(product.images?.[0]) ||
     resolveImage(fallbackImage);
+  const imageSet = buildResponsiveImageSet(imageSrc, [320, 480, 720], "auto");
 
   const productUrl = product.slug || product.id || product._id;
   const colorSwatches = (product.colors || []).filter(
@@ -48,7 +49,9 @@ export default function ProductCard({ product }) {
         >
           {imageSrc ? (
             <img
-              src={imageSrc}
+              src={imageSet.src}
+              srcSet={imageSet.srcSet}
+              sizes={imageSet.sizes}
               alt={product.name}
               loading="lazy"
               decoding="async"

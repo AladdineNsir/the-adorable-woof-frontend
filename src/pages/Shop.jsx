@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useMemo, useState, useTransition } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   Cat,
@@ -12,15 +12,14 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 import ProductCard from "../components/ProductCard";
 import ValuesSection from "../components/ValuesSection";
 import { API_BASE_URL, resolveAssetUrl } from "../config/api";
-import { PageSkeleton } from "../components/LoadingSkeleton";
+import { ErrorState, PageSkeleton } from "../components/LoadingSkeleton";
 
 const PRODUCTS_PER_PAGE = 16;
-const productsCache = new Map();
-
 const SORT_OPTIONS = [
   { value: "featured", label: "Sélection" },
   { value: "price-asc", label: "Prix croissant" },
@@ -161,8 +160,6 @@ export default function Shop() {
   const searchQuery =
     searchParams.get("search") || "";
 
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
 
   const [selectedCategory, setSelectedCategory] =
@@ -197,6 +194,45 @@ export default function Shop() {
       pages: 1,
     });
 
+  const queryKey = useMemo(
+    () => ({
+      page: currentPage,
+      category: selectedCategory,
+      subCategory: selectedSubCategory,
+      sort: sortBy,
+      search: searchQuery.trim(),
+    }),
+    [currentPage, selectedCategory, selectedSubCategory, sortBy, searchQuery]
+  );
+
+  const { data, isLoading, isFetching, isError, refetch } = useQuery({
+    queryKey: ["products", queryKey],
+    queryFn: async () => {
+      const params = {
+        page: currentPage,
+        limit: PRODUCTS_PER_PAGE,
+        stock: "available",
+      };
+
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (selectedCategory !== "all") params.category = selectedCategory;
+      if (selectedSubCategory !== "all") params.subCategory = selectedSubCategory;
+      if (sortBy !== "featured") params.sort = sortBy;
+
+      const { data } = await axios.get(`${API_BASE_URL}/products`, { params });
+      return data;
+    },
+    staleTime: 1000 * 60 * 3,
+    keepPreviousData: true,
+  });
+
+  const products = useMemo(
+    () => (Array.isArray(data?.products) ? data.products.map(normalizeProduct) : []),
+    [data]
+  );
+
+  const loading = isLoading;
+
   const [filtersExpanded, setFiltersExpanded] =
     useState({
       category: true,
@@ -208,115 +244,15 @@ export default function Shop() {
   // ==========================
 
   useEffect(() => {
-    const controller = new AbortController();
-    const cacheKey = JSON.stringify({
+    const nextPagination = data?.pagination || {
       page: currentPage,
-      category: selectedCategory,
-      subCategory: selectedSubCategory,
-      sort: sortBy,
-      search: searchQuery.trim(),
-    });
-
-    const fetchProducts = async () => {
-      const cached = productsCache.get(cacheKey);
-      if (cached) {
-        setProducts(cached.products);
-        setPagination(cached.pagination);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-
-        const params = {
-          page: currentPage,
-          limit: PRODUCTS_PER_PAGE,
-
-          // Seulement les produits disponibles
-          stock: "available",
-        };
-
-        // Recherche
-        if (searchQuery.trim()) {
-          params.search = searchQuery.trim();
-        }
-
-        // Catégorie
-        if (selectedCategory !== "all") {
-          params.category = selectedCategory;
-        }
-
-        // Sous-catégorie
-        if (selectedSubCategory !== "all") {
-          params.subCategory =
-            selectedSubCategory;
-        }
-
-        // Tri
-        if (sortBy !== "featured") {
-          params.sort = sortBy;
-        }
-
-        const { data } = await axios.get(
-          `${API_BASE_URL}/products`,
-          {
-            params,
-            signal: controller.signal,
-          }
-        );
-
-        const productsData =
-          Array.isArray(data)
-            ? data
-            : data.products || [];
-
-        const normalizedProducts = productsData.map(normalizeProduct);
-        const nextPagination = data.pagination || {
-          page: currentPage,
-          limit: PRODUCTS_PER_PAGE,
-          total: productsData.length,
-          pages: 1,
-        };
-
-        productsCache.set(cacheKey, {
-          products: normalizedProducts,
-          pagination: nextPagination,
-        });
-
-        setProducts(normalizedProducts);
-
-        setPagination(nextPagination);
-      } catch (error) {
-        if (error.name === "CanceledError" || error.name === "AbortError") return;
-        console.error(
-          "Erreur chargement produits:",
-          error
-        );
-
-        setProducts([]);
-
-        setPagination({
-          page: 1,
-          limit: PRODUCTS_PER_PAGE,
-          total: 0,
-          pages: 1,
-        });
-      } finally {
-        setLoading(false);
-      }
+      limit: PRODUCTS_PER_PAGE,
+      total: 0,
+      pages: 1,
     };
 
-    fetchProducts();
-
-    return () => controller.abort();
-  }, [
-    currentPage,
-    selectedCategory,
-    selectedSubCategory,
-    sortBy,
-    searchQuery,
-  ]);
+    setPagination(nextPagination);
+  }, [data, currentPage]);
 
   // ==========================
   // RESET PAGE WHEN FILTER CHANGES
@@ -437,6 +373,16 @@ export default function Shop() {
 
   if (loading && products.length === 0) {
     return <PageSkeleton />;
+  }
+
+  if (isError && products.length === 0) {
+    return (
+      <main className="min-h-screen bg-[#F7F3EC] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <ErrorState onRetry={refetch} />
+        </div>
+      </main>
+    );
   }
 
   return (

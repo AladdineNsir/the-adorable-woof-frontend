@@ -49,7 +49,8 @@ export default function Tracking() {
       const response = await fetch(`${API_BASE_URL}/tracking/admin/config`, {
         method: "PUT",
         ...authHeaders(),
-        headers: { ...authHeaders().headers, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(config),
       });
       const data = await response.json();

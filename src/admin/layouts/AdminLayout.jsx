@@ -28,7 +28,7 @@ export default function AdminLayout() {
           onToggleSidebar={() => setSidebarCollapsed((prev) => !prev)}
         />
 
-        <main className="min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-6">
+        <main className="min-w-0 px-3 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
           <div className="w-full">
             <Outlet />
           </div>

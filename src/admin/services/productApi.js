@@ -25,11 +25,9 @@ export const getProductById = async (id) => {
 // CREATE PRODUCT
 // ==========================
 export const createProduct = async (formData) => {
-  const token = localStorage.getItem("token");
-
   const { data } = await axios.post(API_URL, formData, {
+    withCredentials: true,
     headers: {
-      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
   });
@@ -41,14 +39,12 @@ export const createProduct = async (formData) => {
 // UPDATE PRODUCT
 // ==========================
 export const updateProduct = async (id, formData) => {
-  const token = localStorage.getItem("token");
-
   const { data } = await axios.put(
     `${API_URL}/${id}`,
     formData,
     {
+      withCredentials: true,
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     }
@@ -61,12 +57,8 @@ export const updateProduct = async (id, formData) => {
 // DELETE PRODUCT
 // ==========================
 export const deleteProduct = async (id) => {
-  const token = localStorage.getItem("token");
-
   const { data } = await axios.delete(`${API_URL}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    withCredentials: true,
   });
 
   return data;

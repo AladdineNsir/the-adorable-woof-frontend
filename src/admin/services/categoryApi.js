@@ -34,7 +34,6 @@ export const createCategory = async (category) => {
     {
       ...authHeaders(),
       headers: {
-        ...authHeaders().headers,
         "Content-Type": "multipart/form-data",
       },
     }
@@ -57,7 +56,6 @@ export const updateCategory = async (
     {
       ...authHeaders(),
       headers: {
-        ...authHeaders().headers,
         "Content-Type": "multipart/form-data",
       },
     }

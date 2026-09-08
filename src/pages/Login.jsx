@@ -40,7 +40,7 @@
       try {
         const data = await login(form);
 
-        authLogin(data.user, data.token);
+        authLogin(data.user);
 
         navigate("/");
       } catch (err) {
