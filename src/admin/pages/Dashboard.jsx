@@ -204,7 +204,7 @@ function PrimaryMetric({
 
 function SecondaryMetric({ label, value, icon: Icon }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-[var(--velora-border)] bg-white px-4 py-4 shadow-[0_6px_24px_rgba(17,17,17,0.025)]">
+    <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-[var(--velora-border)] bg-white px-3 py-3.5 shadow-[0_6px_24px_rgba(17,17,17,0.025)] sm:px-4 sm:py-4">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--velora-cream)] text-[var(--velora-primary)]">
         <Icon size={16} strokeWidth={1.8} />
       </div>
@@ -243,7 +243,7 @@ function Section({ title, description, action, children, className = "" }) {
         {action}
       </div>
 
-      <div className="p-5 sm:p-6">{children}</div>
+      <div className="p-4 sm:p-6">{children}</div>
     </section>
   );
 }
@@ -643,7 +643,7 @@ export default function Dashboard() {
               
             </div>
 
-<div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">              {/* Year */}
+<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">              {/* Year */}
               <select
                 value={filters.year}
                 onChange={(event) =>
@@ -652,7 +652,7 @@ export default function Dashboard() {
                     year: Number(event.target.value),
                   }))
                 }
-className="min-h-[46px] w-full flex-1 cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[92px] sm:flex-none"              >
+className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[92px]"              >
                 {yearOptions.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -669,7 +669,7 @@ className="min-h-[46px] w-full flex-1 cursor-pointer rounded-xl border border-[#
                     period: event.target.value,
                   }))
                 }
-className="min-h-[46px] w-full flex-1 cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[112px] sm:flex-none"              >
+className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[112px]"              >
                 {PERIOD_OPTIONS.map((period) => (
                   <option key={period} value={period}>
                     {period}
@@ -678,9 +678,9 @@ className="min-h-[46px] w-full flex-1 cursor-pointer rounded-xl border border-[#
               </select>
 
               {/* Date */}
-<div className="col-span-2 flex min-h-[46px] w-full items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3 sm:col-span-auto sm:min-w-[155px] sm:w-auto">                <CalendarDays
+<div className="flex min-h-[46px] w-full items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3 sm:min-w-[155px] sm:w-auto">                <CalendarDays
                   size={15}
-                  className="text-[#C96A26]"
+                  className="shrink-0 text-[#C96A26]"
                   strokeWidth={1.7}
                 />
 
