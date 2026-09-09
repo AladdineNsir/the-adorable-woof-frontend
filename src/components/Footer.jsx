@@ -17,9 +17,9 @@ export default function Footer() {
           {/* Réseaux sociaux */}
           <div className="flex items-center justify-center gap-3">
             {[
-              { Icon: FaInstagram, href: "https://instagram.com", label: "Instagram" },
-              { Icon: FaFacebookF, href: "https://facebook.com", label: "Facebook" },
-              { Icon: FaTiktok, href: "https://tiktok.com", label: "TikTok" },
+              { Icon: FaInstagram, href: "https://www.instagram.com/theadorablewoof.tn/", label: "Instagram" },
+              { Icon: FaFacebookF, href: "https://www.facebook.com/theadorablewoof/", label: "Facebook" },
+              { Icon: FaTiktok, href: "https://www.tiktok.com/@the.adorable.woof", label: "TikTok" },
             ].map(({ Icon, href, label }, index) => (
               <a
                 key={index}
