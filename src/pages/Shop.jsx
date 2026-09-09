@@ -84,9 +84,6 @@ const normalizeProduct = (product) => {
     harnais: "Harnais",
   };
 
-  const rawImage =
-    product.image || product.images?.[0] || "";
-
   const rawCategory =
     typeof product.category === "object"
       ? product.category?.name || ""
@@ -97,9 +94,19 @@ const normalizeProduct = (product) => {
       ? "/assets/chat2.png"
       : "/assets/chien2.png";
 
+  const rawImages = Array.isArray(product.images) && product.images.length
+    ? product.images
+    : product.image
+      ? [product.image]
+      : [];
+
+  const imageCandidate = rawImages.find(
+    (source) => typeof source === "string" && source.trim()
+  );
+
   const image =
-    resolveAssetUrl(rawImage, 480) ||
-    resolveAssetUrl(fallbackImage, 480);
+    resolveAssetUrl(imageCandidate) ||
+    resolveAssetUrl(fallbackImage);
 
   const rawSubCategory =
     typeof product.subCategory === "object"

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { buildResponsiveImageSet, resolveAssetUrl } from "../config/api";
+import { resolveAssetUrl } from "../config/api";
 import { trackSelectItem } from "../analytics/analytics";
 
 const resolveImage = resolveAssetUrl;
@@ -16,7 +16,6 @@ export default function ProductCard({ product }) {
     product.image ||
     resolveImage(product.images?.[0]) ||
     resolveImage(fallbackImage);
-  const imageSet = buildResponsiveImageSet(imageSrc, [320, 480, 720], "auto");
 
   const productUrl = product.slug || product.id || product._id;
   const colorSwatches = (product.colors || []).filter(
@@ -49,13 +48,16 @@ export default function ProductCard({ product }) {
         >
           {imageSrc ? (
             <img
-              src={imageSet.src}
-              srcSet={imageSet.srcSet}
-              sizes={imageSet.sizes}
+              src={imageSrc}
               alt={product.name}
               loading="lazy"
               decoding="async"
-              className="h-full w-full rounded-[10px] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.srcset = "";
+                event.currentTarget.src = resolveImage(fallbackImage);
+              }}
+              className="h-full w-full scale-[1.28] rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.34]"
             />
           ) : (
             <div className="text-xs text-[var(--velora-textGray)]">
