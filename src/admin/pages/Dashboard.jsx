@@ -643,7 +643,8 @@ export default function Dashboard() {
               
             </div>
 
-<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">              {/* Year */}
+            <div className="grid w-full max-w-[420px] grid-cols-2 gap-2 sm:w-auto sm:max-w-none sm:flex sm:flex-nowrap sm:items-center">
+              {/* Year */}
               <select
                 value={filters.year}
                 onChange={(event) =>
@@ -652,7 +653,8 @@ export default function Dashboard() {
                     year: Number(event.target.value),
                   }))
                 }
-className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[92px]"              >
+                className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[92px]"
+              >
                 {yearOptions.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -669,7 +671,8 @@ className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2]
                     period: event.target.value,
                   }))
                 }
-className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[112px]"              >
+                className="h-11 w-full min-w-0 cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-[112px]"
+              >
                 {PERIOD_OPTIONS.map((period) => (
                   <option key={period} value={period}>
                     {period}
@@ -678,7 +681,8 @@ className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2]
               </select>
 
               {/* Date */}
-<div className="flex min-h-[46px] w-full items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3 sm:min-w-[155px] sm:w-auto">                <CalendarDays
+              <div className="col-span-2 flex h-11 w-full items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3 sm:col-span-auto sm:w-auto">
+                <CalendarDays
                   size={15}
                   className="shrink-0 text-[#C96A26]"
                   strokeWidth={1.7}
