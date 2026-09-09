@@ -643,7 +643,7 @@ export default function Dashboard() {
               
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
               {/* Year */}
               <select
                 value={filters.year}
@@ -653,7 +653,7 @@ export default function Dashboard() {
                     year: Number(event.target.value),
                   }))
                 }
-                className="min-h-[46px] cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3.5 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26]"
+                className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3.5 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-auto"
               >
                 {yearOptions.map((year) => (
                   <option key={year} value={year}>
@@ -671,7 +671,7 @@ export default function Dashboard() {
                     period: event.target.value,
                   }))
                 }
-                className="min-h-[46px] cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3.5 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26]"
+                className="min-h-[46px] w-full cursor-pointer rounded-xl border border-[#E7DED2] bg-white px-3.5 text-xs font-semibold text-velora-dark outline-none transition-colors focus:border-[#C96A26] sm:w-auto"
               >
                 {PERIOD_OPTIONS.map((period) => (
                   <option key={period} value={period}>
@@ -681,7 +681,7 @@ export default function Dashboard() {
               </select>
 
               {/* Date */}
-              <div className="flex min-h-[46px] items-center gap-2.5 rounded-xl border border-[#E7DED2] bg-white px-3.5">
+              <div className="col-span-2 flex min-h-[46px] w-full items-center gap-2.5 rounded-xl border border-[#E7DED2] bg-white px-3.5 sm:col-span-auto sm:w-auto">
                 <CalendarDays
                   size={15}
                   className="text-[#C96A26]"
