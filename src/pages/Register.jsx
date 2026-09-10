@@ -236,6 +236,7 @@ export default function Register() {
                       type={showPassword ? "text" : "password"}
                       name="password"
                       required
+                      minLength={6}
                       value={form.password}
                       onChange={handleChange}
                       placeholder="••••••••"
@@ -284,6 +285,7 @@ export default function Register() {
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       required
+                      minLength={6}
                       value={form.confirmPassword}
                       onChange={handleChange}
                       placeholder="••••••••"

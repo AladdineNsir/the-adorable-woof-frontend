@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Mail, MapPin, Package, Phone, ReceiptText, User } from "lucide-react";
+import { Clock3, Mail, MapPin, Package, Phone, ReceiptText, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AdminPageHeader from "../components/AdminPageHeader";
@@ -86,7 +86,10 @@ export default function OrderDetails() {
       toast.success("Statut mis à jour.");
     } catch (error) {
       console.log(error);
-      toast.error("Erreur lors de la mise à jour.");
+      toast.error(
+        error.response?.data?.message ||
+          "Impossible de mettre à jour le statut."
+      );
     } finally {
       setSaving("");
     }
@@ -250,6 +253,36 @@ export default function OrderDetails() {
                 ))}
               </select>
             </label>
+          </div>
+
+          <div className="rounded-xl border border-[#E8DED1] bg-white p-4 shadow-[0_6px_24px_rgba(17,17,17,0.035)]">
+            <div className="mb-4 flex items-center gap-2">
+              <Clock3 size={18} className="text-velora-gold" />
+              <h3 className="font-semibold text-velora-dark">Historique des statuts</h3>
+            </div>
+
+            {order.statusHistory?.length ? (
+              <div className="space-y-3">
+                {[...order.statusHistory].reverse().map((entry, index) => (
+                  <div key={`${entry.type}-${entry.changedAt}-${index}`} className="border-l-2 border-[#E7DED2] pl-3">
+                    <p className="text-xs font-semibold text-velora-dark">
+                      {entry.type === "phone" ? "Téléphone" : "Livraison"}: {entry.status}
+                    </p>
+                    <p className="mt-1 text-[11px] text-velora-textGray">
+                      {entry.previousStatus ? `${entry.previousStatus} → ` : "Créé avec "}
+                      {entry.changedAt ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" }).format(new Date(entry.changedAt)) : "Date inconnue"}
+                    </p>
+                    {entry.changedBy?.name && (
+                      <p className="mt-1 text-[11px] text-velora-textGray">
+                        Par {entry.changedBy.name}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-velora-textGray">Aucun historique disponible pour cette commande.</p>
+            )}
           </div>
 
           <div className="rounded-xl border border-[#E8DED1] bg-white p-4 shadow-[0_6px_24px_rgba(17,17,17,0.035)]">

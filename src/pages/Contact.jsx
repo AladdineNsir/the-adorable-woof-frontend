@@ -268,6 +268,7 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
                         name="name"
                         type="text"
                         required
+                        minLength={2}
                         value={form.name}
                         onChange={handleChange}
                         placeholder="Votre nom"
@@ -342,6 +343,8 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
                       name="message"
                       rows={7}
                       required
+                      minLength={10}
+                      maxLength={1000}
                       value={form.message}
                       onChange={handleChange}
                       placeholder="Comment pouvons-nous vous aider ?"

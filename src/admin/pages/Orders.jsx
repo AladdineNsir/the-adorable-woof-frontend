@@ -459,7 +459,8 @@ export default function Orders() {
       console.error(error);
 
       toast.error(
-        "Impossible de modifier le statut téléphone."
+        error.response?.data?.message ||
+          "Impossible de modifier le statut téléphone."
       );
     } finally {
       setSavingId("");
@@ -505,7 +506,8 @@ export default function Orders() {
       console.error(error);
 
       toast.error(
-        "Impossible de modifier le statut livraison."
+        error.response?.data?.message ||
+          "Impossible de modifier le statut livraison."
       );
     } finally {
       setSavingId("");

@@ -319,12 +319,12 @@ setOrderResult(data);
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Nom complet</label>
-                  <input name="fullName" value={shippingAddress.fullName} onChange={handleShippingChange} placeholder="Nom complet" required className={inputClass} />
+                  <input name="fullName" value={shippingAddress.fullName} onChange={handleShippingChange} placeholder="Nom complet" required minLength={2} className={inputClass} />
                 </div>
 
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Téléphone</label>
-                  <input name="phone" value={shippingAddress.phone} onChange={handleShippingChange} placeholder="Telephone" required className={inputClass} />
+                  <input name="phone" type="tel" inputMode="tel" pattern="(?:\+216\s?)?[2-9][0-9]{7}" title="Entrez un numéro tunisien valide de 8 chiffres." value={shippingAddress.phone} onChange={handleShippingChange} placeholder="Telephone" required className={inputClass} />
                 </div>
 
                 <div>
@@ -334,17 +334,17 @@ setOrderResult(data);
 
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Ville</label>
-                  <input name="city" value={shippingAddress.city} onChange={handleShippingChange} placeholder="Ville" required className={inputClass} />
+                  <input name="city" value={shippingAddress.city} onChange={handleShippingChange} placeholder="Ville" required minLength={2} className={inputClass} />
                 </div>
 
                 <div className="lg:col-span-2">
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Adresse</label>
-                  <input name="address" value={shippingAddress.address} onChange={handleShippingChange} placeholder="Adresse" required className={inputClass} />
+                  <input name="address" value={shippingAddress.address} onChange={handleShippingChange} placeholder="Adresse" required minLength={5} className={inputClass} />
                 </div>
 
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Code postal</label>
-                  <input name="zipCode" value={shippingAddress.zipCode} onChange={handleShippingChange} placeholder="Code postal" required className={inputClass} />
+                  <input name="zipCode" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} title="Le code postal doit contenir 4 chiffres." value={shippingAddress.zipCode} onChange={handleShippingChange} placeholder="Code postal" required className={inputClass} />
                 </div>
               </div>
 

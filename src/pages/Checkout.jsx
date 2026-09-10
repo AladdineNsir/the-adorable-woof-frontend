@@ -129,7 +129,7 @@ export default function Checkout() {
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Nom complet</label>
-                <input id="fullName" name="fullName" type="text" placeholder="Nom complet" required value={form.fullName} onChange={handleChange} className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                <input id="fullName" name="fullName" type="text" placeholder="Nom complet" required minLength={2} value={form.fullName} onChange={handleChange} className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
               </div>
 
               <div>
@@ -139,12 +139,12 @@ export default function Checkout() {
 
               <div>
                 <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Téléphone</label>
-                <input id="phone" name="phone" type="text" placeholder="Téléphone" required value={form.phone} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                <input id="phone" name="phone" type="tel" inputMode="tel" pattern="(?:\+216\s?)?[2-9][0-9]{7}" title="Entrez un numéro tunisien valide de 8 chiffres." placeholder="Téléphone" required value={form.phone} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
               </div>
 
               <div>
                 <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Ville</label>
-                <input id="city" name="city" type="text" placeholder="Ville" required value={form.city} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                <input id="city" name="city" type="text" placeholder="Ville" required minLength={2} value={form.city} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
               </div>
             </div>
 
@@ -159,7 +159,7 @@ export default function Checkout() {
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Adresse complète</label>
-                <input id="address" name="address" type="text" placeholder="Adresse complète" required value={form.address} onChange={handleChange} className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                <input id="address" name="address" type="text" placeholder="Adresse complète" required minLength={5} value={form.address} onChange={handleChange} className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
               </div>
 
               <div>
@@ -169,7 +169,7 @@ export default function Checkout() {
 
               <div>
                 <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Code postal</label>
-                <input id="zipCode" name="zipCode" type="text" placeholder="Code postal" value={form.zipCode} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                <input id="zipCode" name="zipCode" type="text" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} title="Le code postal doit contenir 4 chiffres." placeholder="Code postal" required value={form.zipCode} onChange={handleChange} className="w-full h-11 rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
               </div>
             </div>
 

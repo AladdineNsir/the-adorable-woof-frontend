@@ -222,7 +222,7 @@ export default function EditProfile() {
 
                       <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-velora-gold" />
 
-                      <input type="text" name="name" required value={form.name} onChange={handleChange} placeholder="Votre nom" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] pl-12 pr-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                      <input type="text" name="name" required minLength={2} value={form.name} onChange={handleChange} placeholder="Votre nom" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] pl-12 pr-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
 
                     </div>
 
@@ -256,7 +256,7 @@ export default function EditProfile() {
 
                     <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-velora-gold" />
 
-                    <input type="text" name="phone" value={form.phone} onChange={handleChange} placeholder="+216 xx xxx xxx" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] pl-12 pr-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                    <input type="tel" name="phone" inputMode="tel" pattern="(?:\+216\s?)?[2-9][0-9]{7}" title="Entrez un numéro tunisien valide de 8 chiffres." value={form.phone} onChange={handleChange} placeholder="+216 xx xxx xxx" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] pl-12 pr-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
 
                   </div>
 
@@ -288,7 +288,7 @@ export default function EditProfile() {
 
     <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Ville</label>
 
-    <input type="text" name="city" value={form.city} onChange={handleChange} placeholder="Nabeul" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                    <input type="text" name="city" minLength={2} value={form.city} onChange={handleChange} placeholder="Nabeul" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
 
   </div>
 
@@ -299,7 +299,7 @@ export default function EditProfile() {
 
     <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Code postal</label>
 
-    <input type="text" name="zipCode" value={form.zipCode} onChange={handleChange} placeholder="8000" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
+                    <input type="text" name="zipCode" inputMode="numeric" pattern="[0-9]{4}" maxLength={4} title="Le code postal doit contenir 4 chiffres." value={form.zipCode} onChange={handleChange} placeholder="8000" className="h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10" />
 
   </div>
 

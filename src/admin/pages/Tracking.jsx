@@ -24,8 +24,14 @@ export default function Tracking() {
     const load = async () => {
       try {
         const [configResponse, analyticsResponse] = await Promise.all([
-          fetch(`${API_BASE_URL}/tracking/admin/config`, authHeaders()),
-          fetch(`${API_BASE_URL}/tracking/admin/analytics`, authHeaders()),
+          fetch(`${API_BASE_URL}/tracking/admin/config`, {
+            ...authHeaders(),
+            credentials: "include",
+          }),
+          fetch(`${API_BASE_URL}/tracking/admin/analytics`, {
+            ...authHeaders(),
+            credentials: "include",
+          }),
         ]);
         if (!configResponse.ok) throw new Error("Impossible de charger la configuration.");
         setConfig({ ...emptyConfig, ...(await configResponse.json()) });

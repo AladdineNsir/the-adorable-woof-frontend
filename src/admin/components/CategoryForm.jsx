@@ -121,7 +121,10 @@ export default function CategoryForm({ category = null, isEdit = false }) {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Une erreur est survenue.");
+      toast.error(
+        error.response?.data?.message ||
+          "Impossible d'enregistrer la catégorie."
+      );
     } finally {
       setLoading(false);
     }
