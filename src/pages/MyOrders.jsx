@@ -66,7 +66,7 @@ function AccountSidebar({ user, onLogout }) {
       <div className="pt-5">
         <Link
           to="/account"
-          className="mb-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-velora-dark transition-colors duration-200 hover:bg-white hover:text-[#C96A26]"
+          className="mb-1 hidden items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-velora-dark transition-colors duration-200 hover:bg-white hover:text-[#C96A26] lg:flex"
         >
           <User size={18} />
           Mon profil
@@ -74,7 +74,7 @@ function AccountSidebar({ user, onLogout }) {
 
         <Link
           to="/account/orders"
-          className="mb-1 flex items-center gap-2 rounded-lg bg-[#C96A26] px-3 py-2.5 text-sm font-semibold text-white"
+          className="mb-1 hidden items-center gap-2 rounded-lg bg-[#C96A26] px-3 py-2.5 text-sm font-semibold text-white lg:flex"
         >
           <Package size={18} />
           Mes commandes

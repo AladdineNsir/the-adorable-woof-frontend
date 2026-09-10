@@ -69,7 +69,7 @@ function AccountSidebar({ user, active, onLogout }) {
       <div className="pt-5">
   <Link
     to="/account"
-    className={`mb-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ${
+    className={`mb-1 hidden items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 lg:flex ${
       active === "profile"
         ? "bg-[#C96A26] font-semibold text-white"
         : "font-medium text-velora-dark hover:bg-white hover:text-velora-gold"
@@ -82,7 +82,7 @@ function AccountSidebar({ user, active, onLogout }) {
 
   <Link
     to="/account/orders"
-    className={`mb-1 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ${
+    className={`mb-1 hidden items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 lg:flex ${
       active === "orders"
         ? "bg-[#C96A26] font-semibold text-white"
         : "font-medium text-velora-dark hover:bg-white hover:text-velora-gold"
