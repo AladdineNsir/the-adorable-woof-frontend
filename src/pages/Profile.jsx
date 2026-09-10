@@ -64,6 +64,14 @@ function AccountSidebar({ user, active, onLogout }) {
         <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em] text-velora-gold">
           {user?.role === "admin" ? "Administrateur" : "LA FAMILLE WOOF"}
         </p>
+
+        <Link
+          to="/account/edit"
+          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-4 py-3 text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:text-velora-gold lg:hidden"
+        >
+          <Edit size={17} />
+          Modifier
+        </Link>
       </div>
 
       <div className="pt-5">
@@ -201,7 +209,7 @@ export default function Profile() {
 
               <Link
                 to="/account/edit"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-4 h-10 text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:text-velora-gold"
+                className="hidden items-center gap-2 rounded-lg border border-[#E7DED2] bg-white px-4 h-10 text-sm font-semibold text-velora-dark transition-colors duration-200 hover:border-velora-gold hover:text-velora-gold lg:inline-flex"
               >
                 <Edit size={17} />
                 Modifier
