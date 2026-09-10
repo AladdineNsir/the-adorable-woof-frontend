@@ -95,7 +95,7 @@ function AccountSidebar({ user, active, onLogout }) {
 
   <button
     onClick={onLogout}
-    className="mt-4 flex w-full items-center gap-2 rounded-lg border border-red-100 bg-white px-3 py-2.5 text-sm font-semibold text-red-500 transition-colors duration-200 hover:bg-red-50"
+    className="mt-4 hidden w-full items-center gap-2 rounded-lg border border-red-100 bg-white px-3 py-2.5 text-sm font-semibold text-red-500 transition-colors duration-200 hover:bg-red-50 lg:flex"
     aria-label="Déconnexion"
   >
     <LogOut size={18} />
