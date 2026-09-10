@@ -556,35 +556,15 @@ const { cart } = useCart();
                 )
               )}
 
-              {/* MOBILE ADMIN */}
-              {user?.role === "admin" && (
-                <div className="pt-2 mt-2 border-t border-[#EFE7DC]">
-
-                  <p className="px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
-                    Administration
-                  </p>
-
-                  {adminQuickLinks.map(
-                    ({
-                      to,
-                      label,
-                      Icon,
-                    }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        onClick={
-                          handleMobileNavigation
-                        }
-                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-velora-dark hover:bg-[#FFF7EE] hover:text-velora-gold"
-                      >
-                        <Icon size={18} />
-                        {label}
-                      </Link>
-                    )
-                  )}
-
-                </div>
+              {user && (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-2 flex w-full items-center gap-3 border-t border-[#EFE7DC] px-4 py-4 text-left text-sm text-red-500 hover:bg-red-50"
+                >
+                  <LogOut size={18} />
+                  Déconnexion
+                </button>
               )}
 
             </div>
