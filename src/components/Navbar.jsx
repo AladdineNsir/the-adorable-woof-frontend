@@ -155,6 +155,30 @@ const { cart } = useCart();
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
 
         {/* =========================================
+            MOBILE MENU BUTTON
+        ========================================= */}
+
+        <button
+          type="button"
+          onClick={() =>
+            setShowMobileMenu(!showMobileMenu)
+          }
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#FFF7EE] hover:text-velora-gold transition-colors duration-200"
+          aria-label={
+            showMobileMenu
+              ? "Fermer le menu"
+              : "Ouvrir le menu"
+          }
+          aria-expanded={showMobileMenu}
+        >
+          {showMobileMenu ? (
+            <X size={22} strokeWidth={1.8} />
+          ) : (
+            <Menu size={22} strokeWidth={1.8} />
+          )}
+        </button>
+
+        {/* =========================================
             LOGO + BRAND
         ========================================= */}
 
@@ -455,30 +479,6 @@ const { cart } = useCart();
 )}
             </Link>
           )}
-
-          {/* =========================================
-              MOBILE MENU BUTTON
-          ========================================= */}
-
-          <button
-            type="button"
-            onClick={() =>
-              setShowMobileMenu(!showMobileMenu)
-            }
-            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#FFF7EE] hover:text-velora-gold transition-colors duration-200"
-            aria-label={
-              showMobileMenu
-                ? "Fermer le menu"
-                : "Ouvrir le menu"
-            }
-            aria-expanded={showMobileMenu}
-          >
-            {showMobileMenu ? (
-              <X size={22} strokeWidth={1.8} />
-            ) : (
-              <Menu size={22} strokeWidth={1.8} />
-            )}
-          </button>
 
         </div>
       </div>
