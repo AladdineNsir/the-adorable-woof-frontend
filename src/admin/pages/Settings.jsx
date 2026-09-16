@@ -142,7 +142,7 @@ export default function Settings() {
         </div>
 
         <p className="text-xs text-velora-textGray">
-          Les réglages sont conservés dans ce navigateur. Une prochaine étape utile serait de les synchroniser avec le serveur pour tous les administrateurs.
+          Les réglages sont enregistrés sur le serveur et visibles par tous les visiteurs.
         </p>
       </div>
     </section>

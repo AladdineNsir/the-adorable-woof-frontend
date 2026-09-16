@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-const STORAGE_KEY = "velora_site_settings";
+import { getSiteSettings, updateSiteSettings } from "../services/settingsApi";
 
 export const defaultSiteSettings = {
   theme: {
@@ -45,44 +45,68 @@ function mergeSettings(savedSettings) {
 }
 
 export function SiteSettingsProvider({ children }) {
-  const [settings, setSettings] = useState(() => {
-    try {
-      const savedSettings = localStorage.getItem(STORAGE_KEY);
-      return savedSettings ? mergeSettings(JSON.parse(savedSettings)) : defaultSiteSettings;
-    } catch {
-      return defaultSiteSettings;
-    }
-  });
+  const [settings, setSettings] = useState(defaultSiteSettings);
+  const saveTimerRef = useRef(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getSiteSettings()
+      .then((serverSettings) => {
+        if (isMounted) setSettings(mergeSettings(serverSettings));
+      })
+      .catch((error) => {
+        console.error("Impossible de charger les paramètres du site", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
     Object.entries(settings.theme).forEach(([name, value]) => {
       root.style.setProperty(`--velora-${name}`, value);
     });
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   }, [settings]);
 
-  const updateSettings = (updates) => {
-    setSettings((currentSettings) =>
-      mergeSettings({
-        ...currentSettings,
-        ...updates,
-        theme: { ...currentSettings.theme, ...updates.theme },
-        home: {
-          ...currentSettings.home,
-          ...updates.home,
-          collections: {
-            ...currentSettings.home.collections,
-            ...updates.home?.collections,
-          },
-        },
-        about: { ...currentSettings.about, ...updates.about },
-      })
-    );
+  useEffect(() => () => clearTimeout(saveTimerRef.current), []);
+
+  const queueSave = (nextSettings) => {
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      updateSiteSettings(nextSettings).catch((error) => {
+        console.error("Impossible d'enregistrer les paramètres du site", error);
+      });
+    }, 350);
   };
 
-  const resetSettings = () => setSettings(defaultSiteSettings);
+  const updateSettings = (updates) => {
+    const nextSettings = mergeSettings({
+      ...settings,
+      ...updates,
+      theme: { ...settings.theme, ...updates.theme },
+      home: {
+        ...settings.home,
+        ...updates.home,
+        collections: {
+          ...settings.home.collections,
+          ...updates.home?.collections,
+        },
+      },
+      about: { ...settings.about, ...updates.about },
+    });
+
+    setSettings(nextSettings);
+    queueSave(nextSettings);
+  };
+
+  const resetSettings = () => {
+    const nextSettings = mergeSettings(defaultSiteSettings);
+    setSettings(nextSettings);
+    queueSave(nextSettings);
+  };
 
   return (
     <SiteSettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
