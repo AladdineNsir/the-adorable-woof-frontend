@@ -17,12 +17,16 @@ export const updateSiteSettings = async (settings) => {
 };
 
 export const uploadSettingsImage = async (file) => {
-  const formData = new FormData();
-  formData.append("image", file);
+  const image = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 
   const { data } = await axios.post(
     `${API_BASE_URL}/settings/image`,
-    formData,
+    { image },
     authHeaders()
   );
 
