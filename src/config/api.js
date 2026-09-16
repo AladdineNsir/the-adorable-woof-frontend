@@ -72,7 +72,11 @@ export const buildResponsiveImageSet = (src, widths = [360, 768, 1200], format =
 
   if (src.includes("res.cloudinary.com")) {
     const srcSet = widths
-      .map((width) => `${optimizeCloudinaryUrl(src, width).replace(/q_auto/, `${format},q_auto`)} ${width}w`)
+      .map((width) => {
+        const optimizedUrl = optimizeCloudinaryUrl(src, width);
+        const formatTransformation = format && format !== "auto" ? `${format},` : "";
+        return `${optimizedUrl.replace(/q_auto/, `${formatTransformation}q_auto`)} ${width}w`;
+      })
       .join(", ");
 
     return {
