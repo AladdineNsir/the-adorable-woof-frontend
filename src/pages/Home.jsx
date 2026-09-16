@@ -186,24 +186,38 @@ export default function Home() {
               </span>
               <p className="mt-4 max-w-xl text-sm leading-7 text-velora-textGray md:text-base">
                 Une conception multicouche pensée pour offrir à votre compagnon
-                confort, respirabilité et résistance au quotidien.
+                confort, respirabilité et résistance, pour l’accompagner agréablement au quotidien.
               </p>
 
               <div className="mt-7 space-y-5">
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    Tissu Oxford
+                    Tissu Oxford 600D imprimé
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
-                    Une couche extérieure conçue pour apporter résistance et durabilité.
+                    <strong>Résistant • Durable • Facile à entretenir</strong>
+                    <br />
+                    Un tissu robuste conçu pour résister à l’usage quotidien, tout en gardant un aspect soigné et un imprimé qui attire le regard.
                   </p>
                 </div>
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    Air Mousse
+                    Mousse / EVA fine
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
-                    Une structure alvéolée qui favorise la circulation de l’air et améliore le confort.
+                    <strong>Douceur • Confort • Protection</strong>
+                    <br />
+                    Une couche souple qui apporte plus de douceur au contact du corps et contribue à limiter les frottements pendant les promenades.
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
+                    Air Mesh
+                  </span>
+                  <p className="mt-1 text-sm leading-6 text-velora-textGray">
+                    <strong>Respirabilité • Légèreté • Confort</strong>
+                    <br />
+                    Sa structure alvéolée favorise la circulation de l’air et offre une sensation plus légère et respirante, pour un confort optimal au quotidien.
                   </p>
                 </div>
               </div>
