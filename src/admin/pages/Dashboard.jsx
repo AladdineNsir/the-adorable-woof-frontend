@@ -757,7 +757,7 @@ export default function Dashboard() {
               description={
                 hasCostPrice
                   ? "marge calculée"
-                  : "costPrice requis"
+                    : "Ajoutez le prix coûtant des produits"
               }
             />
           </div>
