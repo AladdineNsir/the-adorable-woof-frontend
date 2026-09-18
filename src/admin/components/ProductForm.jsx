@@ -424,13 +424,6 @@ if (!form.subCategory) {
   return;
 }
 
-if (form.sizes.length === 0 || form.colors.length === 0) {
-  setToastMessage("Ajoutez au moins une taille et une couleur.");
-  setToastType("error");
-  setToastVisible(true);
-  return;
-}
-
     setLoading(true);
 
     try {

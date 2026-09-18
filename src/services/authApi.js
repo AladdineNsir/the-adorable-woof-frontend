@@ -13,6 +13,11 @@ export const register = async (user) => {
   return data;
 };
 
+export const verifyEmail = async (token) => {
+  const { data } = await axios.get(`${API_URL}/verify-email/${token}`);
+  return data;
+};
+
 export const logout = async () => {
   const { data } = await axios.post(`${API_URL}/logout`, {}, authHeaders());
   return data;

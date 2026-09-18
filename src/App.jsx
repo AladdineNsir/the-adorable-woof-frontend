@@ -38,6 +38,7 @@ const Login = lazy(() => { prefetchRoute("/login"); return import("./pages/Login
 const Register = lazy(() => { prefetchRoute("/register"); return import("./pages/Register"); });
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 
 /* ================= USER ================= */
 
@@ -177,6 +178,7 @@ function AppRoutes() {
 
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
       {/* ================= CLIENT ================= */}
 

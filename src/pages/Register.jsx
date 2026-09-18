@@ -48,13 +48,13 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await register({
+      const data = await register({
         name: form.name,
         email: form.email,
         password: form.password,
       });
 
-      toast.success("Compte créé avec succès.");
+      toast.success(data.message || "Vérifiez votre boîte email pour activer votre compte.");
       navigate("/login");
     } catch (error) {
       toast.error(error.response?.data?.message || "Erreur.");

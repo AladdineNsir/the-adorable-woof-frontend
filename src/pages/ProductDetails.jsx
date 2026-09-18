@@ -386,7 +386,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       <div className="mb-3 flex items-center justify-between">
 
         <div>
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#625B54]">
+          <span className="block text-xs font-bold uppercase tracking-[0.18em] text-[#403A35]">
             Taille
           </span>
            <Link
@@ -412,7 +412,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
             key={size}
             type="button"
             onClick={() => setSelectedSize(size)}
-            className={`relative h-10 w-10 rounded-md border transition-all duration-200 ${
+            className={`relative flex h-11 w-11 items-center justify-center rounded-md border text-base font-bold transition-all duration-200 ${
   selectedSize === size
     ? "border-[#C89B5A] bg-[#C89B5A] text-white ring-1 ring-[#C89B5A] ring-offset-1"
     : "border-[#DED7CF] bg-white text-[#4B4743] hover:border-[#C89B5A] hover:scale-105"
@@ -430,11 +430,11 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
     <div>
 
       <div className="mb-3">
-        <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#625B54]">
+        <span className="block text-xs font-bold uppercase tracking-[0.18em] text-[#403A35]">
           Couleur
         </span>
 
-        <span className="mt-1 block text-xs text-velora-gold">
+        <span className="mt-1 block text-sm font-bold text-velora-gold">
           {selectedColor?.name || "Sélectionnez une couleur"}
         </span>
       </div>
@@ -450,7 +450,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
               backgroundColor: color.code || color.hex || "#F4EEE7",
             }}
             aria-label={`Choisir ${color.name}`}
-            className={`relative h-12 w-12 overflow-hidden rounded-lg border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B5A] focus-visible:ring-offset-2 ${
+            className={`relative h-14 w-14 overflow-hidden rounded-lg border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B5A] focus-visible:ring-offset-2 ${
               selectedColor?.name === color.name
                 ? "border-[#C89B5A] ring-1 ring-[#C89B5A] ring-offset-1"
                 : "border-[#DED7CF] hover:border-[#C89B5A] hover:scale-105"
