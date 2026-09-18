@@ -461,7 +461,7 @@ if (!form.subCategory) {
       });
 
       colorImages.forEach((image) => {
-        formData.append("colorImages", image);
+        formData.append("colorImages", image, image.name);
       });
 
       formData.append(

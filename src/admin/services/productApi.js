@@ -27,9 +27,6 @@ export const getProductById = async (id) => {
 export const createProduct = async (formData) => {
   const { data } = await axios.post(API_URL, formData, {
     withCredentials: true,
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
   });
 
   return data;
@@ -44,9 +41,6 @@ export const updateProduct = async (id, formData) => {
     formData,
     {
       withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
     }
   );
 
