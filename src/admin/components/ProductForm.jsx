@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Toast from "../../components/Toast";
 import {
   Check,
@@ -82,6 +83,7 @@ export default function ProductForm({
   product = null,
   isEdit = false,
 }) {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
@@ -469,17 +471,11 @@ if (!form.subCategory) {
 
    if (isEdit) {
   await updateProduct(product._id, formData);
-
-  setToastMessage("Produit modifié avec succès.");
-  setToastType("success");
-  setToastVisible(true);
 } else {
     await createProduct(formData);
-
-  setToastMessage("Produit ajouté avec succès.");
-  setToastType("success");
-  setToastVisible(true);
 }
+
+    navigate("/admin/products");
     } catch (error) {
   setToastMessage(
   error.response?.data?.message ||

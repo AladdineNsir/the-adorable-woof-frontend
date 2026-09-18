@@ -434,7 +434,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
           Couleur
         </span>
 
-        <span className="mt-1 block text-sm font-bold text-velora-gold">
+        <span className="mt-1 block text-sm font-normal text-black">
           {selectedColor?.name || "Sélectionnez une couleur"}
         </span>
       </div>
