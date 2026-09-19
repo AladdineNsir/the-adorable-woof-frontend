@@ -13,6 +13,56 @@ const imageUrl = (src) => {
   return resolveAssetUrl(src);
 };
 
+const getProductSizes = (product) => {
+  const sizes = product.sizes?.length
+    ? product.sizes
+    : product.sizeStocks || [];
+
+  return sizes.map((entry) =>
+    typeof entry === "string" ? entry : entry.size
+  );
+};
+
+const getTotalStock = (product) => {
+  const sizedEntries = (product.sizes || [])
+    .filter((entry) => entry && typeof entry === "object" && entry.size);
+
+  if (sizedEntries.length) {
+    return sizedEntries.reduce(
+      (total, entry) => total + Number(entry.stock || 0),
+      0
+    );
+  }
+
+  if (product.sizeStocks?.length) {
+    return product.sizeStocks.reduce(
+      (total, entry) => total + Number(entry.stock || 0),
+      0
+    );
+  }
+
+  return Number(product.stock || 0);
+};
+
+const SizeBadges = ({ product }) => {
+  const sizes = getProductSizes(product);
+
+  if (!sizes.length) return <span>-</span>;
+
+  return (
+    <div className="flex w-[76px] flex-wrap items-center justify-start gap-0.5">
+      {sizes.map((size) => (
+        <span
+          key={size}
+          className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[#E7DED2] bg-white text-[8px] font-bold leading-none text-velora-dark"
+        >
+          {size}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 function Badge({ children, tone = "neutral" }) {
   const styles = {
     success:
@@ -109,14 +159,17 @@ export default function ProductTable({
                     {product.category?.name || "Sans catégorie"}
                     {product.subCategory?.name ? ` · ${product.subCategory.name}` : ""}
                   </p>
-                  <p className="mt-2 text-sm font-bold text-velora-dark">
-                    {Number(product.price || 0).toFixed(2)} DT
+                  <p className="mt-1 text-xs text-velora-textGray">
+                    Tailles:
                   </p>
+                  <div className="mt-1">
+                    <SizeBadges product={product} />
+                  </div>
                 </div>
 
                 <div className="flex shrink-0 flex-col items-end gap-1.5">
                   {product.isActive === false ? <Badge tone="danger">Inactif</Badge> : <Badge tone="success">Actif</Badge>}
-                  {Number(product.stock || 0) <= 0 ? <Badge tone="danger">Rupture</Badge> : <span className="text-xs font-semibold text-velora-textGray">Stock: {product.stock}</span>}
+                  {getTotalStock(product) <= 0 ? <Badge tone="danger">Rupture</Badge> : <span className="text-xs font-semibold text-velora-textGray">Stock: {getTotalStock(product)}</span>}
                 </div>
               </div>
 
@@ -144,8 +197,19 @@ export default function ProductTable({
           ))}
         </div>
 
-        <div className="hidden overflow-x-auto sm:block">
-          <table className="w-full min-w-[850px]">
+        <div className="hidden overflow-hidden sm:block">
+          <table className="w-full table-fixed">
+
+            <colgroup>
+              <col className="w-[11%]" />
+              <col className="w-[17%]" />
+              <col className="w-[13%]" />
+              <col className="w-[15%]" />
+              <col className="w-[10%]" />
+              <col className="w-[12%]" />
+              <col className="w-[10%]" />
+              <col className="w-[12%]" />
+            </colgroup>
 
             {/* HEADER */}
 
@@ -169,11 +233,11 @@ export default function ProductTable({
                 </th>
 
                 <th className="px-5 py-3.5">
-                  Prix
+                  Stock
                 </th>
 
                 <th className="px-5 py-3.5">
-                  Stock
+                  Tailles
                 </th>
 
                 <th className="px-5 py-3.5">
@@ -213,7 +277,6 @@ export default function ProductTable({
                     hover:bg-[#FCFAF7]
                   "
                 >
-
                   {/* IMAGE */}
 
                   <td className="px-5 py-3.5">
@@ -301,25 +364,17 @@ export default function ProductTable({
                     {product.subCategory?.name || "-"}
                   </td>
 
-                  {/* PRIX */}
-
-                  <td className="px-5 py-3.5 text-sm font-bold text-velora-dark">
-                    <span className="whitespace-nowrap">
-                      {Number(product.price || 0).toFixed(2)} DT
-                    </span>
-                  </td>
-
                   {/* STOCK */}
 
                   <td className="px-5 py-3.5">
 
-                    {Number(product.stock || 0) <= 0 ? (
+                    {getTotalStock(product) <= 0 ? (
 
                       <Badge tone="danger">
                         Rupture
                       </Badge>
 
-                    ) : Number(product.stock) < 10 ? (
+                    ) : getTotalStock(product) < 10 ? (
 
                       <span
                         className="
@@ -335,17 +390,23 @@ export default function ProductTable({
                           text-orange-700
                         "
                       >
-                        {product.stock}
+                        {getTotalStock(product)}
                       </span>
 
                     ) : (
 
                       <Badge tone="success">
-                        {product.stock}
+                        {getTotalStock(product)}
                       </Badge>
 
                     )}
 
+                  </td>
+
+                  {/* TAILLES ET STOCK PAR TAILLE */}
+
+                  <td className="max-w-[220px] px-5 py-3.5 text-xs font-medium text-velora-textGray">
+                    <SizeBadges product={product} />
                   </td>
 
                   {/* STATUT */}
@@ -367,7 +428,6 @@ export default function ProductTable({
                     )}
 
                   </td>
-
                   {/* ACTIONS */}
 
                   <td className="px-5 py-3.5">

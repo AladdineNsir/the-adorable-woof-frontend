@@ -14,6 +14,30 @@ import { API_BASE_URL, resolveAssetUrl } from "../config/api";
 const fallbackSizes = ["XS", "S", "M", "L"];
 const fallbackColors = [{ name: "Noir", code: "#111111" }];
 
+const getSizeEntries = (product) => {
+  if (product.sizes?.length) {
+    return product.sizes.map((entry) =>
+      typeof entry === "string"
+        ? {
+            size: entry,
+            stock: product.sizeStocks?.find((item) => item.size === entry)?.stock ?? null,
+            price: product.sizeStocks?.find((item) => item.size === entry)?.price ?? null,
+            costPrice: product.sizeStocks?.find((item) => item.size === entry)?.costPrice ?? null,
+          }
+        : {
+            size: entry.size,
+            stock: entry.stock ?? null,
+            price: entry.price ?? null,
+            costPrice: entry.costPrice ?? null,
+          }
+    );
+  }
+
+  if (product.sizeStocks?.length) return product.sizeStocks;
+
+  return fallbackSizes.map((size) => ({ size, stock: null }));
+};
+
 
 const formatPrice = (price) => `${Number(price || 0).toFixed(0)} DT`;
 
@@ -32,7 +56,7 @@ export default function ProductDetails() {
   useEffect(() => {
     const setInitialProductState = (item) => {
       setProduct(item);
-      setSelectedSize(item.sizes?.[0] || fallbackSizes[0]);
+      setSelectedSize(getSizeEntries(item)[0]?.size || fallbackSizes[0]);
       setSelectedColor(item.colors?.[0] || fallbackColors[0]);
       setImageIndex(0);
       setQuantity(1);
@@ -97,16 +121,20 @@ export default function ProductDetails() {
   }
 
   const colors = product.colors?.length ? product.colors : fallbackColors;
-  const sizes = product.sizes?.length ? product.sizes : fallbackSizes;
-  const stockCount =
-  product.stock === undefined
-    ? null
-    : Number(product.stock);
+  const sizes = getSizeEntries(product);
+  const selectedSizeStock = sizes.find(
+    (entry) => entry.size === selectedSize
+  );
+  const displayPrice = selectedSizeStock?.price ?? product.price;
+  const stockCount = selectedSizeStock?.stock !== null && selectedSizeStock
+    ? Number(selectedSizeStock.stock || 0)
+    : product.stock === undefined
+      ? null
+      : Number(product.stock);
 
 const inStock =
   stockCount === null || stockCount > 0;
   const categoryLabel = product.category?.name || product.category || "Chats";
-  const discount = product.oldPrice > product.price ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null;
   const productDescription = product.description || `Découvrez ${product.name}, un accessoire de qualité pour votre compagnon.`;
   const productSchema = {
     "@context": "https://schema.org",
@@ -121,20 +149,20 @@ const inStock =
     offers: {
       "@type": "Offer",
       priceCurrency: "TND",
-      price: Number(product.price || 0).toFixed(2),
+      price: Number(displayPrice || 0).toFixed(2),
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: window.location.href,
     },
   };
 
   const handleAddToCart = () => {
-    addToCart(product, quantity, selectedSize, selectedColor);
+    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, selectedSize, selectedColor);
     trackClick("click_add_to_cart", { itemId: String(product._id || product.id), quantity });
     toast.success(`${product.name} ajouté au panier`);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity, selectedSize, selectedColor);
+    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, selectedSize, selectedColor);
     trackClick("click_buy_now", { itemId: String(product._id || product.id), quantity });
     navigate("/cart?checkout=1");
   };
@@ -185,7 +213,7 @@ const inStock =
 
   {/* PRICE */}
   <div className="flex h-[30px] w-[76px] items-center justify-center border border-[#D9D5CF] rounded-lg bg-[#F2F8F3] text-[10px] font-semibold text-[#C95318]">
-    {formatPrice(product.price)}
+    {formatPrice(displayPrice)}
   </div>
 
   {/* STOCK */}
@@ -407,12 +435,13 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {sizes.map((size) => (
+        {sizes.map(({ size, stock }) => (
           <button
             key={size}
             type="button"
             onClick={() => setSelectedSize(size)}
-            className={`relative flex h-11 w-11 items-center justify-center rounded-md border text-base font-bold transition-all duration-200 ${
+            disabled={stock !== null && Number(stock || 0) <= 0}
+            className={`relative flex h-11 w-11 items-center justify-center rounded-md border text-base font-bold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${
   selectedSize === size
     ? "border-[#C89B5A] bg-[#C89B5A] text-white ring-1 ring-[#C89B5A] ring-offset-1"
     : "border-[#DED7CF] bg-white text-[#4B4743] hover:border-[#C89B5A] hover:scale-105"

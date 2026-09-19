@@ -21,6 +21,16 @@ export default function ProductCard({ product }) {
   const colorSwatches = (product.colors || []).filter(
     (color) => color.code || color.hex || color.image || color.name
   );
+  const sizePrices = (product.sizes || [])
+    .map((entry) => (typeof entry === "object" ? Number(entry.price) : NaN))
+    .filter((price) => Number.isFinite(price));
+  const legacySizePrices = (product.sizeStocks || [])
+    .map((entry) => Number(entry.price))
+    .filter((price) => Number.isFinite(price));
+  const hasSizePricing = sizePrices.length > 0 || legacySizePrices.length > 0;
+  const displayPrice = hasSizePricing
+    ? Math.min(...(sizePrices.length ? sizePrices : legacySizePrices))
+    : Number(product.price ?? 0);
 
   const stockStatus =
     !product.available || product.stock <= 0
@@ -136,10 +146,10 @@ export default function ProductCard({ product }) {
         <div className="flex items-end justify-between gap-2 pt-0.5">
           <div className="min-w-0">
             <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-[var(--velora-textGray)]">
-              Prix
+              {hasSizePricing ? "À partir de" : "Prix"}
             </p>
             <p className="mt-1 text-[19px] font-bold leading-none text-[var(--velora-dark)]">
-              {Number(product.price ?? 0).toFixed(0)}
+              {displayPrice.toFixed(0)}
               <span className="ml-1 text-[11px] font-semibold">DT</span>
             </p>
           </div>

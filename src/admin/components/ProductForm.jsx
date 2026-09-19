@@ -53,7 +53,12 @@ function Option({ children, ...props }) {
   );
 }
 
-function SectionTitle({ icon: Icon, title, description }) {
+function SectionTitle({
+  icon: Icon,
+  title,
+  description,
+  descriptionClassName = "text-velora-textGray",
+}) {
   return (
     <div className={sectionHeaderClass}>
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E8D8C8] bg-[#FFF7EE] text-[#C96A26]">
@@ -66,7 +71,7 @@ function SectionTitle({ icon: Icon, title, description }) {
         </h2>
 
         {description && (
-          <p className="mt-0.5 text-xs text-velora-textGray">
+          <p className={`mt-0.5 text-xs ${descriptionClassName}`}>
             {description}
           </p>
         )}
@@ -135,7 +140,6 @@ const [colorInput, setColorInput] = useState({
 
     price: "",
     costPrice: "",
-    oldPrice: "",
 
     category: "",
     subCategory: "",
@@ -207,7 +211,6 @@ const [colorInput, setColorInput] = useState({
 
       price: product.price ?? "",
       costPrice: product.costPrice ?? "",
-      oldPrice: product.oldPrice ?? "",
 
       category: product.category?._id || product.category || "",
       subCategory:
@@ -215,7 +218,25 @@ const [colorInput, setColorInput] = useState({
 
       stock: product.stock ?? "",
 
-      sizes: product.sizes || [],
+      sizes: (product.sizes?.length
+        ? product.sizes
+        : product.sizeStocks || []
+      ).map((entry) =>
+        typeof entry === "string"
+          ? {
+              size: entry,
+              price: product.price ?? "",
+              costPrice: product.costPrice ?? "",
+              stock:
+                product.sizeStocks?.find((item) => item.size === entry)?.stock || 0,
+            }
+          : {
+              size: entry.size,
+              price: entry.price ?? product.price ?? "",
+              costPrice: entry.costPrice ?? product.costPrice ?? "",
+              stock: entry.stock ?? 0,
+            }
+      ),
       colors: product.colors || [],
       materials: product.materials || [],
 
@@ -259,8 +280,28 @@ const [colorInput, setColorInput] = useState({
   const removeSize = (size) => {
     setForm((prev) => ({
       ...prev,
-      sizes: prev.sizes.filter((item) => item !== size),
+      sizes: prev.sizes.filter((item) => item.size !== size),
+      stock: prev.sizes
+        .filter((item) => item.size !== size)
+        .reduce((total, item) => total + Number(item.stock || 0), 0),
     }));
+  };
+
+  const updateSizeField = (size, field, value) => {
+    setForm((prev) => {
+      const sizes = prev.sizes.map((entry) =>
+        entry.size === size ? { ...entry, [field]: value } : entry
+      );
+
+      return {
+        ...prev,
+        sizes,
+        stock: sizes.reduce(
+          (total, entry) => total + Number(entry.stock || 0),
+          0
+        ),
+      };
+    });
   };
 
   /* =========================================================
@@ -398,8 +439,23 @@ const handleImagesChange = (e) => {
   return;
 }
 
-if (!form.price || Number(form.price) < 0) {
-  setToastMessage("Veuillez renseigner un prix valide.");
+const hasInvalidGlobalPrice =
+  form.sizes.length === 0 &&
+  (form.price === "" || form.price === null || Number(form.price) < 0);
+const hasInvalidSizePrice = form.sizes.some(
+  (entry) =>
+    entry.price === "" ||
+    entry.price === null ||
+    entry.price === undefined ||
+    Number(entry.price) < 0
+);
+
+if (hasInvalidGlobalPrice || hasInvalidSizePrice) {
+  setToastMessage(
+    form.sizes.length > 0
+      ? "Veuillez renseigner le prix de chaque taille."
+      : "Veuillez renseigner un prix valide."
+  );
   setToastType("error");
   setToastVisible(true);
   return;
@@ -526,7 +582,7 @@ setToastVisible(true);
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 pb-4"
+      className="flex flex-col space-y-5 pb-4"
     >
 
       {/* =====================================================
@@ -616,11 +672,12 @@ setToastVisible(true);
           PRIX & STOCK
       ===================================================== */}
 
-      <section className={sectionClass}>
+      <section className={`${sectionClass} order-2`}>
         <SectionTitle
           icon={Save}
           title="Prix & stock"
-          description=""
+          description="Produit sans taille"
+          descriptionClassName="text-[#C96A26]"
         />
 
         <div className="p-5 sm:p-6">
@@ -646,7 +703,7 @@ setToastVisible(true);
                   name="price"
                   value={form.price}
                   onChange={handleChange}
-                  required
+                  required={form.sizes.length === 0}
                   placeholder="0.00"
                   className={`${inputClass} pr-14`}
                 />
@@ -690,35 +747,6 @@ setToastVisible(true);
               </p>
             </div>
 
-            {/* Old price */}
-
-            <div>
-              <label
-                htmlFor="oldPrice"
-                className={labelClass}
-              >
-                Ancien prix
-              </label>
-
-              <div className="relative">
-                <input
-                  id="oldPrice"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  name="oldPrice"
-                  value={form.oldPrice}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  className={`${inputClass} pr-14`}
-                />
-
-                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-bold text-[#8D7D6D]">
-                  TND
-                </span>
-              </div>
-            </div>
-
             {/* Stock */}
 
             <div>
@@ -736,7 +764,8 @@ setToastVisible(true);
                 name="stock"
                 value={form.stock}
                 onChange={handleChange}
-                required
+                readOnly={form.sizes.length > 0}
+                required={form.sizes.length === 0}
                 placeholder="0"
                 className={inputClass}
               />
@@ -857,7 +886,7 @@ setToastVisible(true);
           IMAGES
       ===================================================== */}
 
-      <section className={sectionClass}>
+      <section className={`${sectionClass} order-3`}>
         <SectionTitle
           icon={ImagePlus}
           title="Images du produit"
@@ -1045,7 +1074,7 @@ setToastVisible(true);
           TAILLES & COULEURS
       ===================================================== */}
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+      <div className="order-1 grid grid-cols-1 gap-5 xl:grid-cols-2">
 
         {/* Sizes */}
 
@@ -1059,7 +1088,7 @@ setToastVisible(true);
   <div className="p-5 sm:p-6">
     <div className="flex flex-wrap gap-2.5">
       {["XS", "S", "M", "L", "XL"].map((size) => {
-        const isSelected = form.sizes.includes(size);
+        const isSelected = form.sizes.some((entry) => entry.size === size);
 
         return (
           <button
@@ -1071,7 +1100,15 @@ setToastVisible(true);
               } else {
                 setForm((current) => ({
                   ...current,
-                  sizes: [...current.sizes, size],
+                  sizes: [
+                    ...current.sizes,
+                    {
+                      size,
+                      price: current.price,
+                      costPrice: current.costPrice,
+                      stock: 0,
+                    },
+                  ],
                 }));
               }
             }}
@@ -1093,6 +1130,64 @@ setToastVisible(true);
       })}
     </div>
 
+    {form.sizes.length > 0 && (
+      <div className="mt-4 space-y-2">
+        <p className="text-xs font-semibold text-velora-dark">Stock par taille</p>
+        <div className="space-y-3">
+          {form.sizes.map(({ size, price, costPrice, stock }) => {
+            return (
+              <div key={size} className="relative grid grid-cols-1 gap-3 rounded-xl border border-[#EFE7DC] bg-[#FCFAF7] p-3 sm:grid-cols-4 sm:items-end">
+                <div className="flex items-center sm:pb-3">
+                  <p className="text-sm font-bold text-velora-dark">{size}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeSize(size)}
+                  aria-label={`Supprimer la taille ${size}`}
+                  title={`Supprimer ${size}`}
+                  className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[#C95B4B] transition hover:bg-[#FBEDEA] hover:text-[#A63E35]"
+                >
+                  <X size={14} strokeWidth={2} />
+                </button>
+                <label className="text-xs font-medium text-velora-textGray">
+                  Prix de vente
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={price ?? ""}
+                    onChange={(event) => updateSizeField(size, "price", event.target.value)}
+                    className={`${inputClass} mt-1`}
+                  />
+                </label>
+                <label className="text-xs font-medium text-velora-textGray">
+                  Prix coûtant
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={costPrice ?? ""}
+                    onChange={(event) => updateSizeField(size, "costPrice", event.target.value)}
+                    className={`${inputClass} mt-1`}
+                  />
+                </label>
+                <label className="text-xs font-medium text-velora-textGray">
+                  Stock
+                  <input
+                    type="number"
+                    min="0"
+                    value={stock ?? 0}
+                    onChange={(event) => updateSizeField(size, "stock", event.target.value)}
+                    className={`${inputClass} mt-1`}
+                  />
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
+
     <div className="mt-4 rounded-xl border border-[#EFE7DC] bg-[#FCFAF7] px-4 py-3">
       {form.sizes.length === 0 ? (
         <p className="text-xs text-velora-textGray">
@@ -1105,7 +1200,7 @@ setToastVisible(true);
           </span>
 
           <span className="text-xs font-bold text-velora-dark">
-            {form.sizes.join(" · ")}
+            {form.sizes.map((entry) => entry.size).join(" · ")}
           </span>
         </div>
       )}
@@ -1316,7 +1411,7 @@ setToastVisible(true);
           OPTIONS
       ===================================================== */}
 
-      <section className={sectionClass}>
+      <section className={`${sectionClass} order-4`}>
         <SectionTitle
           icon={Check}
           title="Options du produit"
@@ -1324,15 +1419,6 @@ setToastVisible(true);
         />
 
         <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 sm:p-6">
-
-          <Option
-            name="isCustomizable"
-            checked={form.isCustomizable}
-            onChange={handleChange}
-          >
-            Produit personnalisable
-          </Option>
-
           <Option
             name="isActive"
             checked={form.isActive}
@@ -1348,7 +1434,7 @@ setToastVisible(true);
           BADGE
       ===================================================== */}
 
-      <section className={sectionClass}>
+      <section className={`${sectionClass} order-5`}>
 
         <div className="border-b border-[#EFE7DC] px-5 py-4 sm:px-6">
           <h2 className="text-sm font-bold text-velora-dark">
@@ -1440,7 +1526,7 @@ setToastVisible(true);
           ACTIONS
       ===================================================== */}
 
-      <div className="flex flex-col-reverse gap-3 rounded-2xl border border-[#E7DED2] bg-white p-4 shadow-[0_8px_30px_rgba(17,17,17,0.035)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <div className="order-6 flex flex-col-reverse gap-3 rounded-2xl border border-[#E7DED2] bg-white p-4 shadow-[0_8px_30px_rgba(17,17,17,0.035)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
 
         <button
           type="button"
