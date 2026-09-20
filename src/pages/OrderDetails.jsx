@@ -456,20 +456,22 @@ function OrderSummary({ summary, paymentMethod }) {
 
           <div className="my-5 border-t border-[#E7DED2]" />
 
-          <div className="flex items-end justify-between gap-4">
-            <span className="text-sm font-bold text-velora-dark">
-              Total
-            </span>
-
-            <p className="text-right">
-              <span className="font-premium text-2xl font-bold text-velora-dark">
-                {money(summary.total)}
+          <div className="flex items-center justify-end">
+            <div className="flex flex-col items-end text-right">
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#6F6259]">
+                Total
               </span>
 
-              <span className="ml-1 text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">
-                DT
-              </span>
-            </p>
+              <p className="mt-1 flex items-end justify-end gap-1 leading-none text-[#201B18]">
+                <span className="text-[20px] font-semibold tracking-[-0.02em] sm:text-[24px]">
+                  {money(summary.total)}
+                </span>
+
+                <span className="pb-[2px] text-[9px] font-bold uppercase tracking-[0.12em] text-[#6F6259]">
+                  DT
+                </span>
+              </p>
+            </div>
           </div>
 
           <div className="mt-5 rounded-lg bg-[#FCFAF7] p-3.5">
@@ -643,16 +645,14 @@ export default function OrderDetails() {
             <div className="flex flex-col gap-5 rounded-xl border border-[#E8DED1] bg-white px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
 
               <div className="min-w-0">
-                {/* <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
-                  Détail de la commande
-                </p> */}
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#6F6259]">
+                  Référence
+                </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <h1 className="font-premium text-2xl font-bold text-velora-dark sm:text-3xl">
-                    #{orderNumber}
+                <div className="mt-2 flex flex-col gap-2">
+                  <h1 className="leading-none text-[26px] font-semibold tracking-[-0.04em] text-[#1F1713] sm:text-[30px]">
+                    {order.orderNumber || orderNumber}
                   </h1>
-
-                  <span className="hidden h-5 w-px bg-[#E7DED2] sm:block" />
 
                   <span className="flex items-center gap-2 text-xs text-velora-textGray">
                     <CalendarDays size={14} />
@@ -665,25 +665,25 @@ export default function OrderDetails() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5 text-center">
-  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
-    Articles
-  </p>
+                <div className="rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 py-2.5 text-center">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
+                    Articles
+                  </p>
 
-  <p className="mt-1 text-sm font-bold text-velora-dark">
-    {itemCount}
-  </p>
-</div>
+                  <p className="mt-1 text-sm font-bold text-velora-dark">
+                    {itemCount}
+                  </p>
+                </div>
 
-<div className="rounded-lg bg-[#FCFAF7] px-4 py-2.5 text-center">
-  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
-    Total
-  </p>
+                <div className="rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 py-2.5 text-center">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
+                    Total
+                  </p>
 
-  <p className="mt-1 text-sm font-bold text-velora-dark">
-    {money(summary.total)} DT
-  </p>
-</div>
+                  <p className="mt-1 text-sm font-bold text-velora-dark">
+                    {money(summary.total)} DT
+                  </p>
+                </div>
 
                 <StatusBadge
                   type={delivered ? "success" : "warning"}

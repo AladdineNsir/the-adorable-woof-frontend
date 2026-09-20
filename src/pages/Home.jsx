@@ -1,11 +1,13 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 import ValuesSection from "../components/ValuesSection";
 import { useSiteSettings } from "../context/SiteSettingsContext";
-import { buildResponsiveImageSet } from "../config/api";
+import { buildResponsiveImageSet, resolveAssetUrl } from "../config/api";
 import { trackClick } from "../analytics/analytics";
+import { getPacks } from "../services/packApi";
 
 const reveal = (direction = 0, delay = 0) => ({
   initial: { opacity: 0, x: direction, y: direction ? 0 : 20 },
@@ -16,6 +18,8 @@ const reveal = (direction = 0, delay = 0) => ({
 
 export default function Home() {
   const { settings } = useSiteSettings();
+  const [packs, setPacks] = useState([]);
+  const selectedFeaturedPack = settings.home.featuredPack || "";
   const heroImage =
     settings.home.heroImage === "/assets/d1.png"
       ? "/assets/d1-1200.webp"
@@ -42,6 +46,37 @@ export default function Home() {
     },
   ];
 
+  useEffect(() => {
+    let isMounted = true;
+
+    getPacks()
+      .then((data) => {
+        if (isMounted) setPacks(Array.isArray(data?.packs) ? data.packs : []);
+      })
+      .catch((error) => {
+        console.error("Erreur chargement des packs sur la Home:", error);
+        if (isMounted) setPacks([]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const visiblePacks =
+    selectedFeaturedPack === "__none__"
+      ? []
+      : selectedFeaturedPack
+        ? packs.filter(
+            (pack) =>
+              String(pack._id || pack.slug) === String(selectedFeaturedPack)
+              && pack.available !== false
+              && Number(pack.stock ?? 0) > 0
+          )
+        : packs.filter(
+            (pack) => pack.available !== false && Number(pack.stock ?? 0) > 0
+          );
+
   return (
     <main className="overflow-x-hidden bg-velora-cream text-velora-dark">
       <section className="bg-velora-cream py-10 sm:py-14 lg:min-h-[70vh] lg:py-16">
@@ -60,7 +95,7 @@ export default function Home() {
 
             <p className="mt-5 max-w-md text-sm leading-7 text-velora-textGray sm:text-base">
               Parce qu’un compagnon n’est pas juste un animal, nous créons des
-              accessoires qui allient style, confort et amour au quotidien.
+              accessoires qui réunissent style, confort et amour au quotidien.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -152,6 +187,327 @@ export default function Home() {
         </div>
       </section>
 
+    {visiblePacks.length > 0 && (
+  <section className="bg-velora-cream py-10 sm:py-14 lg:py-16">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16">
+
+      {/* SECTION HEADER */}
+      <motion.div
+        {...reveal()}
+        className="mb-8 text-center sm:mb-10"
+      >
+        <div className="mb-3 inline-flex items-center gap-2">
+          <span className="h-px w-8 bg-velora-gold" />
+
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-velora-gold">
+            La signature The Adorable Woof
+          </span>
+
+          <span className="h-px w-8 bg-velora-gold" />
+        </div>
+
+        <h2 className="font-premium text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
+          Tout ce qu’il faut, en harmonie.
+        </h2>
+      </motion.div>
+
+      {/* PACKS */}
+      <div className="space-y-5">
+        {visiblePacks.map((pack, index) => {
+          const image =
+            resolveAssetUrl(pack.image) ||
+            settings.home.collections.harnais;
+
+          const imageSet = buildResponsiveImageSet(
+            image,
+            [360, 640, 960],
+            "auto"
+          );
+
+          const price =
+            pack.pricePreview?.final ??
+            pack.pricePreview?.[pack.preferredSize]?.final ??
+            0;
+
+          const discountPercentage =
+            pack.discountType === "percentage"
+              ? Number(pack.discountValue || 0)
+              : 0;
+
+          const componentNames = (pack.components || [])
+            .map((component) => component.product?.name)
+            .filter(Boolean)
+            .join(" + ");
+
+          return (
+            <motion.div
+              key={pack._id || pack.slug}
+              {...reveal(0, index * 0.08)}
+            >
+              <Link
+                to={`/pack/${pack.slug || pack._id}`}
+                onClick={() =>
+                  trackClick("click_pack_home", {
+                    pack: pack.slug || pack._id,
+                  })
+                }
+                className="
+                  group relative block
+                  min-h-[330px] w-full
+                  overflow-hidden
+                  rounded-[22px]
+                  border border-[#E7D8C8]
+                  bg-[#FAF7F2]
+                  shadow-[0_14px_35px_rgba(77,54,35,0.10)]
+                  transition-all duration-300
+                  hover:-translate-y-1
+                  hover:shadow-[0_18px_42px_rgba(77,54,35,0.14)]
+                  sm:min-h-[370px]
+                "
+              >
+
+                {/* =====================================================
+                    IMAGE
+                ====================================================== */}
+                <div
+                  className="
+                    absolute inset-y-0 right-0
+                    w-full
+                    overflow-hidden
+                    sm:w-[58%]
+                  "
+                >
+                  <img
+                    src={imageSet.src}
+                    srcSet={imageSet.srcSet}
+                    sizes={imageSet.sizes}
+                    alt={pack.name || "Pack"}
+                    loading="lazy"
+                    className="
+                      h-full w-full
+                      object-cover
+                      object-center
+                      transition-transform
+                      duration-700
+                      ease-out
+                      group-hover:scale-[1.035]
+                      sm:object-[center_right]
+                    "
+                  />
+
+                  {/* 
+                    1. DARK WARM GRADIENT
+                    Smooth from top -> bottom
+                  */}
+                  <div
+                    className="
+                      pointer-events-none
+                      absolute inset-0
+                    "
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, rgba(64,58,53,0) 0%, rgba(64,58,53,0.02) 38%, rgba(64,58,53,0.16) 58%, rgba(64,58,53,0.48) 78%, rgba(64,58,53,0.78) 100%)",
+                    }}
+                  />
+
+                  {/*
+                    2. SOFT HORIZONTAL BLEND
+                    Removes the hard border between cream and image.
+                  */}
+                  <div
+                    className="
+                      pointer-events-none
+                      absolute inset-y-0 left-0
+                      w-[38%]
+                      sm:w-[34%]
+                    "
+                    style={{
+                      background:
+                        "linear-gradient(to right, rgba(250,247,242,1) 0%, rgba(250,247,242,0.88) 18%, rgba(250,247,242,0.45) 48%, rgba(250,247,242,0) 100%)",
+                    }}
+                  />
+                </div>
+
+                {/* =====================================================
+                    CONTENT
+                ====================================================== */}
+                <div
+                  className="
+                    relative z-10
+                    flex min-h-[330px]
+                    w-full
+                    flex-col
+                    justify-between
+                    p-5
+                    sm:min-h-[370px]
+                    sm:max-w-[58%]
+                    sm:p-8
+                    lg:p-10
+                  "
+                >
+
+                  {/* TOP */}
+                  <div>
+
+                    {/* LABEL */}
+                    <div className="flex items-center gap-4">
+                      <p
+                        className="
+                          text-[10px]
+                          font-semibold
+                          uppercase
+                          tracking-[0.24em]
+                          text-velora-gold
+                          sm:text-xs
+                        "
+                      >
+                        Pack Signature
+                      </p>
+
+                      <span className="h-px w-10 bg-velora-gold sm:w-14" />
+                    </div>
+
+                    {/* TITLE */}
+                    <h6
+  className="
+    mt-4
+    max-w-2xl
+    font-premium
+    text-2xl
+    leading-[0.98]
+    text-velora-dark
+    sm:text-3xl
+    lg:text-4xl
+  "
+>
+  {pack.name}
+</h6>
+
+                    {/* DISCOUNT */}
+                    {discountPercentage > 0 && (
+                      <div className="mt-3 flex items-baseline gap-2 whitespace-nowrap">
+                        <span className="text-sm text-velora-gold sm:text-base">
+                          Remise exclusive
+                        </span>
+
+                        <span className="text-sm font-bold text-velora-gold sm:text-base">
+                          -{discountPercentage} %
+                        </span>
+                      </div>
+                    )}
+
+                    {/* COMPONENTS */}
+                    <p
+                      className="
+                        mt-4
+                        max-w-xl
+                        text-sm
+                        leading-6
+                        text-velora-dark
+                        sm:text-base
+                        lg:text-lg
+                      "
+                    >
+                      {componentNames || "Harnais + Collier + Laisse"}
+                    </p>
+
+                    {/* DESCRIPTION */}
+                    <p
+                      className="
+                        mt-2
+                        max-w-md
+                        text-xs
+                        italic
+                        leading-5
+                        text-velora-textGray
+                        sm:text-sm
+                      "
+                    >
+                      {pack.description ||
+                        "L’essentiel pour des promenades tout en harmonie."}
+                    </p>
+                  </div>
+
+                  {/* =====================================================
+                      BOTTOM
+                  ====================================================== */}
+                  <div
+                    className="
+                      mt-8
+                      flex
+                      flex-col
+                      gap-4
+                      sm:flex-row
+                      sm:items-end
+                      sm:justify-between
+                    "
+                  >
+
+                    {/* BUTTON */}
+                    <span
+                      className="
+                        inline-flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-3
+                        rounded-[16px]
+                        bg-velora-gold
+                        px-5
+                        text-[10px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.14em]
+                        text-white
+                        shadow-[0_8px_20px_rgba(196,82,17,0.18)]
+                        transition-all
+                        duration-300
+                        group-hover:bg-velora-goldHover
+                        group-hover:shadow-[0_10px_24px_rgba(196,82,17,0.25)]
+                        sm:px-7
+                        sm:text-xs
+                      "
+                    >
+                      Découvrir le pack
+
+                      <ArrowRight
+                        size={18}
+                        className="
+                          transition-transform
+                          duration-300
+                          group-hover:translate-x-1
+                        "
+                      />
+                    </span>
+                  </div>
+                </div>
+
+                {/* =====================================================
+                    MOBILE OVERLAY
+                    Keeps the image visible but maintains readability.
+                ====================================================== */}
+                <div
+                  className="
+                    pointer-events-none
+                    absolute inset-0
+                    z-[2]
+                    bg-gradient-to-t
+                    from-[#211710]/10
+                    via-transparent
+                    to-transparent
+                    sm:hidden
+                  "
+                />
+
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+)}
+
       <section className="bg-velora-cream py-10 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div {...reveal()} className="mb-10 text-center md:mb-12">
@@ -192,7 +548,7 @@ export default function Home() {
               <div className="mt-7 space-y-5">
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    Tissu Oxford 600D imprimé
+                    COUCHE EXTÉRIEURE
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
                     <strong>Résistant • Durable • Facile à entretenir</strong>
@@ -202,7 +558,7 @@ export default function Home() {
                 </div>
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    Mousse / EVA fine
+                    CUCHE CONFORT
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
                     <strong>Douceur • Confort • Protection</strong>
@@ -212,7 +568,7 @@ export default function Home() {
                 </div>
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    Air Mesh
+                    COUCHE RESPIRANTE
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
                     <strong>Respirabilité • Légèreté • Confort</strong>

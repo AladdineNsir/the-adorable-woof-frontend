@@ -26,6 +26,7 @@ import { PageSkeleton } from "./components/LoadingSkeleton";
 const Home = lazy(() => { prefetchRoute("/"); return import("./pages/Home"); });
 const About = lazy(() => { prefetchRoute("/about"); return import("./pages/About"); });
 const Shop = lazy(() => { prefetchRoute("/shop"); return import("./pages/Shop"); });
+const PackDetails = lazy(() => import("./pages/PackDetails"));
 const Cart = lazy(() => { prefetchRoute("/cart"); return import("./pages/Cart"); });
 const ContactPage = lazy(() => { prefetchRoute("/contact"); return import("./pages/Contact"); });
 const SizeGuide = lazy(() => { prefetchRoute("/size-guide"); return import("./pages/SizeGuide"); });
@@ -53,6 +54,9 @@ const AdminLayout = lazy(() => import("./admin/layouts/AdminLayout"));
 const Products = lazy(() => import("./admin/pages/Products"));
 const AddProduct = lazy(() => import("./admin/pages/AddProduct"));
 const EditProduct = lazy(() => import("./admin/pages/EditProduct"));
+const Packs = lazy(() => import("./admin/pages/Packs"));
+const AddPack = lazy(() => import("./admin/pages/AddPack"));
+const EditPack = lazy(() => import("./admin/pages/EditPack"));
 const Categories = lazy(() => import("./admin/pages/Categories"));
 const AddCategory = lazy(() => import("./admin/pages/AddCategory"));
 const EditCategory = lazy(() => import("./admin/pages/EditCategory"));
@@ -129,6 +133,8 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
 
         <Route path="/shop" element={<Shop />} />
+
+        <Route path="/pack/:id" element={<PackDetails />} />
 
         <Route
           path="/produit/:id"
@@ -241,6 +247,21 @@ function AppRoutes() {
           <Route
             path="products/edit/:id"
             element={<EditProduct />}
+          />
+
+          <Route
+            path="packs"
+            element={<Packs />}
+          />
+
+          <Route
+            path="packs/add"
+            element={<AddPack />}
+          />
+
+          <Route
+            path="packs/edit/:id"
+            element={<EditPack />}
           />
 
           <Route

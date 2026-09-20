@@ -1,5 +1,6 @@
 ﻿import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import ValuesSection from "../components/ValuesSection";
 import { Ruler, CircleDot, Weight, Tag, Heart } from "lucide-react";
 
@@ -23,6 +24,24 @@ const dogCollarSizes = [
     neck: "41 - 66 cm",
   },
  
+];
+
+const dogLeashSizes = [
+  {
+    size: "S",
+    width: "2 cm",
+    length: "100 cm",
+  },
+  {
+    size: "M",
+    width: "2 cm",
+    length: "120 cm",
+  },
+  {
+    size: "L",
+    width: "2.5 cm",
+    length: "150 cm",
+  },
 ];
 
 const dogSizes = [
@@ -74,9 +93,25 @@ const catSizes = [
 ];
 
 export default function SizeGuide() {
+  const location = useLocation();
+
   useEffect(() => {
     document.title = "Guide des tailles | The aDoraBLe Woof";
   }, []);
+
+  useEffect(() => {
+    const targetId = location.hash?.replace("#", "");
+    if (!targetId) return;
+
+    const timer = setTimeout(() => {
+      const section = document.getElementById(targetId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
+  }, [location.hash]);
 
   return (
     <div className="min-h-screen bg-[#F7F3EC] pt-8 sm:pt-10 lg:pt-0 pb-0 overflow-x-hidden">
@@ -242,7 +277,7 @@ Trouvez sa taille idéale
   {/* =========================================================
     HARNAIS
 ========================================================= */}
-<section className="space-y-3">
+<section id="harnais" className="space-y-3 scroll-mt-28">
 
   <div className="text-center">
   <h2 className="font-premium text-lg sm:text-xl font-normal tracking-tight text-[#3A3A3A]">
@@ -375,7 +410,7 @@ Trouvez sa taille idéale
 {/* =========================================================
     COLLIER
 ========================================================= */}
-<section className="space-y-2">
+<section id="colliers" className="space-y-2 scroll-mt-28">
 
   <h2 className="text-center font-premium text-lg sm:text-xl font-normal tracking-tight text-[#3A3A3A]">
     Tailles pour chiens — Colliers
@@ -438,6 +473,102 @@ Trouvez sa taille idéale
 
               <td className="px-4 py-3 text-xs text-black sm:px-5">
                 {collar.neck}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</section>
+
+  {/* =========================================================
+    LAISSES
+========================================================= */}
+<section id="laisses" className="space-y-2 scroll-mt-28">
+
+  <h2 className="text-center font-premium text-lg sm:text-xl font-normal tracking-tight text-[#3A3A3A]">
+    Tailles pour chiens — Laisses
+  </h2>
+
+  <div className="overflow-x-auto">
+    <div className="mx-auto w-full max-w-[650px] overflow-hidden rounded-lg border border-[#E8DED1] bg-white">
+
+      <table className="w-full border-collapse text-left">
+
+        <thead className="bg-[#FCFAF7]">
+          <tr className="border-b border-[#E8DED1]">
+
+            <th className="w-[25%] px-4 py-2.5 sm:px-5">
+              <div className="flex items-center gap-1.5">
+                <Tag
+                  size={15}
+                  strokeWidth={1.8}
+                  className="text-black"
+                />
+
+                <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-black">
+                  Taille
+                </span>
+              </div>
+            </th>
+
+            <th className="w-[35%] px-4 py-2.5 sm:px-5">
+              <div className="flex items-center gap-1.5">
+                <Ruler
+                  size={15}
+                  strokeWidth={1.8}
+                  className="text-black"
+                />
+
+                <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-black">
+                  Largeur
+                </span>
+              </div>
+            </th>
+
+            <th className="w-[40%] px-4 py-2.5 sm:px-5">
+              <div className="flex items-center gap-1.5">
+                <CircleDot
+                  size={15}
+                  strokeWidth={1.8}
+                  className="text-black"
+                />
+
+                <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-black">
+                  Longueur
+                </span>
+              </div>
+            </th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+          {dogLeashSizes.map((leash, index) => (
+            <tr
+              key={leash.size}
+              className={
+                index < dogLeashSizes.length - 1
+                  ? "border-b border-[#EFE7DC]"
+                  : ""
+              }
+            >
+              <td className="px-4 py-3 sm:px-5">
+                <span className="inline-flex h-7 min-w-[34px] items-center justify-center rounded-md bg-black px-2 text-[11px] font-bold text-white">
+                  {leash.size}
+                </span>
+              </td>
+
+              <td className="px-4 py-3 text-xs text-black sm:px-5">
+                {leash.width}
+              </td>
+
+              <td className="px-4 py-3 text-xs text-black sm:px-5">
+                {leash.length}
               </td>
             </tr>
           ))}

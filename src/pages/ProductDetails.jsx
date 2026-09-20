@@ -135,6 +135,35 @@ export default function ProductDetails() {
 const inStock =
   stockCount === null || stockCount > 0;
   const categoryLabel = product.category?.name || product.category || "Chats";
+  const normalizedCategory = String(
+    product.subCategory?.name ||
+    product.category?.name ||
+    product.subCategory ||
+    product.category ||
+    ""
+  ).toLowerCase();
+
+  const guideSection = [
+    "harnais",
+    "harness",
+  ].includes(normalizedCategory)
+    ? "harnais"
+    : [
+        "collier",
+        "colliers",
+        "collar",
+        "collars",
+      ].includes(normalizedCategory)
+      ? "colliers"
+      : [
+          "laisse",
+          "laisses",
+          "leash",
+          "leashes",
+        ].includes(normalizedCategory)
+        ? "laisses"
+        : "harnais";
+
   const productDescription = product.description || `Découvrez ${product.name}, un accessoire de qualité pour votre compagnon.`;
   const productSchema = {
     "@context": "https://schema.org",
@@ -418,8 +447,10 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
             Taille
           </span>
            <Link
-          to="/size-guide"
-          onClick={() => trackClick("click_size_guide")}
+          to={`/size-guide#${guideSection}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackClick("click_size_guide", { section: guideSection })}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-velora-gold underline underline-offset-4 transition hover:text-velora-dark"
         >
           <Ruler size={14} strokeWidth={1.7} />

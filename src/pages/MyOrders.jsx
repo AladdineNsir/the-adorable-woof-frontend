@@ -467,7 +467,7 @@ function OrderCard({ order }) {
   const navigate = useNavigate();
 
   const orderNumber =
-    order._id?.slice(-8)?.toUpperCase() || "COMMANDE";
+    order.orderNumber || order._id?.slice(-8)?.toUpperCase() || "COMMANDE";
 
   const itemsCount = order.orderItems?.length || 0;
 
@@ -495,12 +495,12 @@ function OrderCard({ order }) {
       "
     >
       <div className="px-5 py-5 sm:px-6">
-        <div className="flex items-center gap-4 sm:gap-5">
+        <div className="grid grid-cols-[minmax(0,1.8fr)_auto_auto_auto] items-center gap-3 sm:gap-4 md:gap-5">
 
           {/* LEFT */}
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#C96A26]" />
 
               <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C96A26]">
@@ -508,15 +508,15 @@ function OrderCard({ order }) {
               </span>
             </div>
 
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div className="mt-2 flex flex-nowrap items-center gap-x-3 gap-y-1 overflow-hidden">
 
-              <h3 className="text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
-                #{orderNumber}
+              <h3 className="truncate text-xs font-normal tracking-wide text-velora-dark sm:text-sm">
+                {orderNumber}
               </h3>
 
               <span className="hidden h-3.5 w-px bg-[#E7DED2] sm:block" />
 
-              <span className="flex items-center gap-1.5 text-[11px] text-velora-textGray">
+              <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[11px] text-velora-textGray">
                 <CalendarDays size={12} />
 
                 {order.createdAt
@@ -527,15 +527,8 @@ function OrderCard({ order }) {
             </div>
           </div>
 
-          {/* STATUS */}
-          <div className="hidden min-w-[150px] md:block">
-            <Status>
-              {status}
-            </Status>
-          </div>
-
           {/* ARTICLES */}
-          <div className="hidden min-w-[80px] text-center sm:block">
+          <div className="min-w-[80px] text-center">
             <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
               Articles
             </p>
@@ -546,22 +539,21 @@ function OrderCard({ order }) {
           </div>
 
           {/* TOTAL */}
-          <div className="min-w-[75px] text-right sm:min-w-[90px] sm:text-center">
-            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
+          <div className="min-w-[110px] shrink-0 text-center">
+            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-velora-textGray">
               Total
             </p>
 
-            <p className="mt-1 text-base font-bold text-velora-dark sm:text-lg">
-              {Number(order.totalPrice || 0).toFixed(2)}
-
-              <span className="ml-1 text-[9px] font-semibold uppercase tracking-wider text-velora-textGray">
+            <p className="mt-1 flex items-end justify-center gap-1 whitespace-nowrap leading-none text-[17px] font-semibold tracking-normal text-[#201B18] sm:text-[18px]">
+              <span>{Number(order.totalPrice || 0).toFixed(2)}</span>
+              <span className="pb-[1px] text-[9px] font-bold uppercase tracking-[0.12em] text-velora-textGray">
                 DT
               </span>
             </p>
           </div>
 
           {/* EYE + VOIR LES DÉTAILS */}
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center justify-end gap-2">
 
             <span
               className="

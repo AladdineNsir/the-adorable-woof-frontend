@@ -19,6 +19,7 @@ import { useAuth } from "../../context/AuthContext";
 const menu = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin" },
   { title: "Produits", icon: Package, path: "/admin/products" },
+  { title: "Packs", icon: Package, path: "/admin/packs" },
   { title: "Catégories", icon: Tags, path: "/admin/categories" },
   { title: "Sous-catégories", icon: FolderTree, path: "/admin/subcategories" },
   { title: "Commandes", icon: ShoppingCart, path: "/admin/orders" },

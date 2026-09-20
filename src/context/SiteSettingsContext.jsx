@@ -14,6 +14,7 @@ export const defaultSiteSettings = {
   home: {
     heroImage: "/assets/d1.png",
     constructionImage: "/assets/pp.png",
+    featuredPack: "",
     collections: {
       harnais: "/assets/chien-harnais.png",
       colliers: "/assets/chien-collier.png",

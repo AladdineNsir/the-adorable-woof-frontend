@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState, useTransition } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Cat,
   ChevronDown,
   Dog,
   Grid3X3,
   List,
+  Package,
   RotateCcw,
+  ShoppingCart,
   SlidersHorizontal,
   X,
 } from "lucide-react";
@@ -18,6 +20,8 @@ import ProductCard from "../components/ProductCard";
 import ValuesSection from "../components/ValuesSection";
 import { API_BASE_URL, resolveAssetUrl } from "../config/api";
 import { ErrorState, PageSkeleton } from "../components/LoadingSkeleton";
+import { getPacks } from "../services/packApi";
+import { getCategories } from "../services/categoryApi";
 
 const PRODUCTS_PER_PAGE = 16;
 const SORT_OPTIONS = [
@@ -26,7 +30,7 @@ const SORT_OPTIONS = [
   { value: "price-desc", label: "Prix décroissant" },
 ];
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   {
     id: "all",
     label: "Tout",
@@ -54,6 +58,12 @@ const SUB_CATEGORIES = [
     icon: "/assets/tous_icon.png",
   },
   {
+    id: "Packs",
+    label: "Packs",
+    shortLabel: "Packs",
+    icon: Package,
+  },
+  {
     id: "Colliers",
     label: "Colliers",
     shortLabel: "Colliers",
@@ -73,10 +83,48 @@ const SUB_CATEGORIES = [
   },
 ];
 
+const normalizeSubCategoryParam = (value) => {
+  if (!value || value === "all") return "all";
+
+  const normalized = String(value).trim().toLowerCase();
+  const mapping = {
+    all: "all",
+    tous: "all",
+    "tous les accessoires": "all",
+    collar: "Colliers",
+    collier: "Colliers",
+    colliers: "Colliers",
+    pack: "Packs",
+    packs: "Packs",
+    leash: "Laisses",
+    laisse: "Laisses",
+    laisses: "Laisses",
+    harness: "Harnais",
+    harnais: "Harnais",
+  };
+
+  return mapping[normalized] || value;
+};
+
+const normalizeSubCategoriesParam = (value) => {
+  if (!value) return [];
+
+  const splitted = String(value)
+    .split(",")
+    .map((item) => normalizeSubCategoryParam(item))
+    .filter(Boolean)
+    .filter((item) => item !== "all");
+
+  return [...new Set(splitted)];
+};
+
 const normalizeProduct = (product) => {
   const localToSubCategory = {
     collar: "Colliers",
     collier: "Colliers",
+    collars: "Colliers",
+    pack: "Packs",
+    packs: "Packs",
     leash: "Laisses",
     laisse: "Laisses",
     laisses: "Laisses",
@@ -161,8 +209,99 @@ const normalizeProduct = (product) => {
   };
 };
 
+const PackCard = ({ pack }) => {
+  const price = Number(pack.pricePreview?.final ?? pack.price ?? 0);
+  const image = resolveAssetUrl(pack.image || pack.images?.[0]) || "/assets/chien2.png";
+  const stockValue = Number(pack.stock ?? 0);
+  const isPackAvailable = pack.available !== false && stockValue > 0;
+  const stockStatus =
+    !isPackAvailable
+      ? null
+      : stockValue <= 5
+      ? {
+          text: `Plus que ${stockValue} en stock`,
+          className: "bg-[#FFF3E6] text-[#A76228]",
+        }
+      : {
+          text: "En stock",
+          className: "bg-[#EEF9F1] text-[#2F7D57]",
+        };
+
+  return (
+    <article className="group overflow-hidden rounded-[16px] border border-[#E9E0D6] bg-[#FFFDFB] shadow-[0_8px_22px_rgba(17,17,17,0.04)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(17,17,17,0.05)]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[#F8F5F0] p-2.5">
+        <Link to={`/pack/${pack.slug || pack._id}`} className="flex h-full w-full items-center justify-center overflow-hidden rounded-[12px]">
+          <img
+            src={image}
+            alt={pack.name}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full scale-[1.28] rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.34]"
+          />
+        </Link>
+
+        <span className="absolute left-3 top-3 z-10 rounded-full bg-velora-gold px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+          Pack
+        </span>
+      </div>
+
+      <div className="space-y-2 p-2.5">
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-[8px] font-semibold uppercase tracking-[0.12em] text-velora-textGray">
+            {pack.categories?.length
+              ? pack.categories.map((category) => category.name).join(" / ")
+              : pack.category === "chats"
+                ? "Chats"
+                : pack.category === "chiens"
+                  ? "Chiens"
+                  : "Pack"}
+          </span>
+        </div>
+
+        <Link to={`/pack/${pack.slug || pack._id}`} className="block">
+          <h3 className="line-clamp-2 text-[12.5px] font-semibold leading-5 text-velora-dark transition-colors hover:text-velora-gold">
+            {pack.name}
+          </h3>
+        </Link>
+
+        {pack.description && (
+          <p className="line-clamp-2 text-[10.5px] leading-5 text-velora-textGray">
+            {pack.description.length > 70 ? `${pack.description.slice(0, 70)}…` : pack.description}
+          </p>
+        )}
+
+        <div className="flex items-end justify-between gap-2 pt-0.5">
+          <div className="min-w-0">
+            <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
+              À partir de
+            </p>
+            <p className="mt-1 text-[19px] font-bold leading-none text-velora-dark">
+              {price.toFixed(0)}
+              <span className="ml-1 text-[11px] font-semibold">DT</span>
+            </p>
+          </div>
+
+          <Link
+            to={`/pack/${pack.slug || pack._id}`}
+            className="group/cart inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-velora-dark transition-all duration-200 hover:border-velora-gold hover:bg-velora-gold hover:text-white"
+            aria-label={`Voir ${pack.name}`}
+          >
+            <ShoppingCart size={14} className="transition-transform duration-200 group-hover/cart:scale-105" />
+          </Link>
+        </div>
+
+        {stockStatus && (
+          <span className={`inline-flex rounded-full px-2 py-0.5 text-[8px] font-semibold ${stockStatus.className}`}>
+            {stockStatus.text}
+          </span>
+        )}
+      </div>
+    </article>
+  );
+};
+
 export default function Shop() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery =
     searchParams.get("search") || "";
@@ -174,8 +313,17 @@ export default function Shop() {
       searchParams.get("category") || "all"
     );
 
-  const [selectedSubCategory, setSelectedSubCategory] =
-    useState("all");
+  const [selectedSubCategories, setSelectedSubCategories] =
+    useState(() =>
+      normalizeSubCategoriesParam(
+        searchParams.get("subCategory")
+      )
+    );
+
+  const selectedSubCategory =
+    selectedSubCategories.length === 1
+      ? selectedSubCategories[0]
+      : "all";
 
   const [sortBy, setSortBy] =
     useState("featured");
@@ -188,6 +336,31 @@ export default function Shop() {
 
   const [currentPage, setCurrentPage] =
     useState(1);
+
+  const { data: categoryData } = useQuery({
+    queryKey: ["shop-categories"],
+    queryFn: getCategories,
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const categories = useMemo(() => {
+    const dynamicCategories = (categoryData?.categories || [])
+      .filter((category) => category.isActive !== false)
+      .map((category) => {
+        const categoryText = `${category.name} ${category.slug}`.toLowerCase();
+        const isCat = categoryText.includes("chat") || categoryText.includes("cat");
+        return {
+          id: category.slug || category._id,
+          label: category.name,
+          icon: isCat ? Cat : Dog,
+          image: category.image || (isCat ? "/assets/chat2.png" : "/assets/chien2.png"),
+        };
+      });
+
+    return dynamicCategories.length
+      ? [{ id: "all", label: "Tout", icon: Grid3X3 }, ...dynamicCategories]
+      : DEFAULT_CATEGORIES;
+  }, [categoryData]);
 
   // ==========================
   // PAGINATION BACKEND
@@ -205,12 +378,17 @@ export default function Shop() {
     () => ({
       page: currentPage,
       category: selectedCategory,
-      subCategory: selectedSubCategory,
+      subCategory: selectedSubCategories.join(","),
       sort: sortBy,
       search: searchQuery.trim(),
     }),
-    [currentPage, selectedCategory, selectedSubCategory, sortBy, searchQuery]
+    [currentPage, selectedCategory, selectedSubCategories, sortBy, searchQuery]
   );
+
+  const showingPacks = selectedSubCategories.includes("Packs");
+  const showingOnlyPacks = showingPacks && selectedSubCategories.length === 1;
+  const showingAllAccessories = selectedSubCategories.length === 0;
+  const shouldLoadPacks = showingPacks || showingAllAccessories;
 
   const { data, isLoading, isFetching, isError, refetch } = useQuery({
     queryKey: ["products", queryKey],
@@ -223,7 +401,9 @@ export default function Shop() {
 
       if (searchQuery.trim()) params.search = searchQuery.trim();
       if (selectedCategory !== "all") params.category = selectedCategory;
-      if (selectedSubCategory !== "all") params.subCategory = selectedSubCategory;
+      if (selectedSubCategories.length > 0) {
+        params.subCategory = selectedSubCategories.join(",");
+      }
       if (sortBy !== "featured") params.sort = sortBy;
 
       const { data } = await axios.get(`${API_BASE_URL}/products`, { params });
@@ -231,6 +411,19 @@ export default function Shop() {
     },
     staleTime: 1000 * 60 * 3,
     placeholderData: (previousData) => previousData,
+    enabled: !showingOnlyPacks,
+  });
+
+  const {
+    data: packsData,
+    isLoading: packsLoading,
+    isError: packsError,
+    refetch: refetchPacks,
+  } = useQuery({
+    queryKey: ["packs", searchQuery.trim()],
+    queryFn: () => getPacks(),
+    staleTime: 1000 * 60 * 3,
+    enabled: shouldLoadPacks,
   });
 
   const products = useMemo(
@@ -238,7 +431,43 @@ export default function Shop() {
     [data]
   );
 
-  const loading = isLoading;
+  const packs = useMemo(() => {
+    const allPacks = Array.isArray(packsData?.packs) ? packsData.packs : [];
+    const query = searchQuery.trim().toLowerCase();
+    return allPacks
+      .filter((pack) => {
+        if (pack.available === false || Number(pack.stock ?? 0) <= 0) {
+          return false;
+        }
+
+        const packCategories = (pack.categories || [])
+          .map((category) => String(category.slug || category.name || category).toLowerCase());
+        const legacyCategory = String(pack.category || "mixte").toLowerCase();
+        const categoryMatches = selectedCategory === "all"
+          || packCategories.includes(selectedCategory.toLowerCase())
+          || (!packCategories.length && (legacyCategory === "mixte" || legacyCategory === selectedCategory));
+        const searchMatches = !query
+          || `${pack.name} ${pack.description || ""}`.toLowerCase().includes(query);
+        return categoryMatches && searchMatches;
+      })
+      .sort((first, second) => {
+        if (sortBy === "price-asc") return Number(first.pricePreview?.final || 0) - Number(second.pricePreview?.final || 0);
+        if (sortBy === "price-desc") return Number(second.pricePreview?.final || 0) - Number(first.pricePreview?.final || 0);
+        return 0;
+      });
+  }, [packsData, searchQuery, selectedCategory, sortBy]);
+
+  const displayedItems = showingOnlyPacks
+    ? packs
+    : showingAllAccessories
+      ? [...(currentPage === 1 ? packs : []), ...products]
+      : showingPacks
+        ? [...packs, ...products]
+      : products;
+
+  const loading = showingOnlyPacks || showingAllAccessories || showingPacks
+    ? packsLoading || isLoading
+    : isLoading;
 
   const [filtersExpanded, setFiltersExpanded] =
     useState({
@@ -279,11 +508,13 @@ export default function Shop() {
   // ==========================
 
   const pageTitle =
-    selectedSubCategory !== "all"
-      ? selectedSubCategory
+    selectedSubCategories.length === 1
+      ? selectedSubCategories[0]
+      : selectedSubCategories.length > 1
+      ? "Accessoires"
       : selectedCategory === "all"
       ? "Collection"
-      : CATEGORIES.find(
+      : categories.find(
           (category) =>
             category.id === selectedCategory
         )?.label || "Tout";
@@ -292,18 +523,65 @@ export default function Shop() {
   // FILTER ACTIONS
   // ==========================
 
+  useEffect(() => {
+    setSelectedCategory((prev) => {
+      const nextCategory = searchParams.get("category") || "all";
+      return prev === nextCategory ? prev : nextCategory;
+    });
+
+    setSelectedSubCategories((prev) => {
+      const nextSubCategories = normalizeSubCategoriesParam(
+        searchParams.get("subCategory")
+      );
+      return prev.join(",") === nextSubCategories.join(",") ? prev : nextSubCategories;
+    });
+  }, [searchParams]);
+
   const selectCategory = (category) => {
     startTransition(() => {
+      const nextParams = new URLSearchParams(searchParams);
+
+      if (category === "all") {
+        nextParams.delete("category");
+      } else {
+        nextParams.set("category", category);
+      }
+
+      nextParams.delete("subCategory");
+
       setSelectedCategory(category);
-      setSelectedSubCategory("all");
+      setSelectedSubCategories([]);
       setCurrentPage(1);
+      setSearchParams(nextParams, { replace: true });
     });
   };
 
   const selectSubCategory = (subCategory) => {
     startTransition(() => {
-      setSelectedSubCategory(subCategory);
+      const nextParams = new URLSearchParams(searchParams);
+
+      if (subCategory === "all") {
+        nextParams.delete("subCategory");
+        setSelectedSubCategories([]);
+        setCurrentPage(1);
+        setSearchParams(nextParams, { replace: true });
+        return;
+      }
+
+      const wasSelected = selectedSubCategories.includes(subCategory);
+      const nextSelection = wasSelected
+        ? selectedSubCategories.filter((item) => item !== subCategory)
+        : [...selectedSubCategories.filter((item) => item !== "all"), subCategory];
+
+      if (nextSelection.length === 0) {
+        nextParams.delete("subCategory");
+      } else {
+        nextParams.set("subCategory", nextSelection.join(","));
+      }
+
+      setSelectedSubCategories(nextSelection);
       setCurrentPage(1);
+      setSearchParams(nextParams, { replace: true });
     });
   };
 
@@ -328,13 +606,12 @@ export default function Shop() {
 
   const activeFilters = [
     selectedCategory !== "all" &&
-      CATEGORIES.find(
+      categories.find(
         (category) =>
           category.id === selectedCategory
       )?.label,
 
-    selectedSubCategory !== "all" &&
-      selectedSubCategory,
+    ...selectedSubCategories,
   ].filter(Boolean);
 
   // ==========================
@@ -382,11 +659,17 @@ export default function Shop() {
     return <PageSkeleton />;
   }
 
-  if (isError && products.length === 0) {
+  const hasLoadingError = showingOnlyPacks
+    ? packsError
+    : showingAllAccessories
+      ? packsError || isError
+      : isError;
+
+  if (hasLoadingError && displayedItems.length === 0) {
     return (
       <main className="min-h-screen bg-[#F7F3EC] px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <ErrorState onRetry={refetch} />
+          <ErrorState onRetry={showingPacks || showingAllAccessories ? refetchPacks : refetch} />
         </div>
       </main>
     );
@@ -461,7 +744,7 @@ export default function Shop() {
                   centered
                 >
 
-                  {CATEGORIES.map(
+                  {categories.map(
                     (category) => {
                       const selected =
                         selectedCategory ===
@@ -475,7 +758,11 @@ export default function Shop() {
                               category.id
                             )
                           }
-                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                          className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                            category.id === "all"
+                              ? "w-full"
+                              : "ml-6 w-[calc(100%-1.5rem)]"
+                          } ${
                             selected
                               ? "bg-smiley-warning text-white shadow-sm"
                               : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
@@ -515,8 +802,11 @@ export default function Shop() {
                   {SUB_CATEGORIES.map(
                     (subCategory) => {
                       const selected =
-                        selectedSubCategory ===
-                        subCategory.id;
+                        subCategory.id === "all"
+                          ? selectedSubCategories.length === 0
+                          : selectedSubCategories.includes(
+                              subCategory.id
+                            );
 
                       return (
                         <button
@@ -526,29 +816,58 @@ export default function Shop() {
                               subCategory.id
                             )
                           }
-                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                          className={`flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                            subCategory.id === "all"
+                              ? "w-full"
+                              : "ml-6 w-[calc(100%-1.5rem)]"
+                          } ${
                             selected
                               ? "bg-smiley-warning text-white shadow-sm"
                               : "text-velora-textGray hover:bg-[#F8F4EF] hover:text-velora-dark"
                           }`}
                         >
+                          <span className="flex items-center gap-3">
+                            {typeof subCategory.icon === "string" ? (
+                              <img
+                                src={subCategory.icon}
+                                alt={
+                                  subCategory.label
+                                }
+                                className={`h-5 w-5 object-contain ${
+                                  selected
+                                    ? "brightness-0 invert"
+                                    : ""
+                                }`}
+                              />
+                            ) : (
+                              <subCategory.icon
+                                size={16}
+                                strokeWidth={1.8}
+                                className={
+                                  selected
+                                    ? "text-white"
+                                    : "text-current"
+                                }
+                              />
+                            )}
 
-                          <img
-                            src={subCategory.icon}
-                            alt={
-                              subCategory.label
-                            }
-                            className={`h-5 w-5 object-contain ${
-                              selected
-                                ? "brightness-0 invert"
-                                : ""
-                            }`}
-                          />
-
-                          <span>
-                            {subCategory.label}
+                            <span>
+                              {subCategory.label}
+                            </span>
                           </span>
 
+                          <span
+                            className={`flex h-4 w-4 items-center justify-center rounded border transition-all ${
+                              selected
+                                ? "border-white bg-white"
+                                : "border-current/50 bg-transparent"
+                            }`}
+                            aria-hidden="true"
+                          >
+                            {selected && (
+                              <span className="h-2 w-2 rounded-[2px] bg-smiley-warning" />
+                            )}
+                          </span>
                         </button>
                       );
                     }
@@ -687,7 +1006,7 @@ export default function Shop() {
                       "all" && (
                       <FilterChip
                         label={
-                          CATEGORIES.find(
+                          categories.find(
                             (category) =>
                               category.id ===
                               selectedCategory
@@ -701,19 +1020,18 @@ export default function Shop() {
                       />
                     )}
 
-                    {selectedSubCategory !==
-                      "all" && (
-                      <FilterChip
-                        label={
-                          selectedSubCategory
-                        }
-                        onClear={() =>
-                          selectSubCategory(
-                            "all"
-                          )
-                        }
-                      />
-                    )}
+                    {selectedSubCategories.length > 0 &&
+                      selectedSubCategories.map((subCategory) => (
+                        <FilterChip
+                          key={subCategory}
+                          label={subCategory}
+                          onClear={() =>
+                            selectSubCategory(
+                              subCategory
+                            )
+                          }
+                        />
+                      ))}
 
                     <button
                       onClick={resetFilters}
@@ -732,8 +1050,11 @@ export default function Shop() {
                   {SUB_CATEGORIES.map(
                     (subCategory) => {
                       const selected =
-                        selectedSubCategory ===
-                        subCategory.id;
+                        subCategory.id === "all"
+                          ? selectedSubCategories.length === 0
+                          : selectedSubCategories.includes(
+                              subCategory.id
+                            );
 
                       return (
                         <button
@@ -765,7 +1086,7 @@ export default function Shop() {
                   EMPTY STATE
               ========================= */}
 
-              {products.length === 0 ? (
+              {displayedItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center rounded-2xl border border-[#EFE7DC] bg-[#F8F4EF] px-5 py-16 text-center">
 
                   <h3 className="font-premium text-2xl font-bold text-velora-dark">
@@ -799,17 +1120,16 @@ export default function Shop() {
                     }
                   >
 
-                    {products.map(
-                      (product) => (
+                    {displayedItems.map((item) => (
+                      item.components ? (
+                        <PackCard key={`pack-${item._id}`} pack={item} />
+                      ) : (
                         <ProductCard
-                          key={
-                            product.id ||
-                            product._id
-                          }
-                          product={product}
+                          key={item.id || item._id}
+                          product={item}
                         />
                       )
-                    )}
+                    ))}
 
                   </div>
 
@@ -817,7 +1137,7 @@ export default function Shop() {
                       PAGINATION
                   ========================= */}
 
-                  {pagination.pages > 1 && (
+                  {!showingPacks && pagination.pages > 1 && (
                     <div className="mt-9 flex items-center justify-center gap-1">
 
                       {/* PREVIOUS */}
@@ -1022,7 +1342,7 @@ export default function Shop() {
 
                 <MobileFilterGroup title="Pour">
 
-                  {CATEGORIES.map(
+                  {categories.map(
                     (category) => (
                       <button
                         key={category.id}
@@ -1057,35 +1377,67 @@ export default function Shop() {
                 <MobileFilterGroup title="Accessoires">
 
                   {SUB_CATEGORIES.map(
-                    (subCategory) => (
-                      <button
-                        key={subCategory.id}
-                        onClick={() => {
-                          selectSubCategory(
-                            subCategory.id
-                          );
-                          setFilterOpen(false);
-                        }}
-                        className={`flex w-full items-center gap-3 border-b border-[#EFE7DC] py-3 text-left text-sm ${
-                          selectedSubCategory ===
-                          subCategory.id
-                            ? "font-semibold text-velora-dark"
-                            : "text-velora-textGray"
-                        }`}
-                      >
+                    (subCategory) => {
+                      const selected =
+                        subCategory.id === "all"
+                          ? selectedSubCategories.length === 0
+                          : selectedSubCategories.includes(
+                              subCategory.id
+                            );
 
-                        <img
-                          src={subCategory.icon}
-                          alt={
-                            subCategory.label
-                          }
-                          className="h-5 w-5 object-contain"
-                        />
+                      return (
+                        <button
+                          key={subCategory.id}
+                          onClick={() => {
+                            selectSubCategory(
+                              subCategory.id
+                            );
+                            setFilterOpen(false);
+                          }}
+                          className={`flex items-center justify-between gap-3 border-b border-[#EFE7DC] py-3 text-left text-sm ${
+                            subCategory.id === "all"
+                              ? "w-full"
+                              : "ml-6 w-[calc(100%-1.5rem)]"
+                          } ${
+                            selected
+                              ? "font-semibold text-velora-dark"
+                              : "text-velora-textGray"
+                          }`}
+                        >
+                          <span className="flex items-center gap-3">
+                            {typeof subCategory.icon === "string" ? (
+                              <img
+                                src={subCategory.icon}
+                                alt={
+                                  subCategory.label
+                                }
+                                className="h-5 w-5 object-contain"
+                              />
+                            ) : (
+                              <subCategory.icon
+                                size={16}
+                                strokeWidth={1.8}
+                              />
+                            )}
 
-                        {subCategory.label}
+                            {subCategory.label}
+                          </span>
 
-                      </button>
-                    )
+                          <span
+                            className={`flex h-4 w-4 items-center justify-center rounded border ${
+                              selected
+                                ? "border-velora-gold bg-velora-gold"
+                                : "border-[#D5C7BA] bg-white"
+                            }`}
+                            aria-hidden="true"
+                          >
+                            {selected && (
+                              <span className="h-2 w-2 rounded-[2px] bg-white" />
+                            )}
+                          </span>
+                        </button>
+                      );
+                    }
                   )}
 
                 </MobileFilterGroup>

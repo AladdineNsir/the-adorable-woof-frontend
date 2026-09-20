@@ -121,24 +121,25 @@ export default function OrderDetails() {
       />
 
       <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-7">
-        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-3 sm:grid-cols-4 sm:p-4">
-          <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Commande</p>
-            <p className="mt-1 truncate text-sm font-semibold text-velora-dark">{order.orderNumber || "-"}</p>
-          </div>
-          <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Date</p>
-            <p className="mt-1 text-sm font-semibold text-velora-dark">
+        <div className="mb-5 grid gap-3 rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:p-4">
+          <div className="min-w-0">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#918579]">Référence</p>
+            <p className="mt-1 truncate text-xl font-black tracking-[-0.04em] text-velora-dark">
+              {order.orderNumber || "-"}
+            </p>
+            <p className="mt-2 flex items-center gap-2 text-xs text-velora-textGray">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#C96A26]" />
               {order.createdAt ? new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(order.createdAt)) : "-"}
             </p>
           </div>
-          <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Articles</p>
-            <p className="mt-1 text-sm font-semibold text-velora-dark">{order.orderItems?.length || 0}</p>
-          </div>
-          <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#918579]">Total</p>
-            <p className="mt-1 text-sm font-bold text-velora-gold">{money(order.totalPrice)} DT</p>
+
+          <div className="flex items-center justify-end">
+            <div className="rounded-lg border border-[#E7DED2] bg-white px-4 py-3 text-center shadow-sm">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#918579]">Commande</p>
+              <p className="mt-1 text-lg font-black tracking-[0.08em] text-velora-dark">
+                #{(order._id || "").slice(-8).toUpperCase()}
+              </p>
+            </div>
           </div>
         </div>
 

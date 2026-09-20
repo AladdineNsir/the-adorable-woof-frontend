@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImagePlus, RotateCcw } from "lucide-react";
 
 import AdminPageHeader from "../components/AdminPageHeader";
 import { uploadSettingsImage } from "../services/settingsApi";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { getPacks } from "../../services/packApi";
 
 const colorFields = [
   ["primary", "Couleur principale"],
@@ -71,6 +72,13 @@ function ImageSetting({ label, value, onChange }) {
 
 export default function Settings() {
   const { settings, updateSettings, resetSettings } = useSiteSettings();
+  const [packs, setPacks] = useState([]);
+
+  useEffect(() => {
+    getPacks()
+      .then((data) => setPacks(Array.isArray(data?.packs) ? data.packs : []))
+      .catch(() => setPacks([]));
+  }, []);
 
   const updateTheme = (name, value) => updateSettings({ theme: { [name]: value } });
   const updateHome = (name, value) => updateSettings({ home: { [name]: value } });
@@ -117,6 +125,25 @@ export default function Settings() {
         <div className="border border-[#E7DED2] bg-white p-5 shadow-sm sm:p-6">
           <h2 className="text-base font-semibold text-velora-dark">Images du Home</h2>
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <div className="border border-[#E7DED2] bg-[#FCFAF7] p-4 lg:col-span-2">
+              <label className="block text-sm font-semibold text-velora-dark">
+                Pack affiché sur la Home
+              </label>
+              <select
+                value={settings.home.featuredPack || ""}
+                onChange={(event) => updateHome("featuredPack", event.target.value)}
+                className="mt-2 h-11 w-full rounded-lg border border-[#E7DED2] bg-white px-3 text-sm text-velora-dark outline-none focus:border-velora-gold"
+              >
+                <option value="">Afficher tous les packs</option>
+                <option value="__none__">Ne pas afficher les packs</option>
+                {packs.map((pack) => (
+                  <option key={pack._id} value={pack._id}>
+                    {pack.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {imageFields.map(([name, label]) => (
               <ImageSetting
                 key={name}

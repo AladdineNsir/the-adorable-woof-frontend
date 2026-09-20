@@ -124,6 +124,11 @@ const { cart } = useCart();
       Icon: Package,
     },
     {
+      to: "/admin/packs",
+      label: "Packs",
+      Icon: Package,
+    },
+    {
       to: "/admin/categories",
       label: "Catégories",
       Icon: Tags,

@@ -129,9 +129,6 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // ============================================
-  // Ajouter au panier
-  // ============================================
   const addToCart = (
     product,
     quantity,
@@ -142,85 +139,79 @@ export const CartProvider = ({ children }) => {
       phoneNumber: "",
     }
   ) => {
-    const productId =
-      product.id ||
-      product._id ||
-      "";
+    const productId = product.id || product._id || "";
 
     setCart((prevCart) => {
-      // Clé unique produit + options
-      const cartItemId =
-        `${productId}-${size}-${color?.name || ""}-${customization.petName}-${customization.phoneNumber}`;
+      const cartItemId = `${productId}-${size}-${color?.name || ""}-${customization.petName}-${customization.phoneNumber}`;
+      const existingItemIndex = prevCart.findIndex((item) => item.cartItemId === cartItemId);
 
-      const existingItemIndex =
-        prevCart.findIndex(
-          (item) =>
-            item.cartItemId === cartItemId
-        );
-
-      // Surcoût personnalisation
       let extraCost = 0;
+      if (customization.petName) extraCost += 5;
+      if (customization.phoneNumber) extraCost += 5;
 
-      if (customization.petName) {
-        extraCost += 5;
+      const basePrice = Number(product.price || 0) + extraCost;
+
+      if (existingItemIndex > -1) {
+        return prevCart.map((item, index) =>
+          index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item
+        );
       }
 
-      if (customization.phoneNumber) {
-        extraCost += 5;
-      }
-
-      const basePrice =
-        product.price + extraCost;
-
-      // Produit déjà présent
-     if (existingItemIndex > -1) {
-  return prevCart.map((item, index) =>
-    index === existingItemIndex
-      ? {
-          ...item,
-          quantity: item.quantity + quantity,
-        }
-      : item
-  );
-}
-
-      // Nouveau produit
       return [
         ...prevCart,
         {
           cartItemId,
-
           product: productId,
-
           name: product.name,
-
-          image:
-            product.image ||
-            resolveAssetUrl(
-              product.images?.[0]
-            ),
-
+          image: product.image || resolveAssetUrl(product.images?.[0]),
           price: basePrice,
-
           selectedSize: size,
-
-          selectedColor:
-            color?.name,
-
-          colorCode:
-            color?.code,
-
+          selectedColor: color?.name,
+          colorCode: color?.code,
           customization,
-
           quantity,
+          type: "product",
         },
       ];
     });
 
-    triggerToast(
-      `${product.name} ajouté au panier`
-    );
+    triggerToast(`${product.name} ajouté au panier`);
     trackAddToCart(product, quantity);
+  };
+
+  const addPackToCart = (pack, size, quantity = 1) => {
+    const key = `${pack._id || pack.id}-${size}`;
+
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex((item) => item.cartItemId === key && item.type === "pack");
+
+      if (existingItemIndex > -1) {
+        return prevCart.map((item, index) =>
+          index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item
+        );
+      }
+
+      return [
+        ...prevCart,
+        {
+          cartItemId: key,
+          name: pack.name,
+          image: pack.image || resolveAssetUrl(pack.image),
+          price: Number(pack.pricePreview?.final || pack.price || 0),
+          selectedSize: size,
+          selectedColor: "Standard",
+          quantity,
+          type: "pack",
+          packId: pack._id || pack.id,
+          packSlug: pack.slug,
+          components: pack.components || [],
+          product: null,
+          customization: { petName: "", phoneNumber: "" },
+        },
+      ];
+    });
+
+    triggerToast(`${pack.name} ajouté au panier`);
   };
 
   // ============================================
@@ -291,6 +282,7 @@ export const CartProvider = ({ children }) => {
       value={{
         cart,
         addToCart,
+        addPackToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
