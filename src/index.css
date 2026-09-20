@@ -58,7 +58,9 @@
   html {
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior-y: none;
     scroll-behavior: auto;
+    touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
   }
 }
@@ -69,7 +71,13 @@ body {
   color: var(--velora-dark);
   font-family: 'Inter', 'Segoe UI', sans-serif;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+  touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  min-height: 100%;
 }
 
 * {
