@@ -18,25 +18,25 @@ import { Navigate } from "react-router-dom";
 import SEO from "./components/SEO";
 import AnalyticsProvider from "./analytics/AnalyticsProvider";
 import WhatsAppButton from "./components/WhatsAppButton";
-import { prefetchRoute } from "./config/routePreloads";
+import { loadRoute } from "./config/routePreloads";
 import { PageSkeleton } from "./components/LoadingSkeleton";
 
 /* ================= WEBSITE ================= */
 
-const Home = lazy(() => { prefetchRoute("/"); return import("./pages/Home"); });
-const About = lazy(() => { prefetchRoute("/about"); return import("./pages/About"); });
-const Shop = lazy(() => { prefetchRoute("/shop"); return import("./pages/Shop"); });
+const Home = lazy(() => loadRoute("/") || import("./pages/Home"));
+const About = lazy(() => loadRoute("/about") || import("./pages/About"));
+const Shop = lazy(() => loadRoute("/shop") || import("./pages/Shop"));
 const PackDetails = lazy(() => import("./pages/PackDetails"));
-const Cart = lazy(() => { prefetchRoute("/cart"); return import("./pages/Cart"); });
-const ContactPage = lazy(() => { prefetchRoute("/contact"); return import("./pages/Contact"); });
-const SizeGuide = lazy(() => { prefetchRoute("/size-guide"); return import("./pages/SizeGuide"); });
-const FAQ = lazy(() => { prefetchRoute("/faq"); return import("./pages/FAQ"); });
+const Cart = lazy(() => loadRoute("/cart") || import("./pages/Cart"));
+const ContactPage = lazy(() => loadRoute("/contact") || import("./pages/Contact"));
+const SizeGuide = lazy(() => loadRoute("/size-guide") || import("./pages/SizeGuide"));
+const FAQ = lazy(() => loadRoute("/faq") || import("./pages/FAQ"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 
 /* ================= AUTH ================= */
 
-const Login = lazy(() => { prefetchRoute("/login"); return import("./pages/Login"); });
-const Register = lazy(() => { prefetchRoute("/register"); return import("./pages/Register"); });
+const Login = lazy(() => loadRoute("/login") || import("./pages/Login"));
+const Register = lazy(() => loadRoute("/register") || import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));

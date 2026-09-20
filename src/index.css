@@ -56,7 +56,7 @@
 
 @media (max-width: 1023px) {
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
     overflow-y: auto;
     overscroll-behavior-y: auto;
     scroll-behavior: auto;
@@ -69,7 +69,7 @@ body {
   background: var(--velora-cream);
   color: var(--velora-dark);
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
   overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
 }

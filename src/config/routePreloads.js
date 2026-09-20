@@ -12,12 +12,25 @@ const routeLoaders = {
 
 const loadedRoutes = new Map();
 
-export const prefetchRoute = (path) => {
+export const loadRoute = (path) => {
   const basePath = path.split("?")[0];
   const loader = routeLoaders[basePath];
-  if (!loader) return;
+  if (!loader) return null;
 
   if (!loadedRoutes.has(basePath)) {
-    loadedRoutes.set(basePath, loader());
+    loadedRoutes.set(
+      basePath,
+      loader().catch((error) => {
+        loadedRoutes.delete(basePath);
+        throw error;
+      })
+    );
   }
+
+  return loadedRoutes.get(basePath);
+};
+
+export const prefetchRoute = (path) => {
+  const promise = loadRoute(path);
+  if (promise) promise.catch(() => {});
 };
