@@ -240,9 +240,6 @@ const PackCard = ({ pack }) => {
           />
         </Link>
 
-        <span className="absolute left-3 top-3 z-10 rounded-full bg-velora-gold px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
-          Pack
-        </span>
       </div>
 
       <div className="space-y-2 p-2.5">
@@ -276,7 +273,7 @@ const PackCard = ({ pack }) => {
               À partir de
             </p>
             <p className="mt-1 text-[19px] font-bold leading-none text-velora-dark">
-              {price.toFixed(0)}
+              {Math.floor(price)}
               <span className="ml-1 text-[11px] font-semibold">DT</span>
             </p>
           </div>

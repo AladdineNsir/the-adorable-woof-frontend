@@ -208,7 +208,7 @@ const steps = [
                     {step.description}
                   </p>
 
-                  <p
+                  <div
                     className={`mt-1 text-[11px] ${
                       step.active
                         ? "text-[#C96A26]"
@@ -226,7 +226,7 @@ const steps = [
 >
   {step.statusText}
 </p>
-                  </p>
+                  </div>
                 </div>
               </div>
             );

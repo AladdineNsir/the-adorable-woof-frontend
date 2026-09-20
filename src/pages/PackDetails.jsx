@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { ArrowLeft, Minus, Plus, Ruler, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingBag } from "lucide-react";
 
 import { getPackById } from "../services/packApi";
 import { useCart } from "../context/CartContext";
 import ValuesSection from "../components/ValuesSection";
 import { resolveAssetUrl } from "../config/api";
 
-const formatPrice = (value) => `${Number(value || 0).toFixed(2)} DT`;
+const formatPrice = (value) => `${Math.floor(Number(value || 0))} DT`;
 
 export default function PackDetails() {
   const { id } = useParams();
@@ -17,6 +17,7 @@ export default function PackDetails() {
 
   const [pack, setPack] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageIndex, setImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("Standard");
   const [quantity, setQuantity] = useState(1);
 
@@ -26,6 +27,7 @@ export default function PackDetails() {
       try {
         const data = await getPackById(id);
         setPack(data);
+        setImageIndex(0);
         setSelectedSize(data?.compatibleSizes?.includes("Standard") ? "Standard" : data?.compatibleSizes?.[0] || "Standard");
       } catch (error) {
         toast.error(error?.response?.data?.message || "Pack introuvable.");
@@ -37,6 +39,29 @@ export default function PackDetails() {
 
     fetchPack();
   }, [id]);
+
+  const gallery = useMemo(() => {
+    if (!pack) return [];
+
+    const rawImages = pack.images?.length
+      ? pack.images
+      : pack.image
+        ? [pack.image]
+        : [];
+
+    return [...new Set(rawImages.map((image) => resolveAssetUrl(image)).filter(Boolean))];
+  }, [pack]);
+
+  const currentImage = gallery[imageIndex] || gallery[0] || "/assets/chien2.png";
+  const hasMultipleImages = gallery.length > 1;
+
+  const nextImage = () => {
+    if (hasMultipleImages) setImageIndex((previous) => (previous + 1) % gallery.length);
+  };
+
+  const previousImage = () => {
+    if (hasMultipleImages) setImageIndex((previous) => (previous - 1 + gallery.length) % gallery.length);
+  };
 
   const pricePreview = useMemo(() => {
     if (!pack) return { final: 0, subtotal: 0, discount: 0 };
@@ -92,7 +117,6 @@ export default function PackDetails() {
     navigate("/cart?checkout=1");
   };
 
-  const packImage = resolveAssetUrl(pack.image) || "/assets/chien2.png";
   const discountPercentage = pack.discountType === "percentage" ? Number(pack.discountValue || 0) : 0;
 
   return (
@@ -108,7 +132,7 @@ export default function PackDetails() {
               <div className="overflow-hidden rounded-[22px] border border-[#E8DED1] bg-[#FAF8F4] shadow-[0_12px_32px_rgba(17,17,17,0.04)]">
                 <div className="relative aspect-square w-full overflow-hidden rounded-[18px] bg-[#FAF8F4] p-3 sm:p-4">
                   {discountPercentage > 0 && (
-                    <span className="absolute left-4 top-4 z-20 rounded-md bg-velora-gold px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
+                    <span className="absolute left-4 top-4 z-20 rounded-md bg-[#9B2C2C] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm">
                       -{discountPercentage} %
                     </span>
                   )}
@@ -121,9 +145,30 @@ export default function PackDetails() {
                       {inStock ? "En stock" : "Rupture"}
                     </div>
                   </div>
-                  <img src={packImage} alt={pack.name} className="h-full w-full scale-[1.05] rounded-[14px] object-contain" loading="eager" />
+                  {hasMultipleImages && (
+                    <>
+                      <button type="button" onClick={previousImage} aria-label="Image précédente" className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E8DED1] bg-white/90 shadow-sm transition hover:border-velora-gold hover:text-velora-gold">
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button type="button" onClick={nextImage} aria-label="Image suivante" className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#E8DED1] bg-white/90 shadow-sm transition hover:border-velora-gold hover:text-velora-gold">
+                        <ChevronRight size={16} />
+                      </button>
+                    </>
+                  )}
+                  <img src={currentImage} alt={pack.name} className="h-full w-full scale-[1.05] rounded-[14px] object-contain" loading="eager" />
                 </div>
               </div>
+              {gallery.length > 1 && (
+                <div className="mt-2 flex justify-center gap-2 overflow-x-auto sm:mt-3 sm:gap-3">
+                  {gallery.map((image, index) => (
+                    <button key={image} type="button" onClick={() => setImageIndex(index)} aria-label={`Afficher l'image ${index + 1}`} className={`flex-none overflow-hidden rounded-xl border transition-all duration-200 ${imageIndex === index ? "border-[#C89B5A] shadow-[0_0_0_1px_rgba(200,155,90,0.2)]" : "border-[#E8DED1] hover:border-[#C89B5A]/70"}`}>
+                      <div className="h-16 w-20 overflow-hidden rounded-lg bg-[#FAF8F4] p-1.5">
+                        <img src={image} alt={`${pack.name} ${index + 1}`} loading="lazy" decoding="async" className="mx-auto h-full w-full rounded-md object-contain" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex h-full flex-col lg:pt-4">
@@ -150,9 +195,6 @@ export default function PackDetails() {
                   <div className="mb-3 flex items-center justify-between">
                     <div>
                       <span className="block text-xs font-bold uppercase tracking-[0.18em] text-[#403A35]">Taille</span>
-                      <span className="mt-1 flex items-center gap-1.5 text-xs font-medium text-velora-gold">
-                        <Ruler size={14} strokeWidth={1.7} /> Tailles compatibles : {availableSizes.join(" / ")}
-                      </span>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -182,9 +224,6 @@ export default function PackDetails() {
                 </button>
               </div>
 
-              <p className={`mt-4 text-sm font-medium ${inStock ? "text-emerald-700" : "text-red-600"}`}>
-                {inStock ? `Disponibilité : ${stockPreview} packs disponibles pour la taille ${selectedSize}` : "Pack indisponible pour cette taille."}
-              </p>
             </div>
           </div>
         </div>
@@ -193,8 +232,12 @@ export default function PackDetails() {
           <h2 className="font-premium text-2xl font-bold text-velora-dark">Contenu du pack</h2>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
             {(pack.components || []).map((item) => (
-              <div key={item.product?._id || item.product} className="flex items-center gap-3 rounded-xl border border-[#E7DED2] bg-[#FCFAF7] p-3">
-                <img src={resolveAssetUrl(item.product?.images?.[0] || item.product?.image) || "/assets/chien2.png"} alt={item.product?.name || "Produit"} className="h-16 w-16 rounded-lg object-cover" />
+              <div key={item.product?._id || item.product} className="flex items-start gap-3 rounded-xl border border-[#E7DED2] bg-[#FCFAF7] p-3">
+                <div className="flex shrink-0 gap-2 overflow-x-auto">
+                  {(item.product?.images?.length ? item.product.images : [item.product?.image]).filter(Boolean).map((image, imageIndex) => (
+                    <img key={`${image}-${imageIndex}`} src={resolveAssetUrl(image) || "/assets/chien2.png"} alt={item.product?.name || "Produit"} className="h-16 w-16 rounded-lg object-cover" />
+                  ))}
+                </div>
                 <div className="min-w-0">
                   <p className="font-semibold text-velora-dark">{item.product?.name || "Produit"}</p>
                   <p className="text-sm text-velora-textGray">Quantité : {item.quantity}</p>

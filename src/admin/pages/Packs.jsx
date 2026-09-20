@@ -149,7 +149,7 @@ export default function Packs() {
                   <thead className="bg-[#FCFAF7] text-[#6D5E53]">
                     <tr>
                       <th className="px-4 py-3 font-semibold">Nom</th>
-                      <th className="px-4 py-3 font-semibold">Produits</th>
+                      <th className="hidden px-4 py-3 font-semibold md:table-cell">Produits</th>
                       <th className="px-4 py-3 font-semibold">Prix</th>
                       <th className="px-4 py-3 font-semibold">Réduction</th>
                       <th className="px-4 py-3 font-semibold">Stock</th>
@@ -169,12 +169,12 @@ export default function Packs() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-velora-textGray">
+                        <td className="hidden px-4 py-4 text-velora-textGray md:table-cell">
                           {pack.components?.map((item) => item.product?.name || "Produit").join(", ") || "-"}
                         </td>
                         <td className="px-4 py-4">
-                          <div className="font-semibold text-velora-dark">Après réduction : {Number(pack.pricePreview?.final ?? 0).toFixed(2)} DT</div>
-                          <div className="text-xs text-velora-textGray">Prix produits : {Number(pack.pricePreview?.subtotal ?? 0).toFixed(2)} DT</div>
+                          <div className="font-semibold text-velora-dark">Après réduction : {Math.floor(Number(pack.pricePreview?.final ?? 0))} DT</div>
+                          <div className="text-xs text-velora-textGray">Prix produits : {Math.floor(Number(pack.pricePreview?.subtotal ?? 0))} DT</div>
                         </td>
                         <td className="px-4 py-4 text-velora-textGray">
                           {pack.discountType === "percentage" ? `${pack.discountValue || 0}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}

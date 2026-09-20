@@ -272,7 +272,7 @@ export const CartProvider = ({ children }) => {
     return cart.reduce(
       (acc, item) =>
         acc +
-        item.price * item.quantity,
+        (item.type === "pack" ? Math.floor(Number(item.price || 0)) : Number(item.price || 0)) * item.quantity,
       0
     );
   };

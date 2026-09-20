@@ -32,7 +32,8 @@ const initialShippingAddress = {
 const inputClass =
   "h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10";
 
-const formatPrice = (price) => `${Number(price || 0).toFixed(2)} DT`;
+const formatPrice = (price, isPack = false) => `${isPack ? Math.floor(Number(price || 0)) : Number(price || 0).toFixed(2)} DT`;
+const getCartItemPrice = (item) => item.type === "pack" ? Math.floor(Number(item.price || 0)) : Number(item.price || 0);
 
 const getUserShippingAddress = (user) => ({
   fullName: user?.name || "",
@@ -113,10 +114,15 @@ export default function Cart() {
     }
 
     const orderItems = cart.map((item) => ({
+      type: item.type || "product",
       product: item.product,
+      packId: item.packId,
+      packSlug: item.packSlug,
       name: item.name,
+      image: item.image,
+      components: item.components,
       quantity: item.quantity,
-      price: item.price,
+      price: item.type === "pack" ? Math.floor(Number(item.price || 0)) : item.price,
       selectedSize: item.selectedSize || "Standard",
       selectedColor: item.selectedColor || "Standard",
       customization: item.customization || {
@@ -233,7 +239,7 @@ setOrderResult(data);
 
                         <div className="min-w-0">
                           <h3 className="line-clamp-2 text-sm sm:text-base font-semibold text-velora-dark">{item.name}</h3>
-                          <p className="mt-1 text-sm font-semibold text-velora-dark">{formatPrice(item.price)}</p>
+                          <p className="mt-1 text-sm font-semibold text-velora-dark">{formatPrice(item.price, item.type === "pack")}</p>
 
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             <span className="inline-flex items-center rounded-md border border-[#E7DED2] bg-[#FCFAF7] px-2 py-0.5 text-[10px] font-medium text-velora-dark">Taille: {item.selectedSize || "Standard"}</span>
@@ -258,7 +264,7 @@ setOrderResult(data);
 
                         <div className="text-left md:text-right">
                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-velora-textGray">Total</p>
-                          <p className="mt-0.5 text-sm font-bold text-velora-dark">{formatPrice(item.price * item.quantity)}</p>
+                          <p className="mt-0.5 text-sm font-bold text-velora-dark">{formatPrice(getCartItemPrice(item) * item.quantity, item.type === "pack")}</p>
                         </div>
 
                         <button type="button" onClick={() => { trackRemoveFromCart(item); removeFromCart(item.cartItemId); }} className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg border border-[#EFE7DC] text-velora-textGray transition hover:border-red-200 hover:bg-red-50 hover:text-red-500 md:static" aria-label="Supprimer l'article"><Trash2 size={14} /></button>
@@ -285,7 +291,7 @@ setOrderResult(data);
                     <div className="space-y-3 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="text-velora-textGray">Sous-total</span>
-                        <span className="font-semibold text-velora-dark">{formatPrice(itemsTotal)}</span>
+                        <span className="font-semibold text-velora-dark">{formatPrice(itemsTotal, cart.length > 0 && cart.every((item) => item.type === "pack"))}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-velora-textGray">Livraison</span>
@@ -298,7 +304,7 @@ setOrderResult(data);
 
                   <div className="flex items-end justify-between">
                     <span className="text-lg font-semibold text-velora-dark">Total</span>
-                    <span className="text-2xl font-premium font-bold text-velora-dark">{formatPrice(total)}</span>
+                    <span className="text-2xl font-premium font-bold text-velora-dark">{formatPrice(total, cart.length > 0 && cart.every((item) => item.type === "pack"))}</span>
                   </div>
                 </div>
 

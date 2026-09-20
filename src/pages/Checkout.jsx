@@ -7,6 +7,8 @@ import { getProfile } from "../services/authApi";
 import toast from "react-hot-toast";
 import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout } from "../analytics/analytics";
 
+const formatCartItemPrice = (price, isPack = false) => `${isPack ? Math.floor(Number(price || 0)) : Number(price || 0).toFixed(2)} DT`;
+
 export default function Checkout() {
   const navigate = useNavigate();
 
@@ -15,9 +17,11 @@ export default function Checkout() {
 
 
   const shippingPrice = 7;
+  const onlyPacks = cart.length > 0 && cart.every((item) => item.type === "pack");
+  const getItemPrice = (item) => item.type === "pack" ? Math.floor(Number(item.price || 0)) : Number(item.price || 0);
 
   const subtotal = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) => acc + getItemPrice(item) * item.quantity,
     0
   );
 
@@ -81,7 +85,10 @@ export default function Checkout() {
       // API après
 
       await createOrder({
-        orderItems: cart,
+        orderItems: cart.map((item) => ({
+          ...item,
+          price: getItemPrice(item),
+        })),
         shippingAddress: form,
         paymentMethod: "Paiement à la livraison",
         shippingPrice,
@@ -236,7 +243,7 @@ export default function Checkout() {
                       <h3 className="text-sm font-semibold text-velora-dark truncate">{item.name}</h3>
                       <p className="text-xs text-velora-textGray">Qté : {item.quantity}</p>
                     </div>
-                    <div className="text-sm font-semibold text-velora-dark">{(item.price * item.quantity).toFixed(2)} DT</div>
+                    <div className="text-sm font-semibold text-velora-dark">{formatCartItemPrice(getItemPrice(item) * item.quantity, item.type === "pack")}</div>
                   </div>
                 ))
               )}
@@ -245,9 +252,9 @@ export default function Checkout() {
             <div className="border-t border-[#EFE7DC] my-5" />
 
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between text-velora-textGray"><span>Sous-total</span><span>{subtotal.toFixed(2)} DT</span></div>
+              <div className="flex justify-between text-velora-textGray"><span>Sous-total</span><span>{formatCartItemPrice(subtotal, onlyPacks)}</span></div>
               <div className="flex justify-between text-velora-textGray"><span>Livraison</span><span>{shippingPrice.toFixed(2)} DT</span></div>
-              <div className="flex justify-between pt-3 border-t border-[#EFE7DC] text-lg font-bold text-velora-dark"><span>Total</span><span>{total.toFixed(2)} DT</span></div>
+              <div className="flex justify-between pt-3 border-t border-[#EFE7DC] text-lg font-bold text-velora-dark"><span>Total</span><span>{formatCartItemPrice(total, onlyPacks)}</span></div>
             </div>
 
             <button type="submit" onClick={handleOrder} disabled={loading || cart.length === 0} className="w-full h-12 mt-6 rounded-lg bg-velora-gold text-white font-semibold hover:bg-velora-goldHover transition disabled:opacity-60">

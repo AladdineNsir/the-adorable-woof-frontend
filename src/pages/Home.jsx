@@ -19,6 +19,7 @@ const reveal = (direction = 0, delay = 0) => ({
 export default function Home() {
   const { settings } = useSiteSettings();
   const [packs, setPacks] = useState([]);
+  const [packImageIndices, setPackImageIndices] = useState({});
   const selectedFeaturedPack = settings.home.featuredPack || "";
   const heroImage =
     settings.home.heroImage === "/assets/d1.png"
@@ -76,6 +77,26 @@ export default function Home() {
         : packs.filter(
             (pack) => pack.available !== false && Number(pack.stock ?? 0) > 0
           );
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setPackImageIndices((currentIndices) => {
+        const nextIndices = { ...currentIndices };
+
+        packs.forEach((pack) => {
+          const imageCount = pack.images?.length || (pack.image ? 1 : 0);
+          if (imageCount > 1) {
+            const packKey = String(pack._id || pack.slug);
+            nextIndices[packKey] = ((currentIndices[packKey] || 0) + 1) % imageCount;
+          }
+        });
+
+        return nextIndices;
+      });
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [packs]);
 
   return (
     <main className="overflow-x-hidden bg-velora-cream text-velora-dark">
@@ -214,7 +235,13 @@ export default function Home() {
       {/* PACKS */}
       <div className="space-y-5">
         {visiblePacks.map((pack, index) => {
+          const packKey = String(pack._id || pack.slug);
+          const packImages = (pack.images?.length ? pack.images : [pack.image])
+            .filter(Boolean)
+            .map((packImage) => resolveAssetUrl(packImage))
+            .filter(Boolean);
           const image =
+            packImages[packImageIndices[packKey] % packImages.length] ||
             resolveAssetUrl(pack.image) ||
             settings.home.collections.harnais;
 
@@ -386,11 +413,11 @@ export default function Home() {
                     {/* DISCOUNT */}
                     {discountPercentage > 0 && (
                       <div className="mt-3 flex items-baseline gap-2 whitespace-nowrap">
-                        <span className="text-sm text-velora-gold sm:text-base">
+                        <span className="text-sm text-[#9B2C2C] sm:text-base">
                           Remise exclusive
                         </span>
 
-                        <span className="text-sm font-bold text-velora-gold sm:text-base">
+                        <span className="text-sm font-bold text-[#9B2C2C] sm:text-base">
                           -{discountPercentage} %
                         </span>
                       </div>
