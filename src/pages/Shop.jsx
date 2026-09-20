@@ -1335,6 +1335,38 @@ export default function Shop() {
 
               </div>
 
+              {activeFilters.length > 0 && (
+                <div className="mb-6 rounded-xl border border-[#EFE7DC] bg-[#FCFAF7] p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-velora-textGray">
+                      Filtres sélectionnés
+                    </p>
+                    <button
+                      type="button"
+                      onClick={resetFilters}
+                      className="text-[11px] font-semibold text-velora-gold hover:text-velora-dark"
+                    >
+                      Tout retirer
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategory !== "all" && (
+                      <FilterChip
+                        label={categories.find((category) => category.id === selectedCategory)?.label}
+                        onClear={() => selectCategory("all")}
+                      />
+                    )}
+                    {selectedSubCategories.map((subCategory) => (
+                      <FilterChip
+                        key={subCategory}
+                        label={subCategory}
+                        onClear={() => selectSubCategory(subCategory)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-7">
 
                 <MobileFilterGroup title="Pour">
@@ -1347,7 +1379,6 @@ export default function Shop() {
                           selectCategory(
                             category.id
                           );
-                          setFilterOpen(false);
                         }}
                         className={`flex w-full items-center gap-3 border-b border-[#EFE7DC] py-3 text-sm ${
                           selectedCategory ===
@@ -1389,7 +1420,6 @@ export default function Shop() {
                             selectSubCategory(
                               subCategory.id
                             );
-                            setFilterOpen(false);
                           }}
                           className={`flex items-center justify-between gap-3 border-b border-[#EFE7DC] py-3 text-left text-sm ${
                             subCategory.id === "all"
