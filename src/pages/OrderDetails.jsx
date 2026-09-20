@@ -33,7 +33,7 @@ const formatDate = (date) => {
   }).format(new Date(date));
 };
 
-const money = (value) => Number(value || 0).toFixed(2);
+const money = (value) => Math.floor(Number(value || 0));
 
 const getOrderNumber = (id) =>
   id?.slice(-8)?.toUpperCase() || "COMMANDE";

@@ -149,7 +149,7 @@ export default function ProductCard({ product }) {
               {hasSizePricing ? "À partir de" : "Prix"}
             </p>
             <p className="mt-1 text-[19px] font-bold leading-none text-[var(--velora-dark)]">
-              {displayPrice.toFixed(0)}
+              {Math.floor(displayPrice)}
               <span className="ml-1 text-[11px] font-semibold">DT</span>
             </p>
           </div>

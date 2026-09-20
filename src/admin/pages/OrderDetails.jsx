@@ -26,7 +26,7 @@ const deliveryStatuses = [
   "Retourné",
 ];
 
-const money = (value) => Number(value || 0).toFixed(2);
+const money = (value) => Math.floor(Number(value || 0));
 const normalizePhoneStatus = (status) =>
   status === "En attente d d'appel" ? "En attente d'appel" : status;
 

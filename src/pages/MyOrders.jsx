@@ -278,7 +278,6 @@ function Status({ children }) {
 //               </p>
 
 //               <p className="mt-1 text-base font-bold text-velora-dark sm:text-lg">
-//                 {Number(order.totalPrice || 0).toFixed(2)}
 //                 <span className="ml-1 text-[9px] font-semibold uppercase tracking-wider text-velora-textGray">
 //                   DT
 //                 </span>
@@ -545,7 +544,7 @@ function OrderCard({ order }) {
             </p>
 
             <p className="mt-1 flex items-end justify-center gap-1 whitespace-nowrap leading-none text-[17px] font-semibold tracking-normal text-[#201B18] sm:text-[18px]">
-              <span>{Number(order.totalPrice || 0).toFixed(2)}</span>
+              <span>{Math.floor(Number(order.totalPrice || 0))}</span>
               <span className="pb-[1px] text-[9px] font-bold uppercase tracking-[0.12em] text-velora-textGray">
                 DT
               </span>

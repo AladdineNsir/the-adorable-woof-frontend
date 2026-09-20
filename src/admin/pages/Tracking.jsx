@@ -108,7 +108,7 @@ export default function Tracking() {
         <h2 className="text-base font-semibold text-velora-dark">Statistiques réelles enregistrées</h2>
         <p className="mt-1 text-sm text-velora-textGray">Aucune statistique n'est simulée. Les valeurs apparaissent après consentement et événements reçus.</p>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[['Visiteurs', analytics?.visitors || 0], ['Pages vues', analytics?.pageViews || 0], ['Ajouts panier', analytics?.addToCart || 0], ['Commandes', analytics?.orders || 0], ['Checkouts', analytics?.checkouts || 0], ['CA', `${Number(analytics?.revenue || 0).toFixed(2)} DT`], ['Vues produits', analytics?.productViews || 0], ['Conversion', `${analytics?.conversionRate || 0}%`]].map(([label, value]) => <div key={label} className="border border-[#E7DED2] p-3"><span className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-velora-textGray">{label}</span><strong className="mt-2 block text-lg text-velora-dark">{value}</strong></div>)}
+          {[['Visiteurs', analytics?.visitors || 0], ['Pages vues', analytics?.pageViews || 0], ['Ajouts panier', analytics?.addToCart || 0], ['Commandes', analytics?.orders || 0], ['Checkouts', analytics?.checkouts || 0], ['CA', `${Math.floor(Number(analytics?.revenue || 0))} DT`], ['Vues produits', analytics?.productViews || 0], ['Conversion', `${Math.floor(Number(analytics?.conversionRate || 0))}%`]].map(([label, value]) => <div key={label} className="border border-[#E7DED2] p-3"><span className="block text-[10px] font-semibold uppercase tracking-[0.1em] text-velora-textGray">{label}</span><strong className="mt-2 block text-lg text-velora-dark">{value}</strong></div>)}
         </div>
       </section>
     </section>

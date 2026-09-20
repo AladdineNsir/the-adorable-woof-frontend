@@ -258,7 +258,7 @@ export default function Home() {
 
           const discountPercentage =
             pack.discountType === "percentage"
-              ? Number(pack.discountValue || 0)
+              ? Math.floor(Number(pack.discountValue || 0))
               : 0;
 
           const componentNames = (pack.components || [])
@@ -591,7 +591,7 @@ export default function Home() {
                 </div>
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">
-                    CUCHE CONFORT
+                    COUCHE CONFORT
                   </span>
                   <p className="mt-1 text-sm leading-6 text-velora-textGray">
                     <strong>Douceur • Confort • Protection</strong>

@@ -32,7 +32,7 @@ const initialShippingAddress = {
 const inputClass =
   "h-11 w-full rounded-lg border border-[#E7DED2] bg-[#FCFAF7] px-4 text-sm text-velora-dark outline-none transition focus:border-velora-gold focus:ring-2 focus:ring-velora-gold/10";
 
-const formatPrice = (price, isPack = false) => `${isPack ? Math.floor(Number(price || 0)) : Number(price || 0).toFixed(2)} DT`;
+const formatPrice = (price) => `${Math.floor(Number(price || 0))} DT`;
 const getCartItemPrice = (item) => item.type === "pack" ? Math.floor(Number(item.price || 0)) : Number(item.price || 0);
 
 const getUserShippingAddress = (user) => ({

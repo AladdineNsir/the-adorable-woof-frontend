@@ -7,7 +7,7 @@ import { getProfile } from "../services/authApi";
 import toast from "react-hot-toast";
 import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout } from "../analytics/analytics";
 
-const formatCartItemPrice = (price, isPack = false) => `${isPack ? Math.floor(Number(price || 0)) : Number(price || 0).toFixed(2)} DT`;
+const formatCartItemPrice = (price) => `${Math.floor(Number(price || 0))} DT`;
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -198,7 +198,7 @@ export default function Checkout() {
                   <h3 className="font-semibold text-sm">Livraison Standard</h3>
                   <p className="text-sm text-velora-textGray">Livraison sous 24 à 72 heures.</p>
                 </div>
-                <span className="font-semibold text-velora-dark">{shippingPrice.toFixed(2)} DT</span>
+                <span className="font-semibold text-velora-dark">{Math.floor(shippingPrice)} DT</span>
               </div>
             </div>
 
@@ -253,7 +253,7 @@ export default function Checkout() {
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-velora-textGray"><span>Sous-total</span><span>{formatCartItemPrice(subtotal, onlyPacks)}</span></div>
-              <div className="flex justify-between text-velora-textGray"><span>Livraison</span><span>{shippingPrice.toFixed(2)} DT</span></div>
+              <div className="flex justify-between text-velora-textGray"><span>Livraison</span><span>{Math.floor(shippingPrice)} DT</span></div>
               <div className="flex justify-between pt-3 border-t border-[#EFE7DC] text-lg font-bold text-velora-dark"><span>Total</span><span>{formatCartItemPrice(total, onlyPacks)}</span></div>
             </div>
 

@@ -35,7 +35,7 @@ const formatDate = (date) =>
     : "-";
 
 const formatMoney = (value) =>
-  `${Number(value || 0).toFixed(2)} DT`;
+  `${Math.floor(Number(value || 0))} DT`;
 
 const CLIENTS_PER_PAGE = 8;
 

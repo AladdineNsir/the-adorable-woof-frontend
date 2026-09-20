@@ -792,7 +792,7 @@ setToastVisible(true);
                   {(
                     Number(form.price || 0) -
                     Number(form.costPrice || 0)
-                  ).toFixed(2)}{" "}
+                  )} {" "}
                   TND
                 </p>
               </div>

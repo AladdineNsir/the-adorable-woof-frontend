@@ -39,7 +39,7 @@ const getSizeEntries = (product) => {
 };
 
 
-const formatPrice = (price) => `${Number(price || 0).toFixed(0)} DT`;
+const formatPrice = (price) => `${Math.floor(Number(price || 0))} DT`;
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -178,7 +178,7 @@ const inStock =
     offers: {
       "@type": "Offer",
       priceCurrency: "TND",
-      price: Number(displayPrice || 0).toFixed(2),
+      price: Math.floor(Number(displayPrice || 0)),
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: window.location.href,
     },

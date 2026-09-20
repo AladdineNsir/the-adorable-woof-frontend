@@ -122,7 +122,7 @@ export default function Orders() {
                       </div>
                     </td>
 
-                    <td className="px-5 lg:px-6 py-4 align-middle text-sm font-bold text-[#1F1713]">{order.totalPrice?.toFixed(2)} DT</td>
+                    <td className="px-5 lg:px-6 py-4 align-middle text-sm font-bold text-[#1F1713]">{Math.floor(Number(order.totalPrice || 0))} DT</td>
 
                     <td className="px-5 lg:px-6 py-4 align-middle">
                       <span className="inline-flex items-center rounded-md border border-amber-100 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold text-amber-700">A la livraison</span>

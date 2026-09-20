@@ -154,7 +154,7 @@ export default function Packs() {
                       <div className="mt-0.5 truncate text-xs text-velora-textGray">{pack.slug}</div>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <StatusBadge active={pack.isActive} />
-                        <span className="rounded-full bg-[#FFF7EE] px-2.5 py-1 text-[11px] font-semibold text-[#A76228]">-{pack.discountType === "percentage" ? `${pack.discountValue || 0}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}</span>
+                        <span className="rounded-full bg-[#FFF7EE] px-2.5 py-1 text-[11px] font-semibold text-[#A76228]">-{pack.discountType === "percentage" ? `${Math.floor(Number(pack.discountValue || 0))}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}</span>
                       </div>
                     </div>
                   </div>
@@ -214,7 +214,7 @@ export default function Packs() {
                           <div className="text-xs text-velora-textGray">Prix produits : {Math.floor(Number(pack.pricePreview?.subtotal ?? 0))} DT</div>
                         </td>
                         <td className="px-4 py-4 text-velora-textGray">
-                          {pack.discountType === "percentage" ? `${pack.discountValue || 0}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}
+                          {pack.discountType === "percentage" ? `${Math.floor(Number(pack.discountValue || 0))}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}
                         </td>
                         <td className="px-4 py-4 text-velora-textGray">
                           {pack.compatibleSizes?.length ? pack.compatibleSizes.map((size) => `${size}: ${pack.stockPreview?.[size] ?? 0}`).join(" / ") : "Aucune taille commune"}

@@ -117,7 +117,7 @@ export default function PackDetails() {
     navigate("/cart?checkout=1");
   };
 
-  const discountPercentage = pack.discountType === "percentage" ? Number(pack.discountValue || 0) : 0;
+  const discountPercentage = pack.discountType === "percentage" ? Math.floor(Number(pack.discountValue || 0)) : 0;
 
   return (
     <div className="min-h-[60vh] bg-[#F7F3EC] py-8 sm:py-10 lg:py-12">

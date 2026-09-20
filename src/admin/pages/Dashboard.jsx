@@ -41,8 +41,8 @@ const numberFormatter = new Intl.NumberFormat("fr-FR");
 
 const formatMoney = (value) =>
   `${Number(value || 0).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   })} DT`;
 
 const formatPercent = (value) => {
@@ -51,7 +51,7 @@ const formatPercent = (value) => {
   }
 
   const number = Number(value);
-  return `${number >= 0 ? "+" : ""}${number.toFixed(1)}%`;
+  return `${number >= 0 ? "+" : ""}${Math.floor(number)}%`;
 };
 
 const formatDate = (date) => {
