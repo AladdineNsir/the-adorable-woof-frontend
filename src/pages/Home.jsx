@@ -298,9 +298,10 @@ export default function Home() {
                 ====================================================== */}
                 <div
                   className="
-                    absolute inset-y-0 right-0
+                    relative h-[250px]
                     w-full
                     overflow-hidden
+                    sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto
                     sm:w-[58%]
                   "
                 >
@@ -359,176 +360,155 @@ export default function Home() {
                     CONTENT
                 ====================================================== */}
                 <div
+                  className="
+                    relative z-10
+                    flex min-h-0
+                    w-full
+                    flex-col
+                    justify-between
+                    p-5
+                    sm:min-h-[370px]
+                    sm:max-w-[58%]
+                    sm:p-8
+                    lg:p-10
+                  "
+                >
+
+                  {/* TOP */}
+                  <div>
+
+                    {/* LABEL */}
+                    <div className="flex items-center gap-4">
+                      <p
+                        className="
+                          text-[10px]
+                          font-semibold
+                          uppercase
+                          tracking-[0.24em]
+                          text-velora-gold
+                          sm:text-xs
+                        "
+                      >
+                        Pack Signature
+                      </p>
+
+                      <span className="h-px w-10 bg-velora-gold sm:w-14" />
+                    </div>
+
+                    {/* TITLE */}
+                    <h6
   className="
-    relative z-10
-    flex min-h-[330px]
-    w-full
-    flex-col
-    justify-between
-    overflow-hidden
-    bg-gradient-to-r
-    from-velora-cream
-    via-velora-cream/90
-    to-transparent
-    p-5
-    sm:min-h-[370px]
-    sm:max-w-[58%]
-    sm:bg-transparent
-    sm:overflow-visible
-    sm:p-8
-    lg:p-10
+    mt-4
+    max-w-2xl
+    font-premium
+    text-2xl
+    leading-[0.98]
+    text-velora-dark
+    sm:text-3xl
+    lg:text-4xl
   "
 >
-  {/* TOP */}
-  <div>
+  {pack.name}
+</h6>
 
-    {/* LABEL */}
-    <div className="flex items-center gap-3 sm:gap-4">
-      <p
-        className="
-          text-[9px]
-          font-semibold
-          uppercase
-          tracking-[0.20em]
-          text-velora-gold
-          sm:text-xs
-          sm:tracking-[0.24em]
-        "
-      >
-        Pack Signature
-      </p>
+                    {/* DISCOUNT */}
+                    {discountPercentage > 0 && (
+                      <div className="mt-3 flex items-baseline gap-2 whitespace-nowrap">
+                        <span className="text-sm text-[#9B2C2C] sm:text-base">
+                          Remise exclusive
+                        </span>
 
-      <span className="h-px w-8 bg-velora-gold sm:w-14" />
-    </div>
+                        <span className="text-sm font-bold text-[#9B2C2C] sm:text-base">
+                          -{discountPercentage} %
+                        </span>
+                      </div>
+                    )}
 
-    {/* TITLE */}
-    <h6
-      className="
-        mt-3
-        max-w-[85%]
-        font-premium
-        text-2xl
-        leading-[1]
-        text-velora-dark
-        sm:mt-4
-        sm:max-w-2xl
-        sm:text-3xl
-        sm:leading-[0.98]
-        lg:text-4xl
-      "
-    >
-      {pack.name}
-    </h6>
+                    {/* COMPONENTS */}
+                    <p
+                      className="
+                        mt-4
+                        max-w-xl
+                        text-sm
+                        leading-6
+                        text-velora-dark
+                        sm:text-base
+                        lg:text-lg
+                      "
+                    >
+                      {componentNames || "Harnais + Collier + Laisse"}
+                    </p>
 
-    {/* DISCOUNT */}
-    {discountPercentage > 0 && (
-      <div className="mt-2 flex items-baseline gap-2 whitespace-nowrap sm:mt-3">
-        <span className="text-xs text-[#9B2C2C] sm:text-base">
-          Remise exclusive
-        </span>
+                    {/* DESCRIPTION */}
+                    <p
+                      className="
+                        mt-2
+                        max-w-md
+                        text-xs
+                        italic
+                        leading-5
+                        text-velora-textGray
+                        sm:text-sm
+                      "
+                    >
+                      {pack.description ||
+                        "L’essentiel pour des promenades tout en harmonie."}
+                    </p>
+                  </div>
 
-        <span className="text-xs font-bold text-[#9B2C2C] sm:text-base">
-          -{discountPercentage} %
-        </span>
-      </div>
-    )}
+                  {/* =====================================================
+                      BOTTOM
+                  ====================================================== */}
+                  <div
+                    className="
+                      mt-8
+                      flex
+                      flex-col
+                      gap-4
+                      sm:flex-row
+                      sm:items-end
+                      sm:justify-between
+                    "
+                  >
 
-    {/* COMPONENTS */}
-    <p
-      className="
-        mt-3
-        max-w-[90%]
-        text-xs
-        leading-5
-        text-velora-dark
-        sm:mt-4
-        sm:max-w-xl
-        sm:text-base
-        sm:leading-6
-        lg:text-lg
-      "
-    >
-      {componentNames || "Harnais + Collier + Laisse"}
-    </p>
+                    {/* BUTTON */}
+                    <span
+                      className="
+                        inline-flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-3
+                        rounded-[16px]
+                        bg-velora-gold
+                        px-5
+                        text-[10px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.14em]
+                        text-white
+                        shadow-[0_8px_20px_rgba(196,82,17,0.18)]
+                        transition-all
+                        duration-300
+                        group-hover:bg-velora-goldHover
+                        group-hover:shadow-[0_10px_24px_rgba(196,82,17,0.25)]
+                        sm:px-7
+                        sm:text-xs
+                      "
+                    >
+                      Découvrir le pack
 
-    {/* DESCRIPTION */}
-    <p
-      className="
-        mt-2
-        max-w-[85%]
-        text-[11px]
-        italic
-        leading-4
-        text-velora-dark
-        sm:max-w-md
-        sm:text-sm
-        sm:leading-5
-        sm:text-velora-textGray
-      "
-    >
-      {pack.description ||
-        "L’essentiel pour des promenades tout en harmonie."}
-    </p>
-  </div>
-
-  {/* BOTTOM */}
-  <div
-    className="
-      mt-6
-      flex
-      flex-col
-      gap-4
-      sm:mt-8
-      sm:flex-row
-      sm:items-end
-      sm:justify-between
-    "
-  >
-    {/* BUTTON */}
-    <span
-      className="
-        inline-flex
-        min-h-10
-        w-fit
-        items-center
-        justify-center
-        gap-2
-        rounded-[14px]
-        bg-velora-gold
-        px-5
-        text-[9px]
-        font-semibold
-        uppercase
-        tracking-[0.12em]
-        text-white
-        shadow-[0_8px_20px_rgba(196,82,17,0.18)]
-        transition-all
-        duration-300
-        group-hover:bg-velora-goldHover
-        group-hover:shadow-[0_10px_24px_rgba(196,82,17,0.25)]
-        sm:min-h-11
-        sm:gap-3
-        sm:rounded-[16px]
-        sm:px-7
-        sm:text-xs
-        sm:tracking-[0.14em]
-      "
-    >
-      Découvrir le pack
-
-      <ArrowRight
-        size={17}
-        className="
-          transition-transform
-          duration-300
-          group-hover:translate-x-1
-          sm:h-[18px]
-          sm:w-[18px]
-        "
-      />
-    </span>
-  </div>
-</div>
+                      <ArrowRight
+                        size={18}
+                        className="
+                          transition-transform
+                          duration-300
+                          group-hover:translate-x-1
+                        "
+                      />
+                    </span>
+                  </div>
+                </div>
 
                 {/* =====================================================
                     MOBILE OVERLAY
