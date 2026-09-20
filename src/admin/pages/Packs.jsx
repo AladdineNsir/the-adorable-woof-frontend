@@ -143,7 +143,44 @@ export default function Packs() {
               <Link to="/admin/packs/add" className="mt-5 inline-flex h-11 items-center justify-center rounded-xl bg-[#C96A26] px-5 text-sm font-semibold text-white">Créer un pack</Link>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-[#E7DED2] bg-white shadow-[0_10px_30px_rgba(17,17,17,0.04)]">
+            <>
+            <div className="md:hidden space-y-3">
+              {paginatedPacks.map((pack) => (
+                <article key={pack._id} className="rounded-2xl border border-[#E7DED2] bg-white p-4 shadow-[0_8px_22px_rgba(17,17,17,0.04)]">
+                  <div className="flex items-start gap-3">
+                    {pack.image ? <img src={pack.image} alt={pack.name} className="h-16 w-16 shrink-0 rounded-xl object-cover" /> : <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#F8F3ED] text-[#C96A26]"><Package size={20} /></div>}
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold leading-5 text-velora-dark">{pack.name}</div>
+                      <div className="mt-0.5 truncate text-xs text-velora-textGray">{pack.slug}</div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <StatusBadge active={pack.isActive} />
+                        <span className="rounded-full bg-[#FFF7EE] px-2.5 py-1 text-[11px] font-semibold text-[#A76228]">-{pack.discountType === "percentage" ? `${pack.discountValue || 0}%` : pack.discountType === "fixed" ? `${pack.discountValue || 0} DT` : "Aucune"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3 border-t border-[#EFE7DC] pt-3 text-sm">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Prix</p>
+                      <p className="mt-1 font-semibold text-velora-dark">{Math.floor(Number(pack.pricePreview?.final ?? 0))} DT</p>
+                      <p className="text-xs text-velora-textGray">Produits: {Math.floor(Number(pack.pricePreview?.subtotal ?? 0))} DT</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-velora-textGray">Stock</p>
+                      <p className="mt-1 leading-5 text-velora-dark">{pack.compatibleSizes?.length ? pack.compatibleSizes.map((size) => `${size}: ${pack.stockPreview?.[size] ?? 0}`).join(" / ") : "Aucune taille commune"}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex justify-end gap-2 border-t border-[#EFE7DC] pt-3">
+                    <Link to={`/admin/packs/edit/${pack._id}`} className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-[#8D8176]" aria-label="Modifier le pack"><Edit size={16} strokeWidth={1.8} /></Link>
+                    <button type="button" onClick={() => toggleActive(pack)} className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-[#8D8176]" aria-label={pack.isActive ? "Désactiver" : "Activer"}>{pack.isActive ? <ToggleRight size={16} strokeWidth={1.8} /> : <ToggleLeft size={16} strokeWidth={1.8} />}</button>
+                    <button type="button" onClick={() => { setSelectedPack(pack); setDeleteOpen(true); }} className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#E7DED2] bg-white text-[#8D8176]" aria-label="Supprimer le pack"><Trash2 size={16} strokeWidth={1.8} /></button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="hidden overflow-hidden rounded-2xl border border-[#E7DED2] bg-white shadow-[0_10px_30px_rgba(17,17,17,0.04)] md:block">
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
                   <thead className="bg-[#FCFAF7] text-[#6D5E53]">
@@ -216,6 +253,7 @@ export default function Packs() {
                 </table>
               </div>
             </div>
+            </>
           )}
 
           {filteredPacks.length > PACKS_PER_PAGE && (
