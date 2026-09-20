@@ -652,7 +652,7 @@ export default function Shop() {
   // LOADING
   // ==========================
 
-  if (loading && products.length === 0) {
+  if (loading && products.length === 0 && !filterOpen) {
     return <PageSkeleton />;
   }
 
