@@ -292,6 +292,11 @@ export default function Home() {
                   sm:min-h-[370px]
                 "
               >
+                {discountPercentage > 0 && (
+                  <span className="absolute left-4 top-4 z-20 rounded-md bg-[#9B2C2C] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-sm sm:left-auto sm:right-4">
+                    -{discountPercentage} %
+                  </span>
+                )}
 
                 {/* =====================================================
                     IMAGE
