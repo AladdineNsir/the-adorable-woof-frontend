@@ -518,7 +518,10 @@ const { cart } = useCart();
               right-0
               top-[60px]
               max-h-[calc(100dvh-60px)]
+              overscroll-contain
               overflow-y-auto
+              [touch-action:pan-y]
+              [-webkit-overflow-scrolling:touch]
               z-[60]
               md:hidden
               border-t

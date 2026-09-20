@@ -48,8 +48,10 @@
   border-color: var(--velora-primary) !important;
 }
 
-html {
-  scroll-behavior: smooth;
+@media (min-width: 1024px) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

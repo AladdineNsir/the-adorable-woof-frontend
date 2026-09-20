@@ -1307,7 +1307,7 @@ export default function Shop() {
                 type: "tween",
                 duration: 0.25,
               }}
-              className="fixed bottom-0 left-0 top-0 z-50 w-[86%] max-w-sm overflow-y-auto bg-white p-5 sm:p-6 lg:hidden"
+              className="fixed bottom-0 left-0 top-0 z-50 w-[86%] max-w-sm overscroll-contain overflow-y-auto bg-white p-5 [touch-action:pan-y] [-webkit-overflow-scrolling:touch] sm:p-6 lg:hidden"
             >
 
               <div className="mb-6 flex items-center justify-between">

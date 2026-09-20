@@ -229,7 +229,7 @@ export default function Topbar({
                     <p className="mt-1 text-xs text-velora-textGray">Votre espace est à jour.</p>
                   </div>
                 ) : (
-                  <div className="max-h-[min(420px,60vh)] divide-y divide-[#EFE7DC] overflow-y-auto p-2">
+                  <div className="max-h-[min(420px,60vh)] divide-y divide-[#EFE7DC] overscroll-contain overflow-y-auto p-2 [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
                     {visibleNotifications.map((order) => (
                       <Link
                         key={order._id}

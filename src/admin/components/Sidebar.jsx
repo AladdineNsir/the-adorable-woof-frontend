@@ -115,7 +115,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        <nav className="mt-7 flex-1 space-y-1 px-2">
+        <nav className="mt-7 flex-1 space-y-1 overflow-y-auto overscroll-contain px-2 [touch-action:pan-y] [-webkit-overflow-scrolling:touch]">
           {menu.map((item) => {
             const Icon = item.icon;
             const isCollapsedDesktop = !sidebarOpen && collapsed;
