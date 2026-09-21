@@ -94,7 +94,7 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
     {
       icon: Mail,
       label: "Email",
-      value: "theadoreablewoof@gmail.com",
+      value: "contact@adorablewoof.tn",
     },
     {
       icon: Clock,
