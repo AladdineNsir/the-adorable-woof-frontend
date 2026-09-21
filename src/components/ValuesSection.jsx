@@ -205,7 +205,7 @@ export default function ValuesSection() {
         {/* =========================================
             TITRE
         ========================================= */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -221,7 +221,18 @@ export default function ValuesSection() {
 
             <div className="h-px w-5 sm:w-8 bg-velora-gold" />
           </div>
-        </motion.div>
+        </motion.div> */}
+        <div className="mb-3 flex justify-center sm:mb-5 md:mb-6">
+  <div className="inline-flex items-center gap-1.5 sm:gap-2">
+    <div className="h-px w-5 sm:w-8 bg-velora-gold" />
+
+    <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-velora-gold sm:text-xs">
+      Nos Valeurs
+    </span>
+
+    <div className="h-px w-5 sm:w-8 bg-velora-gold" />
+  </div>
+</div>
 
         {/* =========================================
             CARDS
