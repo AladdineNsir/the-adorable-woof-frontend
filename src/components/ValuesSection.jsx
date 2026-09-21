@@ -245,116 +245,211 @@ export default function ValuesSection() {
           {values.map((value, i) => {
             const Icon = value.icon;
 
+            // return (
+            //   <motion.div
+            //     key={value.title}
+            //     initial={{
+            //       opacity: 0,
+            //       y: 15,
+            //     }}
+            //     whileInView={{
+            //       opacity: 1,
+            //       y: 0,
+            //     }}
+            //     viewport={{
+            //       once: true,
+            //     }}
+            //     transition={{
+            //       duration: 0.35,
+            //       delay: i * 0.08,
+            //     }}
+            //     className="
+            //       w-full
+            //       rounded-lg
+            //       border
+            //       border-velora-gold/20
+            //       px-2
+            //       py-3
+            //       text-center
+            //       transition-all
+            //       duration-300
+            //       hover:-translate-y-1
+            //       hover:border-velora-gold/50
+            //       hover:shadow-md
+
+            //       sm:px-5
+            //       sm:py-5
+
+            //       md:p-6
+            //     "
+            //   >
+
+            //     {/* =========================================
+            //         ICON
+            //     ========================================= */}
+            //     <div
+            //       className="
+            //         mx-auto
+            //         mb-2
+            //         flex
+            //         h-8
+            //         w-8
+            //         items-center
+            //         justify-center
+            //         rounded-full
+            //         border
+            //         border-velora-gold/40
+
+            //         sm:mb-3
+            //         sm:h-10
+            //         sm:w-10
+
+            //         md:h-12
+            //         md:w-12
+            //       "
+            //     >
+            //       <Icon
+            //         size={14}
+            //         className="text-velora-gold sm:size-[17px] md:size-[18px]"
+            //       />
+            //     </div>
+
+            //     {/* =========================================
+            //         TITRE
+            //     ========================================= */}
+            //     <h3
+            //       className="
+            //         mb-1
+            //         font-premium
+            //         text-[11px]
+            //         font-bold
+            //         leading-tight
+            //         text-velora-dark
+
+            //         sm:text-sm
+
+            //         md:text-base
+            //       "
+            //     >
+            //       {value.title}
+            //     </h3>
+
+            //     {/* =========================================
+            //         DESCRIPTION
+            //     ========================================= */}
+            //     <p
+            //       className="
+            //         mx-auto
+            //         max-w-[260px]
+            //         text-[9px]
+            //         leading-[1.35]
+            //         text-velora-textGray
+
+            //         sm:text-xs
+
+            //         md:text-sm
+            //       "
+            //     >
+            //       {value.desc}
+            //     </p>
+
+            //   </motion.div>
+            // );
             return (
-              <motion.div
-                key={value.title}
-                initial={{
-                  opacity: 0,
-                  y: 15,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  duration: 0.35,
-                  delay: i * 0.08,
-                }}
-                className="
-                  w-full
-                  rounded-lg
-                  border
-                  border-velora-gold/20
-                  px-2
-                  py-3
-                  text-center
-                  transition-all
-                  duration-300
-                  hover:-translate-y-1
-                  hover:border-velora-gold/50
-                  hover:shadow-md
+  <div
+    key={value.title}
+    className="
+      w-full
+      rounded-lg
+      border
+      border-velora-gold/20
+      px-2
+      py-3
+      text-center
+      transition-all
+      duration-300
+      hover:-translate-y-1
+      hover:border-velora-gold/50
+      hover:shadow-md
 
-                  sm:px-5
-                  sm:py-5
+      sm:px-5
+      sm:py-5
 
-                  md:p-6
-                "
-              >
+      md:p-6
+    "
+  >
 
-                {/* =========================================
-                    ICON
-                ========================================= */}
-                <div
-                  className="
-                    mx-auto
-                    mb-2
-                    flex
-                    h-8
-                    w-8
-                    items-center
-                    justify-center
-                    rounded-full
-                    border
-                    border-velora-gold/40
+    {/* =========================================
+        ICON
+    ========================================= */}
+    <div
+      className="
+        mx-auto
+        mb-2
+        flex
+        h-8
+        w-8
+        items-center
+        justify-center
+        rounded-full
+        border
+        border-velora-gold/40
 
-                    sm:mb-3
-                    sm:h-10
-                    sm:w-10
+        sm:mb-3
+        sm:h-10
+        sm:w-10
 
-                    md:h-12
-                    md:w-12
-                  "
-                >
-                  <Icon
-                    size={14}
-                    className="text-velora-gold sm:size-[17px] md:size-[18px]"
-                  />
-                </div>
+        md:h-12
+        md:w-12
+      "
+    >
+      <Icon
+        size={14}
+        className="text-velora-gold sm:size-[17px] md:size-[18px]"
+      />
+    </div>
 
-                {/* =========================================
-                    TITRE
-                ========================================= */}
-                <h3
-                  className="
-                    mb-1
-                    font-premium
-                    text-[11px]
-                    font-bold
-                    leading-tight
-                    text-velora-dark
+    {/* =========================================
+        TITRE
+    ========================================= */}
+    <h3
+      className="
+        mb-1
+        font-premium
+        text-[11px]
+        font-bold
+        leading-tight
+        text-velora-dark
 
-                    sm:text-sm
+        sm:text-sm
 
-                    md:text-base
-                  "
-                >
-                  {value.title}
-                </h3>
+        md:text-base
+      "
+    >
+      {value.title}
+    </h3>
 
-                {/* =========================================
-                    DESCRIPTION
-                ========================================= */}
-                <p
-                  className="
-                    mx-auto
-                    max-w-[260px]
-                    text-[9px]
-                    leading-[1.35]
-                    text-velora-textGray
+    {/* =========================================
+        DESCRIPTION
+    ========================================= */}
+    <p
+      className="
+        mx-auto
+        max-w-[260px]
+        text-[9px]
+        leading-[1.35]
+        text-velora-textGray
 
-                    sm:text-xs
+        sm:text-xs
 
-                    md:text-sm
-                  "
-                >
-                  {value.desc}
-                </p>
+        md:text-sm
+      "
+    >
+      {value.desc}
+    </p>
 
-              </motion.div>
-            );
+  </div>
+);
           })}
 
         </div>

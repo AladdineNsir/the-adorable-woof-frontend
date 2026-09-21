@@ -615,7 +615,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* <ValuesSection /> */}
+      <ValuesSection /> 
     </main>
   );
 }
