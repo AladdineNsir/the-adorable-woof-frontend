@@ -73,9 +73,22 @@ body {
   overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
 } */
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--velora-cream);
+  color: var(--velora-dark);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+} */
+ @media (max-width: 1023px) {
+  html {
+    overflow-x: hidden;
   }
 }
 
