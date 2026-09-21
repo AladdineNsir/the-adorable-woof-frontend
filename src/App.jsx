@@ -23,14 +23,31 @@ import { PageSkeleton } from "./components/LoadingSkeleton";
 
 /* ================= WEBSITE ================= */
 
-const Home = lazy(() => loadRoute("/") || import("./pages/Home"));
-const About = lazy(() => loadRoute("/about") || import("./pages/About"));
-const Shop = lazy(() => loadRoute("/shop") || import("./pages/Shop"));
+// const Home = lazy(() => loadRoute("/") || import("./pages/Home"));
+// const About = lazy(() => loadRoute("/about") || import("./pages/About"));
+// const Shop = lazy(() => loadRoute("/shop") || import("./pages/Shop"));
+// const PackDetails = lazy(() => import("./pages/PackDetails"));
+// const Cart = lazy(() => loadRoute("/cart") || import("./pages/Cart"));
+// const ContactPage = lazy(() => loadRoute("/contact") || import("./pages/Contact"));
+// const SizeGuide = lazy(() => loadRoute("/size-guide") || import("./pages/SizeGuide"));
+// const FAQ = lazy(() => loadRoute("/faq") || import("./pages/FAQ"));
+// const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const Home = lazy(() => import("./pages/Home"));
+
+const About = lazy(() => import("./pages/About"));
+
+const Shop = lazy(() => import("./pages/Shop"));
+
 const PackDetails = lazy(() => import("./pages/PackDetails"));
-const Cart = lazy(() => loadRoute("/cart") || import("./pages/Cart"));
-const ContactPage = lazy(() => loadRoute("/contact") || import("./pages/Contact"));
-const SizeGuide = lazy(() => loadRoute("/size-guide") || import("./pages/SizeGuide"));
-const FAQ = lazy(() => loadRoute("/faq") || import("./pages/FAQ"));
+
+const Cart = lazy(() => import("./pages/Cart"));
+
+const ContactPage = lazy(() => import("./pages/Contact"));
+
+const SizeGuide = lazy(() => import("./pages/SizeGuide"));
+
+const FAQ = lazy(() => import("./pages/FAQ"));
+
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 
 /* ================= AUTH ================= */
