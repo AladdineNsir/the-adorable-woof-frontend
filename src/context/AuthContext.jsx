@@ -22,6 +22,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     const checkAuth = async () => {
       try {
         const data = await getProfile();
