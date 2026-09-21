@@ -114,11 +114,11 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
 
         <div className="absolute inset-0 flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <motion.div
-  initial={false}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0 }}
-  className="max-w-3xl text-center"
->
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="max-w-3xl text-center"
+          >
             <div className="mb-4 flex items-center justify-center gap-3">
               <div className="h-px w-8 bg-[#C96A26]" />
 

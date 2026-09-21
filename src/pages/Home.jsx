@@ -99,7 +99,8 @@ export default function Home() {
   }, [packs]);
 
   return (
-    <main className="overflow-x-hidden bg-velora-cream text-velora-dark">
+    // <main className="overflow-x-hidden bg-velora-cream text-velora-dark">
+    <main className="bg-velora-cream text-velora-dark">
       <section className="bg-velora-cream py-10 sm:py-14 lg:min-h-[70vh] lg:py-16">
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 sm:px-6 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:px-16">
           <motion.div {...reveal(-40)} className="order-2 lg:order-1">
