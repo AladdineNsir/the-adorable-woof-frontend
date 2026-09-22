@@ -723,7 +723,7 @@ export default function OrderDetails() {
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.45 }}
-              className="min-w-0 space-y-5"
+              className="contents"
             >
               <OrderTimeline order={order} />
 
@@ -733,9 +733,11 @@ export default function OrderDetails() {
                 items={order.orderItems || []}
               />
 
-              <ShippingAddress
-                address={order.shippingAddress}
-              />
+              <div className="order-4 min-w-0 lg:order-none lg:col-start-1">
+                <ShippingAddress
+                  address={order.shippingAddress}
+                />
+              </div>
             </motion.div>
 
             {/* RIGHT */}
@@ -744,6 +746,7 @@ export default function OrderDetails() {
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.45 }}
+              className="order-3 lg:col-start-2 lg:row-start-1 lg:row-span-3"
             >
               <OrderSummary
                 summary={summary}
