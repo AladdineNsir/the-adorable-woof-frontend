@@ -297,7 +297,7 @@ function OrderItems({ items = [] }) {
   const count = items.length;
 
   return (
-    <div className="rounded-xl border border-[#E8DED1] bg-white">
+    <div className="overflow-hidden rounded-xl border border-[#E8DED1] bg-white">
       <div className="flex flex-col gap-2 border-b border-[#EFE7DC] px-5 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
