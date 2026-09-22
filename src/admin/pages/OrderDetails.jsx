@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Clock3, Mail, MapPin, Package, Phone, ReceiptText, User } from "lucide-react";
+import { Clock3, Mail, MapPin, Package, Phone, Printer, ReceiptText, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 import AdminPageHeader from "../components/AdminPageHeader";
@@ -95,6 +95,10 @@ export default function OrderDetails() {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
@@ -118,7 +122,93 @@ export default function OrderDetails() {
         description=""
         breadcrumb={["Commandes", "Détail"]}
         backTo="/admin/orders"
+        action={(
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-velora-gold px-4 text-sm font-semibold text-white transition-colors hover:bg-velora-goldHover"
+          >
+            <Printer size={16} />
+            Imprimer la facture
+          </button>
+        )}
       />
+
+      <section className="print-invoice" aria-label="Facture imprimable">
+        <header className="print-invoice-header">
+          <div>
+            <p className="print-brand">The aDoraBle woof co.</p>
+          </div>
+          <div className="print-invoice-meta">
+            <p className="print-label">Facture</p>
+            <p className="print-order-number">{order.orderNumber || "-"}</p>
+            <p className="print-muted">
+              {order.createdAt
+                ? new Intl.DateTimeFormat("fr-FR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  }).format(new Date(order.createdAt))
+                : "-"}
+            </p>
+          </div>
+        </header>
+
+        <div className="print-invoice-details">
+          <div>
+            <p className="print-label">Client</p>
+            <p>{order.shippingAddress?.fullName || order.user?.name || "Client invite"}</p>
+            <p>{order.shippingAddress?.phone || "-"}</p>
+            <p>{order.shippingAddress?.email || order.user?.email || "-"}</p>
+          </div>
+          <div>
+            <p className="print-label">Adresse de livraison</p>
+            <p>{order.shippingAddress?.address || "-"}</p>
+            <p>
+              {order.shippingAddress?.zipCode || "-"} {order.shippingAddress?.city || ""}
+            </p>
+            {order.shippingAddress?.governorate && <p>{order.shippingAddress.governorate}</p>}
+          </div>
+          <div>
+            <p className="print-label">Mode de paiement</p>
+            <p>{order.paymentMethod || "Paiement à la livraison"}</p>
+          </div>
+        </div>
+
+        <table className="print-invoice-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Taille</th>
+              <th>Couleur</th>
+              <th className="print-number">Qté</th>
+              <th className="print-number">Prix unitaire</th>
+              <th className="print-number">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.orderItems?.map((item, index) => (
+              <tr key={`${item.product || item.pack || item.name}-${index}`}>
+                <td>{item.name || "Produit"}</td>
+                <td>{item.selectedSize || "-"}</td>
+                <td>{item.selectedColor || "-"}</td>
+                <td className="print-number">{item.quantity || 0}</td>
+                <td className="print-number">{money(item.price)} DT</td>
+                <td className="print-number">
+                  {money(Number(item.price || 0) * Number(item.quantity || 0))} DT
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="print-invoice-totals">
+          <div><span>Sous-total</span><strong>{money(totals.items)} DT</strong></div>
+          <div><span>Livraison</span><strong>{money(totals.shipping)} DT</strong></div>
+          <div className="print-total"><span>Total</span><strong>{money(totals.total)} DT</strong></div>
+        </div>
+
+      </section>
 
       <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-7">
         <div className="mb-5 grid gap-3 rounded-xl border border-[#E8DED1] bg-[#FCFAF7] p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:p-4">

@@ -244,3 +244,145 @@ img {
 .border-\[\#E8D8C8\] {
   border-color: var(--velora-primary) !important;
 }
+
+.print-invoice {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #1f1713 !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-invoice,
+  .print-invoice * {
+    visibility: visible !important;
+  }
+
+  .print-invoice {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background: #ffffff;
+    color: #1f1713;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+  }
+
+  .print-invoice-header,
+  .print-invoice-details {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .print-invoice-header {
+    align-items: flex-start;
+    border-bottom: 2px solid #1f1713;
+    padding-bottom: 18px;
+  }
+
+  .print-invoice-meta {
+    text-align: right;
+  }
+
+  .print-brand {
+    margin: 0;
+    color: #c96a26;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .print-order-number {
+    margin: 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .print-muted {
+    margin: 3px 0;
+    color: #75685f;
+  }
+
+  .print-label {
+    margin: 0 0 6px;
+    color: #c96a26;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .print-invoice-details {
+    border-bottom: 1px solid #e8ded1;
+    padding: 22px 0;
+  }
+
+  .print-invoice-details > div {
+    flex: 1;
+  }
+
+  .print-invoice-details p {
+    margin: 3px 0;
+  }
+
+  .print-invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 28px;
+  }
+
+  .print-invoice-table th,
+  .print-invoice-table td {
+    border-bottom: 1px solid #e8ded1;
+    padding: 9px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .print-invoice-table th {
+    background: #1f1713;
+    color: #ffffff;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .print-number {
+    text-align: right !important;
+    white-space: nowrap;
+  }
+
+  .print-invoice-totals {
+    margin: 22px 0 0 auto;
+    width: 260px;
+  }
+
+  .print-invoice-totals > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 5px 0;
+  }
+
+  .print-total {
+    border-top: 2px solid #1f1713;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 400;
+    margin-top: 7px;
+    padding-top: 10px !important;
+  }
+}
