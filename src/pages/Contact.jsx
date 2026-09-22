@@ -44,12 +44,19 @@ export default function ContactPage() {
   setLoading(true);
 
   try {
-const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POST",
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 20000);
+
+    const response = await fetch(`${API_BASE_URL}/contact/send`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(form),
+      signal: controller.signal,
     });
+
+    window.clearTimeout(timeout);
 
     const data = await response.json();
 
@@ -72,7 +79,9 @@ const response = await fetch(`${API_BASE_URL}/contact/send`, {      method: "POS
     console.error("❌ Erreur Contact :", error);
 
     toast.error(
-      error.message ||
+      error.name === "AbortError"
+        ? "Le serveur met trop de temps à répondre. Réessayez dans quelques instants."
+        : error.message ||
         "Une erreur est survenue lors de l'envoi du message."
     );
   } finally {
