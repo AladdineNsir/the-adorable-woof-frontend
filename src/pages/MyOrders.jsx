@@ -494,7 +494,7 @@ function OrderCard({ order }) {
       "
     >
       <div className="px-5 py-5 sm:px-6">
-        <div className="grid grid-cols-[minmax(0,1.8fr)_auto_auto_auto] items-center gap-3 sm:gap-4 md:gap-5">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:grid-cols-[minmax(0,1.8fr)_auto_auto_auto] sm:gap-4 md:gap-5">
 
           {/* LEFT */}
           <div className="min-w-0">
@@ -527,7 +527,7 @@ function OrderCard({ order }) {
           </div>
 
           {/* ARTICLES */}
-          <div className="min-w-[80px] text-center">
+            <div className="hidden min-w-[80px] text-center sm:block">
             <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-velora-textGray">
               Articles
             </p>
@@ -538,7 +538,7 @@ function OrderCard({ order }) {
           </div>
 
           {/* TOTAL */}
-          <div className="min-w-[110px] shrink-0 text-center">
+            <div className="hidden min-w-[110px] shrink-0 text-center sm:block">
             <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-velora-textGray">
               Total
             </p>
