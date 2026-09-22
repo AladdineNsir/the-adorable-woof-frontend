@@ -334,11 +334,11 @@ const image = imageSource
           return (
             <div
               key={item._id || `${item.name}-${index}`}
-              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 transition-colors hover:bg-[#FCFAF7] sm:flex sm:flex-row sm:gap-4 sm:px-6 sm:py-5"
+              className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-1 px-4 py-4 transition-colors hover:bg-[#FCFAF7] sm:flex sm:flex-row sm:gap-4 sm:px-6 sm:py-5"
             >
               {/* IMAGE */}
 
-             <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] p-1.5 sm:h-24 sm:w-24 sm:p-2">
+             <div className="row-span-2 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] p-1.5 sm:row-span-1 sm:h-24 sm:w-24 sm:p-2">
   {image ? (
     <img
       src={image}
@@ -359,12 +359,26 @@ const image = imageSource
 
               {/* INFO */}
 
-              <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 items-start justify-between gap-2 sm:block sm:flex-1">
                 <h3 className="break-words text-sm font-semibold text-velora-dark sm:text-base">
                   {item.name}
                 </h3>
 
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="min-w-[58px] text-right sm:hidden">
+                  <p className="text-[8px] font-bold uppercase tracking-[0.12em] text-velora-textGray">
+                    Total
+                  </p>
+
+                  <p className="font-premium text-base font-bold text-velora-dark">
+                    {money(subtotal)}
+                    <span className="ml-1 text-[8px] font-semibold uppercase tracking-wider text-velora-textGray">
+                      DT
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex min-w-0 flex-wrap gap-2 sm:mt-2">
                   {item.size && (
                     <span className="rounded-md bg-[#FCFAF7] px-2.5 py-1 text-[10px] text-velora-textGray">
                       Taille : {item.size}
@@ -380,12 +394,11 @@ const image = imageSource
                   <span className="rounded-md bg-[#FCFAF7] px-2.5 py-1 text-[10px] text-velora-textGray">
                     Quantité : {quantity}
                   </span>
-                </div>
               </div>
 
               {/* PRICE */}
 
-              <div className="min-w-[58px] text-right sm:block">
+              <div className="hidden min-w-[58px] text-right sm:block">
                 <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
                   Sous-total
                 </p>
