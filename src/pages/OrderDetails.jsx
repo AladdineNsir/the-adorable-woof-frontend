@@ -160,7 +160,7 @@ const steps = [
 ];
 
   return (
-    <div className="rounded-xl border border-[#E8DED1] bg-white">
+    <div className="overflow-hidden rounded-xl border border-[#E8DED1] bg-white">
       <div className="border-b border-[#EFE7DC] px-5 py-4 sm:px-6">
         {/* <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C96A26]">
           Suivi
@@ -334,11 +334,11 @@ const image = imageSource
           return (
             <div
               key={item._id || `${item.name}-${index}`}
-              className="flex flex-col gap-4 px-5 py-5 transition-colors hover:bg-[#FCFAF7] sm:flex-row sm:items-center sm:px-6"
+              className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 transition-colors hover:bg-[#FCFAF7] sm:flex sm:flex-row sm:gap-4 sm:px-6 sm:py-5"
             >
               {/* IMAGE */}
 
-             <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] p-2">
+             <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EFE7DC] bg-[#FCFAF7] p-1.5 sm:h-24 sm:w-24 sm:p-2">
   {image ? (
     <img
       src={image}
@@ -360,7 +360,7 @@ const image = imageSource
               {/* INFO */}
 
               <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-semibold text-velora-dark sm:text-base">
+                <h3 className="break-words text-sm font-semibold text-velora-dark sm:text-base">
                   {item.name}
                 </h3>
 
@@ -385,7 +385,7 @@ const image = imageSource
 
               {/* PRICE */}
 
-              <div className="flex items-center justify-between gap-5 sm:block sm:text-right">
+              <div className="min-w-[58px] text-right sm:block">
                 <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-velora-textGray">
                   Sous-total
                 </p>
