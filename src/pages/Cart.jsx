@@ -218,12 +218,6 @@ setOrderResult(data);
                       
                     </div>
 
-                    <Link
-                      to="/shop"
-                      className="hidden text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold transition hover:text-velora-dark sm:inline-flex"
-                    >
-                      Continuer mes achats
-                    </Link>
                   </div>
 
                   {cart.map((item) => (
@@ -373,10 +367,19 @@ setOrderResult(data);
                   </div>
                 </div>
 
-                <button type="submit" disabled={submitting || cart.length === 0} className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-velora-gold px-4 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-velora-gold/30">
-                  <CreditCard size={18} />
-                  {submitting ? "Validation..." : "Confirmer la commande"}
-                </button>
+                <div className="flex flex-col gap-3">
+                  <button type="submit" disabled={submitting || cart.length === 0} className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-velora-gold px-4 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-velora-gold/30">
+                    <CreditCard size={18} />
+                    {submitting ? "Validation..." : "Confirmer la commande"}
+                  </button>
+
+                  <Link
+                    to="/shop"
+                    className="flex h-12 w-full items-center justify-center rounded-lg border border-[#E7DED2] bg-white px-4 text-sm font-semibold text-velora-dark transition hover:border-velora-gold hover:text-velora-gold"
+                  >
+                    Continuer mes achats
+                  </Link>
+                </div>
               </div>
 
               {/* <p className="mt-4 text-center text-xs leading-5 text-velora-textGray">En validant, vous acceptez nos conditions de vente et notre politique de confidentialite.</p> */}
