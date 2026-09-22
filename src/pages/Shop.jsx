@@ -704,15 +704,44 @@ export default function Shop() {
 
               </div>
 
-              <button
-                onClick={() =>
-                  setFilterOpen(true)
-                }
-                className="inline-flex h-10 w-fit items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-4 text-xs font-semibold text-velora-dark transition hover:border-smiley-warning hover:text-velora-gold lg:hidden"
-              >
-                <SlidersHorizontal size={15} />
-                Filtres
-              </button>
+              <div className="flex items-center gap-2 lg:hidden">
+
+                <button
+                  onClick={() =>
+                    setFilterOpen(true)
+                  }
+                  className="inline-flex h-10 w-fit items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-4 text-xs font-semibold text-velora-dark transition hover:border-smiley-warning hover:text-velora-gold"
+                >
+                  <SlidersHorizontal size={15} />
+                  Filtres
+                </button>
+
+                <label className="flex h-10 items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3">
+
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-velora-textGray">
+                    Trier
+                  </span>
+
+                  <select
+                    value={sortBy}
+                    onChange={(e) =>
+                      setSortBy(e.target.value)
+                    }
+                    className="max-w-[105px] cursor-pointer bg-transparent text-xs font-semibold text-velora-dark outline-none"
+                  >
+                    {SORT_OPTIONS.map((option) => (
+                      <option
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+
+                </label>
+
+              </div>
 
             </div>
 
@@ -955,7 +984,7 @@ export default function Shop() {
 
                     {/* SORT */}
 
-                    <label className="flex h-10 items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3">
+                    <label className="hidden h-10 items-center gap-2 rounded-xl border border-[#E7DED2] bg-white px-3 lg:flex">
 
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-velora-textGray">
                         Trier
