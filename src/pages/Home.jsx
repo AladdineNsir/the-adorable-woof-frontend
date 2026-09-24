@@ -25,7 +25,14 @@ export default function Home() {
     settings.home.heroImage === "/assets/d1.png"
       ? "/assets/d1-1200.webp"
       : settings.home.heroImage;
-  const heroImageSet = buildResponsiveImageSet(heroImage, [480, 768, 1200], "auto");
+  const heroImageSet =
+    heroImage === "/assets/d1-1200.webp"
+      ? {
+          src: heroImage,
+          srcSet: "/assets/d1-768.webp 768w, /assets/d1-1200.webp 1200w",
+          sizes: "(max-width: 640px) calc(100vw - 2rem), 50vw",
+        }
+      : buildResponsiveImageSet(heroImage, [480, 768, 1200], "auto");
   const collections = [
     {
       key: "harnais",
