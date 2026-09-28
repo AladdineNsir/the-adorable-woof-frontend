@@ -236,7 +236,7 @@ const PackCard = ({ pack }) => {
             alt={pack.name}
             loading="lazy"
             decoding="async"
-            className="h-full w-full scale-[1.28] rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.34]"
+            className="h-full w-full rounded-[10px] object-cover transition-transform duration-500 group-hover:scale-[1.05]"
           />
         </Link>
 
