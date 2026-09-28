@@ -75,7 +75,7 @@ export default function Settings() {
   const [packs, setPacks] = useState([]);
 
   useEffect(() => {
-    getPacks()
+    getPacks({ includeInactive: true })
       .then((data) => setPacks(Array.isArray(data?.packs) ? data.packs : []))
       .catch(() => setPacks([]));
   }, []);

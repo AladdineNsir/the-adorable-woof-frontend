@@ -34,7 +34,7 @@ export default function EditPack() {
       try {
         const [productData, packData, categoryData] = await Promise.all([
           getProducts({ limit: 200, stock: "available" }),
-          getPackById(id),
+          getPackById(id, { includeInactive: true }),
           getCategories(),
         ]);
         setProducts(productData.products || []);
