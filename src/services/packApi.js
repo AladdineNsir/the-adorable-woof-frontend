@@ -4,19 +4,28 @@ import { API_BASE_URL } from "../config/api";
 const API_URL = `${API_BASE_URL}/packs`;
 
 export const getPacks = async (params = {}) => {
+  const nextParams = { ...params };
+
+  if (Object.prototype.hasOwnProperty.call(params, "includeInactive")) {
+    nextParams.includeInactive = params.includeInactive;
+  }
+
   const { data } = await axios.get(API_URL, {
-    params: {
-      includeInactive: true,
-      ...params,
-    },
+    params: nextParams,
     withCredentials: true,
   });
   return data;
 };
 
-export const getPackById = async (id) => {
+export const getPackById = async (id, params = {}) => {
+  const nextParams = { ...params };
+
+  if (Object.prototype.hasOwnProperty.call(params, "includeInactive")) {
+    nextParams.includeInactive = params.includeInactive;
+  }
+
   const { data } = await axios.get(`${API_URL}/${id}`, {
-    params: { includeInactive: true },
+    params: nextParams,
     withCredentials: true,
   });
   return data;

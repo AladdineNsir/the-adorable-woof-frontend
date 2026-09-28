@@ -30,7 +30,7 @@ export default function Packs() {
   const loadPacks = async () => {
     try {
       setLoading(true);
-      const data = await getPacks();
+      const data = await getPacks({ includeInactive: true });
       setPacks(data.packs || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Impossible de charger les packs.");
