@@ -7,7 +7,12 @@ const API_URL = `${API_BASE_URL}/products`;
 // GET ALL PRODUCTS
 // ==========================
 export const getProducts = async (params = {}) => {
-  const { data } = await axios.get(API_URL, { params });
+  const { data } = await axios.get(API_URL, {
+    params: {
+      includeInactive: true,
+      ...params,
+    },
+  });
 
   return data;
 };
@@ -16,7 +21,9 @@ export const getProducts = async (params = {}) => {
 // GET PRODUCT BY ID
 // ==========================
 export const getProductById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/${id}`);
+  const { data } = await axios.get(`${API_URL}/${id}`, {
+    params: { includeInactive: true },
+  });
 
   return data;
 };
