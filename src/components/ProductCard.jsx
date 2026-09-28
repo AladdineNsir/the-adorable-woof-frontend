@@ -67,7 +67,7 @@ export default function ProductCard({ product }) {
                 event.currentTarget.srcset = "";
                 event.currentTarget.src = resolveImage(fallbackImage);
               }}
-              className="h-full w-full scale-[1.28] rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.34]"
+              className="h-full w-full rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ) : (
             <div className="text-xs text-[var(--velora-textGray)]">
