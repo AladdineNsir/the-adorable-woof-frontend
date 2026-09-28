@@ -4,12 +4,21 @@ import { API_BASE_URL } from "../config/api";
 const API_URL = `${API_BASE_URL}/packs`;
 
 export const getPacks = async (params = {}) => {
-  const { data } = await axios.get(API_URL, { params, withCredentials: true });
+  const { data } = await axios.get(API_URL, {
+    params: {
+      includeInactive: true,
+      ...params,
+    },
+    withCredentials: true,
+  });
   return data;
 };
 
 export const getPackById = async (id) => {
-  const { data } = await axios.get(`${API_URL}/${id}`, { withCredentials: true });
+  const { data } = await axios.get(`${API_URL}/${id}`, {
+    params: { includeInactive: true },
+    withCredentials: true,
+  });
   return data;
 };
 
