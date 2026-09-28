@@ -50,11 +50,11 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="group overflow-hidden rounded-[16px] border border-[#E9E0D6] bg-[#FFFDFB] shadow-[0_8px_22px_rgba(17,17,17,0.04)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(17,17,17,0.05)]">
-      <div className="relative aspect-[4/3] overflow-hidden bg-[#F8F5F0] p-2.5">
+      <div className="relative aspect-[4/3] overflow-hidden bg-white">
         <Link
           to={`/produit/${productUrl}`}
           onClick={() => trackSelectItem(product)}
-          className="flex h-full w-full items-center justify-center overflow-hidden rounded-[12px]"
+          className="flex h-full w-full items-center justify-center overflow-hidden"
         >
           {imageSrc ? (
             <img
@@ -67,7 +67,7 @@ export default function ProductCard({ product }) {
                 event.currentTarget.srcset = "";
                 event.currentTarget.src = resolveImage(fallbackImage);
               }}
-              className="h-full w-full rounded-[10px] object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+              className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ) : (
             <div className="text-xs text-[var(--velora-textGray)]">
