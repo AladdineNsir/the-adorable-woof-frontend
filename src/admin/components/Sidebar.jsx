@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  QrCode,
   Settings,
   ShoppingCart,
   Tags,
@@ -25,6 +26,7 @@ const menu = [
   { title: "Commandes", icon: ShoppingCart, path: "/admin/orders" },
   { title: "Clients", icon: Users, path: "/admin/clients" },
   { title: "Paramètres", icon: Settings, path: "/admin/settings" },
+  { title: "Code QR", icon: QrCode, path: "/admin/qr-code" },
   { title: "Tracking", icon: BarChart3, path: "/admin/tracking" },
 ];
 

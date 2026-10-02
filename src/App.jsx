@@ -85,6 +85,7 @@ const AdminOrderDetails = lazy(() => import("./admin/pages/OrderDetails"));
 const Clients = lazy(() => import("./admin/pages/Clients"));
 const Settings = lazy(() => import("./admin/pages/Settings"));
 const Tracking = lazy(() => import("./admin/pages/Tracking"));
+const QrCodePage = lazy(() => import("./admin/pages/QrCode"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -315,6 +316,7 @@ function AppRoutes() {
           <Route path="orders/:id" element={<AdminOrderDetails />} />
           <Route path="clients" element={<Clients />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="qr-code" element={<QrCodePage />} />
           <Route path="tracking" element={<Tracking />} />
 
         </Route>
