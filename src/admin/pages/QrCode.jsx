@@ -4,8 +4,8 @@ import { QRCodeSVG } from "qrcode.react";
 
 import AdminPageHeader from "../components/AdminPageHeader";
 
-const destinationUrl = "https://www.theadorablewoof.tn/";
-const qrColor = "#9F3A08";
+const destinationUrl = "https://www.adorablewoof.tn/";
+const qrColor = "#000000";
 
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
@@ -74,7 +74,7 @@ export default function QrCodePage() {
                 fgColor={qrColor}
                 bgColor="#FFFFFF"
                 includeMargin
-                title="Code QR vers theadorablewoof.tn"
+                title="Code QR vers adorablewoof.tn"
               />
             </div>
           </div>
