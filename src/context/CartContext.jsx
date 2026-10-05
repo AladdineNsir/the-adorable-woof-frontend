@@ -5,6 +5,7 @@ import React, {
   useEffect,
 } from "react";
 import { resolveAssetUrl } from "../config/api";
+import { isToyItem } from "../utils/productType";
 import { useAuth } from "./AuthContext";
 import { trackAddToCart } from "../analytics/analytics";
 
@@ -168,6 +169,8 @@ export const CartProvider = ({ children }) => {
           selectedSize: size,
           selectedColor: color?.name,
           colorCode: color?.code,
+          isToy: isToyItem(product),
+          subCategory: product.subCategory,
           customization,
           quantity,
           type: "product",

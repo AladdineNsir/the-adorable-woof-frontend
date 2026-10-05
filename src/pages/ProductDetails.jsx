@@ -10,6 +10,7 @@ import { ProductSkeleton } from "../components/LoadingSkeleton";
 
 import { useCart } from "../context/CartContext";
 import { API_BASE_URL, resolveAssetUrl } from "../config/api";
+import { isToyItem } from "../utils/productType";
 
 const fallbackSizes = ["XS", "S", "M", "L"];
 const fallbackColors = [{ name: "Noir", code: "#111111" }];
@@ -120,9 +121,10 @@ export default function ProductDetails() {
     );
   }
 
+  const isToyProduct = isToyItem(product);
   const colors = product.colors?.length ? product.colors : fallbackColors;
   const sizes = getSizeEntries(product);
-  const selectedSizeStock = sizes.find(
+  const selectedSizeStock = isToyProduct ? null : sizes.find(
     (entry) => entry.size === selectedSize
   );
   const displayPrice = selectedSizeStock?.price ?? product.price;
@@ -185,13 +187,13 @@ const inStock =
   };
 
   const handleAddToCart = () => {
-    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, selectedSize, selectedColor);
+    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, isToyProduct ? "" : selectedSize, isToyProduct ? null : selectedColor);
     trackClick("click_add_to_cart", { itemId: String(product._id || product.id), quantity });
     toast.success(`${product.name} ajouté au panier`);
   };
 
   const handleBuyNow = () => {
-    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, selectedSize, selectedColor);
+    addToCart({ ...product, price: displayPrice, costPrice: selectedSizeStock?.costPrice ?? product.costPrice }, quantity, isToyProduct ? "" : selectedSize, isToyProduct ? null : selectedColor);
     trackClick("click_buy_now", { itemId: String(product._id || product.id), quantity });
     navigate("/cart?checkout=1");
   };
@@ -438,6 +440,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
   <div className="mt-6 space-y-6">
 
     {/* SIZE */}
+    {!isToyProduct && (
     <div>
 
       <div className="mb-3 flex items-center justify-between">
@@ -484,9 +487,11 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       </div>
 
     </div>
+    )}
 
 
     {/* COLOR */}
+    {!isToyProduct && (
     <div>
 
       <div className="mb-3">
@@ -541,6 +546,7 @@ className="h-full w-full scale-[1.10] rounded-[14px] object-contain"      loadin
       </div>
 
     </div>
+    )}
 
   </div>
 

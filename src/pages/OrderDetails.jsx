@@ -18,6 +18,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { getOrderById } from "../services/orderApi";
 import { resolveAssetUrl } from "../config/api";
+import { isToyItem } from "../utils/productType";
 
 /* =========================================================
    HELPERS
@@ -379,13 +380,13 @@ const image = imageSource
               </div>
 
               <div className="flex min-w-0 flex-wrap gap-2 sm:mt-2">
-                  {item.size && (
+                  {!isToyItem(item) && item.size && (
                     <span className="rounded-md bg-[#FCFAF7] px-2.5 py-1 text-[10px] text-velora-textGray">
                       Taille : {item.size}
                     </span>
                   )}
 
-                  {item.color && (
+                  {!isToyItem(item) && item.color && (
                     <span className="rounded-md bg-[#FCFAF7] px-2.5 py-1 text-[10px] text-velora-textGray">
                       Couleur : {item.color}
                     </span>

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { useCart } from "../context/CartContext";
+import { isToyItem } from "../utils/productType";
 import { useAuth } from "../context/AuthContext";
 import { getTrackingAttribution, trackAddPaymentInfo, trackAddShippingInfo, trackBeginCheckout, trackRemoveFromCart, trackViewCart } from "../analytics/analytics";
 
@@ -125,6 +126,7 @@ export default function Cart() {
       price: item.type === "pack" ? Math.floor(Number(item.price || 0)) : item.price,
       selectedSize: item.selectedSize || "Standard",
       selectedColor: item.selectedColor || "Standard",
+      isToy: isToyItem(item),
       customization: item.customization || {
         petName: "",
         phoneNumber: "",
@@ -235,10 +237,10 @@ setOrderResult(data);
                           <h3 className="line-clamp-2 text-sm sm:text-base font-semibold text-velora-dark">{item.name}</h3>
                           <p className="mt-1 text-sm font-semibold text-velora-dark">{formatPrice(item.price, item.type === "pack")}</p>
 
-                          <div className="mt-2 flex flex-wrap gap-1.5">
+                          {!isToyItem(item) && <div className="mt-2 flex flex-wrap gap-1.5">
                             <span className="inline-flex items-center rounded-md border border-[#E7DED2] bg-[#FCFAF7] px-2 py-0.5 text-[10px] font-medium text-velora-dark">Taille: {item.selectedSize || "Standard"}</span>
                             <span className="inline-flex items-center gap-1.5 rounded-md border border-[#E7DED2] bg-[#FCFAF7] px-2 py-0.5 text-[10px] font-medium text-velora-dark">{item.colorCode && (<span className="h-2.5 w-2.5 rounded-full border border-black/10" style={{ backgroundColor: item.colorCode }} />)}Couleur: {item.selectedColor || "Standard"}</span>
-                          </div>
+                          </div>}
 
                           {(item.customization?.petName || item.customization?.phoneNumber) && (
                             <div className="mt-2 text-sm text-velora-textGray">

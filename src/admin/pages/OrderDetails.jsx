@@ -10,6 +10,7 @@ import {
   updatePhoneStatus,
 } from "../../services/orderApi";
 import { resolveAssetUrl } from "../../config/api";
+import { isToyItem } from "../../utils/productType";
 
 const phoneStatuses = [
   "En attente d'appel",
@@ -115,6 +116,8 @@ export default function OrderDetails() {
     );
   }
 
+  const showVariantColumns = order.orderItems?.some((item) => !isToyItem(item));
+
   return (
     <>
       <AdminPageHeader
@@ -179,8 +182,8 @@ export default function OrderDetails() {
           <thead>
             <tr>
               <th>Produit</th>
-              <th>Taille</th>
-              <th>Couleur</th>
+              {showVariantColumns && <th>Taille</th>}
+              {showVariantColumns && <th>Couleur</th>}
               <th className="print-number">Qté</th>
               <th className="print-number">Prix unitaire</th>
               <th className="print-number">Total</th>
@@ -190,8 +193,12 @@ export default function OrderDetails() {
             {order.orderItems?.map((item, index) => (
               <tr key={`${item.product || item.pack || item.name}-${index}`}>
                 <td>{item.name || "Produit"}</td>
-                <td>{item.selectedSize || "-"}</td>
-                <td>{item.selectedColor || "-"}</td>
+                {showVariantColumns && (
+                  <>
+                    <td>{isToyItem(item) ? "" : item.selectedSize || "-"}</td>
+                    <td>{isToyItem(item) ? "" : item.selectedColor || "-"}</td>
+                  </>
+                )}
                 <td className="print-number">{item.quantity || 0}</td>
                 <td className="print-number">{money(item.price)} DT</td>
                 <td className="print-number">
@@ -282,8 +289,12 @@ export default function OrderDetails() {
                       <p className="truncate font-semibold text-velora-dark">{item.name}</p>
                     <div className="mt-2 flex flex-wrap gap-2 text-xs text-velora-textGray">
                       <span>Quantité: {item.quantity}</span>
-                      <span>Taille: {item.selectedSize || "-"}</span>
-                      <span>Couleur: {item.selectedColor || "-"}</span>
+                      {!isToyItem(item) && (
+                        <>
+                          <span>Taille: {item.selectedSize || "-"}</span>
+                          <span>Couleur: {item.selectedColor || "-"}</span>
+                        </>
+                      )}
                       {item.customization?.petName && (
                         <span>Nom: {item.customization.petName}</span>
                       )}
