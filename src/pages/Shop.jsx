@@ -65,7 +65,7 @@ const SUB_CATEGORIES = [
     icon: Package,
   },
   {
-    id: "Jouet",
+    id: "Jouets",
     label: "Jouet",
     shortLabel: "Jouet",
     icon: Bone,
@@ -108,10 +108,10 @@ const normalizeSubCategoryParam = (value) => {
     laisses: "Laisses",
     harness: "Harnais",
     harnais: "Harnais",
-    toy: "Jouet",
-    toys: "Jouet",
-    jouet: "Jouet",
-    jouets: "Jouet",
+    toy: "Jouets",
+    toys: "Jouets",
+    jouet: "Jouets",
+    jouets: "Jouets",
   };
 
   return mapping[normalized] || value;
@@ -141,10 +141,10 @@ const normalizeProduct = (product) => {
     laisses: "Laisses",
     harness: "Harnais",
     harnais: "Harnais",
-    toy: "Jouet",
-    toys: "Jouet",
-    jouet: "Jouet",
-    jouets: "Jouet",
+    toy: "Jouets",
+    toys: "Jouets",
+    jouet: "Jouets",
+    jouets: "Jouets",
   };
 
   const rawCategory =
