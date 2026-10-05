@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useTransition } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
+  Bone,
   Cat,
   ChevronDown,
   Dog,
@@ -64,6 +65,12 @@ const SUB_CATEGORIES = [
     icon: Package,
   },
   {
+    id: "Jouet",
+    label: "Jouet",
+    shortLabel: "Jouet",
+    icon: Bone,
+  },
+  {
     id: "Colliers",
     label: "Colliers",
     shortLabel: "Colliers",
@@ -101,6 +108,10 @@ const normalizeSubCategoryParam = (value) => {
     laisses: "Laisses",
     harness: "Harnais",
     harnais: "Harnais",
+    toy: "Jouet",
+    toys: "Jouet",
+    jouet: "Jouet",
+    jouets: "Jouet",
   };
 
   return mapping[normalized] || value;
@@ -130,6 +141,10 @@ const normalizeProduct = (product) => {
     laisses: "Laisses",
     harness: "Harnais",
     harnais: "Harnais",
+    toy: "Jouet",
+    toys: "Jouet",
+    jouet: "Jouet",
+    jouets: "Jouet",
   };
 
   const rawCategory =
