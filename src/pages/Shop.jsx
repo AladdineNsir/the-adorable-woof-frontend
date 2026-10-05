@@ -340,6 +340,40 @@ export default function Shop() {
     staleTime: 1000 * 60 * 10,
   });
 
+  const { data: subCategoryData } = useQuery({
+    queryKey: ["shop-subcategories"],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_BASE_URL}/subcategories`);
+      return data;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+
+  const subCategories = useMemo(() => {
+    const existingNames = new Set(
+      SUB_CATEGORIES.map((subCategory) => subCategory.id.toLowerCase())
+    );
+    const dynamicSubCategories = (subCategoryData?.subCategories || [])
+      .filter(
+        (subCategory) =>
+          subCategory.isActive !== false &&
+          typeof subCategory.name === "string" &&
+          subCategory.name.trim()
+      )
+      .filter(
+        (subCategory) =>
+          !existingNames.has(subCategory.name.trim().toLowerCase())
+      )
+      .map((subCategory) => ({
+        id: subCategory.name.trim(),
+        label: subCategory.name.trim(),
+        shortLabel: subCategory.name.trim(),
+        icon: Package,
+      }));
+
+    return [...SUB_CATEGORIES, ...dynamicSubCategories];
+  }, [subCategoryData]);
+
   const categories = useMemo(() => {
     const dynamicCategories = (categoryData?.categories || [])
       .filter((category) => category.isActive !== false)
@@ -825,7 +859,7 @@ export default function Shop() {
                   centered
                 >
 
-                  {SUB_CATEGORIES.map(
+                  {subCategories.map(
                     (subCategory) => {
                       const selected =
                         subCategory.id === "all"
@@ -1073,7 +1107,7 @@ export default function Shop() {
 
                 <div className="mt-4 flex flex-wrap gap-1.5 border-y border-[#EFE7DC] py-3">
 
-                  {SUB_CATEGORIES.map(
+                  {subCategories.map(
                     (subCategory) => {
                       const selected =
                         subCategory.id === "all"
@@ -1433,7 +1467,7 @@ export default function Shop() {
 
                 <MobileFilterGroup title="Accessoires">
 
-                  {SUB_CATEGORIES.map(
+                  {subCategories.map(
                     (subCategory) => {
                       const selected =
                         subCategory.id === "all"
