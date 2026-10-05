@@ -440,9 +440,9 @@ const handleImagesChange = (e) => {
 }
 
 const hasInvalidGlobalPrice =
-  form.sizes.length === 0 &&
+  (isToyProduct || form.sizes.length === 0) &&
   (form.price === "" || form.price === null || Number(form.price) < 0);
-const hasInvalidSizePrice = form.sizes.some(
+const hasInvalidSizePrice = !isToyProduct && form.sizes.some(
   (entry) =>
     entry.price === "" ||
     entry.price === null ||
@@ -487,7 +487,12 @@ if (!form.subCategory) {
     try {
       const formData = new FormData();
       const colorImages = [];
-      const colors = form.colors.map((color) => {
+      const formValues = {
+        ...form,
+        sizes: isToyProduct ? [] : form.sizes,
+        colors: isToyProduct ? [] : form.colors,
+      };
+      const colors = formValues.colors.map((color) => {
         if (color.type !== "image" || !(color.image instanceof File)) {
           return color;
         }
@@ -501,8 +506,8 @@ if (!form.subCategory) {
         };
       });
 
-      Object.keys(form).forEach((key) => {
-        const value = key === "colors" ? colors : form[key];
+      Object.keys(formValues).forEach((key) => {
+        const value = key === "colors" ? colors : formValues[key];
 
         formData.append(
           key,
@@ -555,6 +560,12 @@ setToastVisible(true);
 
       return categoryId === form.category;
     }
+  );
+  const selectedSubCategory = subCategories.find(
+    (subCategory) => subCategory._id === form.subCategory
+  );
+  const isToyProduct = /jouet|toy/i.test(
+    `${selectedSubCategory?.name || ""} ${selectedSubCategory?.slug || ""}`
   );
 
   /* =========================================================
@@ -1074,6 +1085,7 @@ setToastVisible(true);
           TAILLES & COULEURS
       ===================================================== */}
 
+      {!isToyProduct && (
       <div className="order-1 grid grid-cols-1 gap-5 xl:grid-cols-2">
 
         {/* Sizes */}
@@ -1186,7 +1198,7 @@ setToastVisible(true);
           })}
         </div>
       </div>
-    )}
+      )}
 
     <div className="mt-4 rounded-xl border border-[#EFE7DC] bg-[#FCFAF7] px-4 py-3">
       {form.sizes.length === 0 ? (
@@ -1406,6 +1418,7 @@ setToastVisible(true);
         </section>
 
       </div>
+      )}
 
       {/* =====================================================
           OPTIONS
