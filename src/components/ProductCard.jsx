@@ -18,6 +18,10 @@ export default function ProductCard({ product }) {
     resolveImage(fallbackImage);
 
   const productUrl = product.slug || product.id || product._id;
+  const subCategory = typeof product.subCategory === "object"
+    ? `${product.subCategory?.name || ""} ${product.subCategory?.slug || ""}`
+    : String(product.subCategory || "");
+  const isToyProduct = /jouet|toy/i.test(subCategory);
   const colorSwatches = (product.colors || []).filter(
     (color) => color.code || color.hex || color.image || color.name
   );
@@ -92,7 +96,7 @@ export default function ProductCard({ product }) {
       <div className="space-y-2 p-2.5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
-            {colorSwatches.slice(0, 4).map((color, index) => (
+            {!isToyProduct && colorSwatches.slice(0, 4).map((color, index) => (
               <span
                 key={`${color.name}-${index}`}
                 className="relative h-3.5 w-3.5 overflow-hidden rounded-[4px] border border-[#D8C7B2] bg-white"
@@ -111,13 +115,13 @@ export default function ProductCard({ product }) {
               </span>
             ))}
 
-            {colorSwatches.length === 0 && (
+            {!isToyProduct && colorSwatches.length === 0 && (
               <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
                 Couleurs variées
               </span>
             )}
 
-            {colorSwatches.length > 4 && (
+            {!isToyProduct && colorSwatches.length > 4 && (
               <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
                 +{colorSwatches.length - 4}
               </span>
