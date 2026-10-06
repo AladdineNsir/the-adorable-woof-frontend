@@ -53,7 +53,7 @@ export default function ProductCard({ product }) {
         };
 
   return (
-    <article className="group overflow-hidden rounded-[16px] border border-[#E9E0D6] bg-[#FFFDFB] shadow-[0_8px_22px_rgba(17,17,17,0.04)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(17,17,17,0.05)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-[#E9E0D6] bg-[#FFFDFB] shadow-[0_8px_22px_rgba(17,17,17,0.04)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(17,17,17,0.05)]">
       <div className="relative aspect-[4/3] overflow-hidden bg-white">
         <Link
           to={`/produit/${productUrl}`}
@@ -93,61 +93,61 @@ export default function ProductCard({ product }) {
         )}
       </div>
 
-      <div className="space-y-2 p-2.5">
+      <div className="flex flex-1 flex-col gap-2 p-2.5">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {!isToyProduct && colorSwatches.slice(0, 4).map((color, index) => (
-              <span
-                key={`${color.name}-${index}`}
-                className="relative h-3.5 w-3.5 overflow-hidden rounded-[4px] border border-[#D8C7B2] bg-white"
-                style={{
-                  backgroundColor: color.code || color.hex || "#F4EEE7",
-                }}
-                title={color.name}
-              >
-                {color.type === "image" && color.image && (
-                  <img
-                    src={resolveImage(color.image)}
-                    alt={color.name}
-                    className="h-full w-full object-cover"
-                  />
-                )}
-              </span>
-            ))}
-
-            {!isToyProduct && colorSwatches.length === 0 && (
-              <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
-                Couleurs variées
-              </span>
-            )}
-
-            {!isToyProduct && colorSwatches.length > 4 && (
-              <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
-                +{colorSwatches.length - 4}
-              </span>
-            )}
-          </div>
-
           <span className="text-[8px] font-semibold uppercase tracking-[0.12em] text-[var(--velora-textGray)]">
             {product.category || "Produit"}
           </span>
         </div>
 
         <Link to={`/produit/${productUrl}`} className="block" onClick={() => trackSelectItem(product)}>
-          <h3 className="line-clamp-2 text-[12.5px] font-semibold leading-5 text-[var(--velora-dark)] transition-colors hover:text-[var(--velora-primary)]">
+          <h3 className="line-clamp-2 min-h-5 text-[12.5px] font-semibold leading-5 text-[var(--velora-dark)] transition-colors hover:text-[var(--velora-primary)]">
             {product.name}
           </h3>
         </Link>
 
-        {product.description && (
-          <p className="line-clamp-2 text-[10.5px] leading-5 text-[var(--velora-textGray)]">
-            {product.description.length > 70
-              ? `${product.description.slice(0, 70)}…`
-              : product.description}
-          </p>
-        )}
+        <div className="-mt-1 flex h-3.5 flex-wrap items-center gap-1.5">
+          {!isToyProduct && colorSwatches.slice(0, 4).map((color, index) => (
+            <span
+              key={`${color.name}-${index}`}
+              className="relative h-3.5 w-3.5 overflow-hidden rounded-[4px] border border-[#D8C7B2] bg-white"
+              style={{
+                backgroundColor: color.code || color.hex || "#F4EEE7",
+              }}
+              title={color.name}
+            >
+              {color.type === "image" && color.image && (
+                <img
+                  src={resolveImage(color.image)}
+                  alt={color.name}
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </span>
+          ))}
 
-        <div className="flex items-end justify-between gap-2 pt-0.5">
+          {!isToyProduct && colorSwatches.length === 0 && (
+            <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
+              Couleurs variées
+            </span>
+          )}
+
+          {!isToyProduct && colorSwatches.length > 4 && (
+            <span className="text-[9px] font-semibold text-[var(--velora-textGray)]">
+              +{colorSwatches.length - 4}
+            </span>
+          )}
+        </div>
+
+        <p className="line-clamp-2 h-10 text-[10.5px] leading-5 text-[var(--velora-textGray)]">
+          {product.description
+            ? product.description.length > 70
+              ? `${product.description.slice(0, 70)}…`
+              : product.description
+            : null}
+        </p>
+
+        <div className="mt-auto flex items-end justify-between gap-2 pt-0.5">
           <div className="min-w-0">
             <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-[var(--velora-textGray)]">
               {hasSizePricing ? "À partir de" : "Prix"}
@@ -171,7 +171,7 @@ export default function ProductCard({ product }) {
         </div>
 
         <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-[8px] font-semibold ${stockStatus.className}`}
+          className={`inline-flex h-5 w-fit items-center whitespace-nowrap rounded-full px-2 text-[8px] font-semibold ${stockStatus.className}`}
         >
           {stockStatus.text}
         </span>

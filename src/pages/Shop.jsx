@@ -352,7 +352,7 @@ export default function Shop() {
   const { data: categoryData } = useQuery({
     queryKey: ["shop-categories"],
     queryFn: getCategories,
-    staleTime: 1000 * 60 * 10,
+    staleTime: 0,
   });
 
   const categories = useMemo(() => {
@@ -421,7 +421,7 @@ export default function Shop() {
       const { data } = await axios.get(`${API_BASE_URL}/products`, { params });
       return data;
     },
-    staleTime: 1000 * 60 * 3,
+    staleTime: 0,
     placeholderData: (previousData) => previousData,
     enabled: !showingOnlyPacks,
   });
@@ -434,7 +434,7 @@ export default function Shop() {
   } = useQuery({
     queryKey: ["packs", searchQuery.trim()],
     queryFn: () => getPacks(),
-    staleTime: 1000 * 60 * 3,
+    staleTime: 0,
     enabled: shouldLoadPacks,
   });
 
