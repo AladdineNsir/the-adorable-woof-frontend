@@ -4,13 +4,15 @@ import { motion } from "framer-motion";
 export default function IntroOverlay({ exiting, onFinish }) {
   const videoRef = useRef(null);
   const stallTimeoutRef = useRef(null);
+  const playbackRequestedRef = useRef(false);
   const onFinishRef = useRef(onFinish);
   onFinishRef.current = onFinish;
 
   const requestPlayback = async () => {
     const video = videoRef.current;
-    if (!video || !video.paused) return;
+    if (!video || playbackRequestedRef.current || !video.paused) return;
 
+    playbackRequestedRef.current = true;
     try {
       await video.play();
     } catch (error) {
@@ -74,33 +76,17 @@ export default function IntroOverlay({ exiting, onFinish }) {
     const video = videoRef.current;
     stallTimeoutRef.current = window.setTimeout(() => {
       onFinishRef.current();
-    }, 15000);
-    const skipLogoIntro = () => {
-      if (!video || video.readyState < 1) return;
-      if (video.duration > 1) {
-        video.currentTime = Math.min(0.8, video.duration * 0.2);
-      }
-    };
+    }, 8000);
     const startPlayback = () => {
-      if (!video || video.readyState < 2) return;
-      if (video.seeking) {
-        video.addEventListener("seeked", startPlayback, { once: true });
-        return;
-      }
       requestPlayback();
     };
 
-    video?.addEventListener("loadedmetadata", skipLogoIntro, { once: true });
     video?.addEventListener("canplay", startPlayback, { once: true });
-    video?.addEventListener("seeked", startPlayback, { once: true });
-    if (video?.readyState >= 1) skipLogoIntro();
     if (video?.readyState >= 3) startPlayback();
 
     return () => {
       window.clearTimeout(stallTimeoutRef.current);
-      video?.removeEventListener("loadedmetadata", skipLogoIntro);
       video?.removeEventListener("canplay", startPlayback);
-      video?.removeEventListener("seeked", startPlayback);
       video?.pause();
     };
   }, []);
