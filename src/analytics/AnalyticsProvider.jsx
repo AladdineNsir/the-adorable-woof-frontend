@@ -6,7 +6,6 @@ import {
   configureAnalytics,
   getStoredConsent,
   loadAnalyticsVendors,
-  setStoredConsent,
   trackPageView,
 } from "./analytics";
 
@@ -41,18 +40,5 @@ export default function AnalyticsProvider({ children }) {
     trackPageView(location.pathname);
   }, [configLoaded, consent, isAdmin, location.pathname]);
 
-  return (
-    <>
-      {children}
-      {configLoaded && consent === null && !isAdmin && (
-        <div className="fixed inset-x-4 bottom-4 z-[100] mx-auto flex max-w-2xl flex-col gap-3 rounded-xl border border-[#E7DED2] bg-white p-4 shadow-[0_15px_45px_rgba(17,17,17,0.16)] sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs leading-5 text-velora-textGray">Nous utilisons des outils de mesure anonymisés pour améliorer votre expérience.</p>
-          <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => setStoredConsent("denied")} className="rounded-lg border border-[#E7DED2] px-3 py-2 text-xs font-semibold text-velora-dark">Refuser</button>
-            <button type="button" onClick={() => setStoredConsent("granted")} className="rounded-lg bg-velora-gold px-3 py-2 text-xs font-semibold text-white">Accepter</button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+  return children;
 }
