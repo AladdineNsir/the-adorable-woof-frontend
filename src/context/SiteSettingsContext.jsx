@@ -4,7 +4,7 @@ import { getSiteSettings, updateSiteSettings } from "../services/settingsApi";
 
 export const defaultSiteSettings = {
   theme: {
-    primary: "#C96A26",
+    primary: "#C95318",
     primaryHover: "#B4571D",
     cream: "#F8F5EF",
     dark: "#1F1713",
@@ -29,10 +29,20 @@ export const defaultSiteSettings = {
 const SiteSettingsContext = createContext(null);
 
 function mergeSettings(savedSettings) {
+  const savedTheme = savedSettings?.theme;
+  const primary =
+    ["#C96A26", "#832B03"].includes(savedTheme?.primary)
+      ? "#C95318"
+      : savedTheme?.primary;
+
   return {
     ...defaultSiteSettings,
     ...savedSettings,
-    theme: { ...defaultSiteSettings.theme, ...savedSettings?.theme },
+    theme: {
+      ...defaultSiteSettings.theme,
+      ...savedTheme,
+      ...(primary ? { primary } : {}),
+    },
     home: {
       ...defaultSiteSettings.home,
       ...savedSettings?.home,

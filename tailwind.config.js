@@ -11,6 +11,7 @@ export default {
         'velora-black': '#0D0D0D',
         'velora-cream': '#F8F5EF',
         'velora-gold': '#C95318',
+        'velora-gold2': '#832B03',
         'velora-goldHover': '#8B3A12',
         'velora-goldDeep': '#B5742E',
         'velora-textGray': '#7B675D',
@@ -20,6 +21,7 @@ export default {
         'velora-ivory': '#FAF7F2',
         'velora-white': '#FFFFFF',
         'velora-orange': '#A94716',
+
         'velora-orangeDark': '#8B3A12',
 
         'smiley-pink': '#A94716',
@@ -41,7 +43,7 @@ export default {
       boxShadow: {
         'smiley-soft': '0 10px 30px rgba(31, 23, 19, 0.08)',
         'smiley-soft-hover': '0 16px 40px rgba(31, 23, 19, 0.12)',
-        'smiley-button': '0 8px 24px rgba(201, 106, 38, 0.18)',
+        'smiley-button': '0 8px 24px rgba(131, 43, 3, 0.18)',
       },
       fontFamily: {
         'premium': ['"Playfair Display"', 'serif'],

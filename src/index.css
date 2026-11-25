@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --velora-primary: #C96A26;
+  --velora-primary: #C95318;
   --velora-primaryHover: #B4571D;
   --velora-primary-soft: #C89B5A;
   --velora-primary-deep: #B5742E;
@@ -99,6 +99,7 @@ body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
   overflow-x: hidden;
 }
+
 #root {
   min-height: 100%;
 }

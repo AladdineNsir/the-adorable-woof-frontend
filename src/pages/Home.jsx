@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -16,7 +16,17 @@ const reveal = (direction = 0, delay = 0) => ({
   transition: { duration: 0.65, delay, ease: "easeOut" },
 });
 
-export default function Home() {
+export default function Home({ introActive = false }) {
+  const skipInitialReveal = useRef(introActive).current;
+  const revealProps = (direction = 0, delay = 0) =>
+    skipInitialReveal
+      ? {
+          initial: false,
+          animate: { opacity: 1, x: 0, y: 0 },
+          transition: { duration: 0 },
+        }
+      : reveal(direction, delay);
+
   const { settings } = useSiteSettings();
   const [packs, setPacks] = useState([]);
   const [packImageIndices, setPackImageIndices] = useState({});
@@ -109,7 +119,7 @@ export default function Home() {
     <main className="overflow-x-hidden bg-velora-cream text-velora-dark">
       <section className="bg-velora-cream py-10 sm:py-14 lg:min-h-[70vh] lg:py-16">
         <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 sm:px-6 md:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:px-16">
-          <motion.div {...reveal(-40)} className="order-2 lg:order-1">
+          <motion.div {...revealProps(-40)} className="order-2 lg:order-1">
             <div className="mb-4 inline-flex items-center gap-2">
               <span className="h-px w-8 bg-velora-gold" />
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-velora-gold sm:text-xs">
@@ -143,7 +153,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <motion.div {...reveal(40, 0.08)} className="order-1 lg:order-2">
+          <motion.div {...revealProps(40, 0.08)} className="order-1 lg:order-2">
             <div className="h-[320px] overflow-hidden rounded-2xl border border-velora-gold/30 shadow-[0_18px_40px_rgba(77,54,35,0.12)] sm:h-[390px] lg:h-[460px]">
               <img
                 src={heroImageSet.src}
@@ -161,7 +171,7 @@ export default function Home() {
 
       <section className="bg-velora-cream py-10 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16">
-          <motion.div {...reveal()} className="mb-8 text-center sm:mb-10">
+          <motion.div {...revealProps()} className="mb-8 text-center sm:mb-10">
             <div className="mb-3 inline-flex items-center gap-2">
               <span className="h-px w-8 bg-velora-gold" />
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-velora-gold">
@@ -176,7 +186,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {collections.map((collection, index) => (
-              <motion.div key={collection.key} {...reveal(0, index * 0.08)}>
+              <motion.div key={collection.key} {...revealProps(0, index * 0.08)}>
                 <Link
                   to={collection.href}
                   onClick={() => trackClick("click_category", { category: collection.key })}
@@ -221,7 +231,7 @@ export default function Home() {
 
       {/* SECTION HEADER */}
       <motion.div
-        {...reveal()}
+        {...revealProps()}
         className="mb-8 text-center sm:mb-10"
       >
         <div className="mb-3 inline-flex items-center gap-2">
@@ -276,7 +286,7 @@ export default function Home() {
           return (
             <motion.div
               key={pack._id || pack.slug}
-              {...reveal(0, index * 0.08)}
+              {...revealProps(0, index * 0.08)}
             >
               <Link
                 to={`/pack/${pack.slug || pack._id}`}
@@ -550,7 +560,7 @@ export default function Home() {
 
       <section className="bg-velora-cream py-10 sm:py-14 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-16">
-          <motion.div {...reveal()} className="mb-10 text-center md:mb-12">
+          <motion.div {...revealProps()} className="mb-10 text-center md:mb-12">
             <div className="mb-4 inline-flex items-center gap-3">
               <span className="h-px w-10 bg-velora-gold" />
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-velora-gold">
@@ -564,7 +574,7 @@ export default function Home() {
           </motion.div>
 
           <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12 xl:gap-16">
-            <motion.div {...reveal(-35)} className="flex items-center justify-center">
+            <motion.div {...revealProps(-35)} className="flex items-center justify-center">
               <img
                 src={settings.home.constructionImage}
                 alt="Structure multicouche du harnais"
@@ -574,7 +584,7 @@ export default function Home() {
             </motion.div>
 
             <motion.div
-              {...reveal(35, 0.08)}
+              {...revealProps(35, 0.08)}
               className="relative border-l border-velora-gold/50 pl-5 sm:pl-7"
             >
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-velora-gold">

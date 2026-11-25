@@ -4,7 +4,7 @@ import sharp from 'sharp';
 
 const srcDir = path.resolve(process.cwd(), 'public', 'assets');
 const sources = [
-  { name: 'd1.png', widths: [768, 1200] },
+  { name: 'd1.png', widths: [768, 1200], quality: 92 },
   { name: 'pp.png', widths: [768, 1200] },
   { name: 'about-velora.png', widths: [768, 1200] },
   { name: 'logoOs.png', widths: [320, 640] },
@@ -18,7 +18,7 @@ async function ensureDir(dir) {
 async function run() {
   await ensureDir(srcDir);
 
-  for (const { name, widths } of sources) {
+  for (const { name, widths, quality = 78 } of sources) {
     const srcPath = path.join(srcDir, name);
     if (!fs.existsSync(srcPath)) continue;
     const baseName = path.parse(name).name;
@@ -27,7 +27,7 @@ async function run() {
       const outWebp = path.join(srcDir, `${baseName}-${w}.webp`);
 
       console.log(`Generating ${w}px -> ${path.basename(outWebp)}`);
-      await sharp(srcPath).resize({ width: w, withoutEnlargement: true }).webp({ quality: 78 }).toFile(outWebp);
+      await sharp(srcPath).resize({ width: w, withoutEnlargement: true }).webp({ quality }).toFile(outWebp);
     }
 
   }

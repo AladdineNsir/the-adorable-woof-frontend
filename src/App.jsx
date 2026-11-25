@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 
 import { Routes, Route, Outlet, useParams } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -20,6 +20,8 @@ import AnalyticsProvider from "./analytics/AnalyticsProvider";
 import WhatsAppButton from "./components/WhatsAppButton";
 import { loadRoute } from "./config/routePreloads";
 import { PageSkeleton } from "./components/LoadingSkeleton";
+import IntroOverlay from "./components/IntroOverlay";
+import Home from "./pages/Home";
 
 /* ================= WEBSITE ================= */
 
@@ -32,8 +34,6 @@ import { PageSkeleton } from "./components/LoadingSkeleton";
 // const SizeGuide = lazy(() => loadRoute("/size-guide") || import("./pages/SizeGuide"));
 // const FAQ = lazy(() => loadRoute("/faq") || import("./pages/FAQ"));
 // const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
-const Home = lazy(() => import("./pages/Home"));
-
 const About = lazy(() => import("./pages/About"));
 
 const Shop = lazy(() => import("./pages/Shop"));
@@ -118,10 +118,13 @@ function LegacyProductRedirect() {
   return <Navigate to={`/produit/${id}`} replace />;
 }
 
-function WebsiteLayout() {
+function WebsiteLayout({ introActive = false }) {
 
   return (
-    <>
+    <div
+      className="transition-opacity duration-700 ease-out"
+      style={{ opacity: introActive ? 0.9 : 1 }}
+    >
       <SEO />
       <Navbar />
 
@@ -133,11 +136,10 @@ function WebsiteLayout() {
 
       <WhatsAppButton />
 
-     
-    </>
+    </div>
   );
 }
-function AppRoutes() {
+function AppRoutes({ introActive }) {
   return (
     <Suspense
       fallback={<PageSkeleton />}
@@ -146,9 +148,12 @@ function AppRoutes() {
 
       {/* ================= WEBSITE ================= */}
 
-      <Route element={<WebsiteLayout />}>
+      <Route element={<WebsiteLayout introActive={introActive} />}>
 
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={<Home introActive={introActive} />}
+        />
 
         <Route path="/shop" element={<Shop />} />
 
@@ -335,6 +340,31 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const [introVisible, setIntroVisible] = useState(() => {
+    if (typeof window === "undefined" || window.location.pathname !== "/") {
+      return false;
+    }
+
+    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
+  const [introExiting, setIntroExiting] = useState(false);
+
+  const finishIntro = useCallback(() => {
+    if (introVisible && !introExiting) {
+      setIntroExiting(true);
+    }
+  }, [introVisible, introExiting]);
+
+  useEffect(() => {
+    if (!introExiting) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setIntroVisible(false);
+    }, 700);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [introExiting]);
+
   return (
     <AnalyticsProvider>
       <QueryClientProvider client={queryClient}>
@@ -343,7 +373,11 @@ export default function App() {
 
             <ScrollToTop />
 
-            <AppRoutes />
+            {introVisible && (
+              <IntroOverlay exiting={introExiting} onFinish={finishIntro} />
+            )}
+
+            <AppRoutes introActive={introVisible && !introExiting} />
 
             <Toaster
   position="bottom-left"

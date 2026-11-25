@@ -8,6 +8,9 @@ import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 
+window.history.scrollRestoration = "manual";
+window.scrollTo(0, 0);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter

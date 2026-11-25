@@ -199,7 +199,7 @@ const { cart } = useCart();
           /> */}
 
           <img
-            src="/assets/1.png"
+            src="/assets/2.png"
             alt="The Adorable Woof"
             className="h-9 sm:h-10 md:h-11 w-auto max-w-[170px] sm:max-w-[480px] md:max-w-[550px] object-contain"
           />

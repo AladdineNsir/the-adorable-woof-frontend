@@ -1,5 +1,4 @@
 const routeLoaders = {
-  "/": () => import("../pages/Home"),
   "/shop": () => import("../pages/Shop"),
   "/size-guide": () => import("../pages/SizeGuide"),
   "/about": () => import("../pages/About"),
