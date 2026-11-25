@@ -57,6 +57,7 @@ function mergeSettings(savedSettings) {
 
 export function SiteSettingsProvider({ children }) {
   const [settings, setSettings] = useState(defaultSiteSettings);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const saveTimerRef = useRef(null);
 
   useEffect(() => {
@@ -68,6 +69,9 @@ export function SiteSettingsProvider({ children }) {
       })
       .catch((error) => {
         console.error("Impossible de charger les paramètres du site", error);
+      })
+      .finally(() => {
+        if (isMounted) setSettingsLoaded(true);
       });
 
     return () => {
@@ -120,7 +124,9 @@ export function SiteSettingsProvider({ children }) {
   };
 
   return (
-    <SiteSettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+    <SiteSettingsContext.Provider
+      value={{ settings, settingsLoaded, updateSettings, resetSettings }}
+    >
       {children}
     </SiteSettingsContext.Provider>
   );

@@ -1,10 +1,28 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function IntroOverlay({ exiting, onFinish }) {
   const videoRef = useRef(null);
+  const stallTimeoutRef = useRef(null);
   const onFinishRef = useRef(onFinish);
+  const [playbackBlocked, setPlaybackBlocked] = useState(false);
+  const [playbackError, setPlaybackError] = useState(false);
   onFinishRef.current = onFinish;
+
+  const requestPlayback = async () => {
+    try {
+      await videoRef.current?.play();
+      setPlaybackBlocked(false);
+      setPlaybackError(false);
+    } catch (error) {
+      if (error?.name === "NotAllowedError") {
+        window.clearTimeout(stallTimeoutRef.current);
+        setPlaybackBlocked(true);
+      } else {
+        setPlaybackError(true);
+      }
+    }
+  };
 
   useLayoutEffect(() => {
     const bodyStyle = document.body.style;
@@ -51,38 +69,24 @@ export default function IntroOverlay({ exiting, onFinish }) {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
     const video = videoRef.current;
-    const stallTimeout = window.setTimeout(() => {
-      if (!cancelled) onFinishRef.current();
+    stallTimeoutRef.current = window.setTimeout(() => {
+      onFinishRef.current();
     }, 15000);
-    const skipLogoIntro = () => {
-      if (video && video.readyState >= 1 && video.duration > 1) {
+    const startPlayback = () => {
+      if (!video || video.readyState < 1) return;
+      if (video.duration > 1) {
         video.currentTime = Math.min(0.8, video.duration * 0.2);
       }
+      requestPlayback();
     };
 
-    const startPlayback = async () => {
-      if (!video) return;
-
-      try {
-        skipLogoIntro();
-        await video.play();
-      } catch (error) {
-        if (cancelled) return;
-        onFinishRef.current();
-      }
-    };
-
-    startPlayback();
-    video?.addEventListener("canplay", startPlayback, { once: true });
-    video?.addEventListener("loadedmetadata", skipLogoIntro, { once: true });
+    video?.addEventListener("loadedmetadata", startPlayback, { once: true });
+    if (video?.readyState >= 1) startPlayback();
 
     return () => {
-      cancelled = true;
-      window.clearTimeout(stallTimeout);
-      video?.removeEventListener("canplay", startPlayback);
-      video?.removeEventListener("loadedmetadata", skipLogoIntro);
+      window.clearTimeout(stallTimeoutRef.current);
+      video?.removeEventListener("loadedmetadata", startPlayback);
       video?.pause();
     };
   }, []);
@@ -115,9 +119,30 @@ export default function IntroOverlay({ exiting, onFinish }) {
           playsInline
           preload="auto"
           onEnded={onFinish}
-          onError={onFinish}
+          onError={() => {
+            window.clearTimeout(stallTimeoutRef.current);
+            setPlaybackError(true);
+          }}
           aria-label="Animation d’introduction"
         />
+
+        {(playbackBlocked || playbackError) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#FBF5EA]/60 px-6">
+            {playbackBlocked ? (
+              <button
+                type="button"
+                onClick={requestPlayback}
+                className="rounded-full bg-velora-gold px-6 py-3 text-sm font-semibold text-white shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-velora-gold focus-visible:ring-offset-2"
+              >
+                Toucher pour lancer la vidéo
+              </button>
+            ) : (
+              <p className="rounded-xl bg-white/90 px-5 py-3 text-center text-sm text-velora-dark shadow">
+                La vidéo ne peut pas être lue sur cet appareil.
+              </p>
+            )}
+          </div>
+        )}
 
         <button
           type="button"

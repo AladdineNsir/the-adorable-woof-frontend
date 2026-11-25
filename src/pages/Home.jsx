@@ -27,7 +27,7 @@ export default function Home({ introActive = false }) {
         }
       : reveal(direction, delay);
 
-  const { settings } = useSiteSettings();
+  const { settings, settingsLoaded } = useSiteSettings();
   const [packs, setPacks] = useState([]);
   const [packImageIndices, setPackImageIndices] = useState({});
   const selectedFeaturedPack = settings.home.featuredPack || "";
@@ -156,6 +156,7 @@ export default function Home({ introActive = false }) {
           <motion.div {...revealProps(40, 0.08)} className="order-1 lg:order-2">
             <div className="h-[320px] overflow-hidden rounded-2xl border border-velora-gold/30 shadow-[0_18px_40px_rgba(77,54,35,0.12)] sm:h-[390px] lg:h-[460px]">
               <img
+                hidden={!settingsLoaded}
                 src={heroImageSet.src}
                 srcSet={heroImageSet.srcSet}
                 sizes={heroImageSet.sizes}
