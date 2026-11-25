@@ -1,10 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function IntroOverlay({ exiting, onFinish }) {
   const videoRef = useRef(null);
   const onFinishRef = useRef(onFinish);
-  const [muted, setMuted] = useState(false);
   onFinishRef.current = onFinish;
 
   useLayoutEffect(() => {
@@ -54,6 +53,9 @@ export default function IntroOverlay({ exiting, onFinish }) {
   useEffect(() => {
     let cancelled = false;
     const video = videoRef.current;
+    const stallTimeout = window.setTimeout(() => {
+      if (!cancelled) onFinishRef.current();
+    }, 15000);
 
     const startPlayback = async () => {
       if (!video) return;
@@ -62,27 +64,17 @@ export default function IntroOverlay({ exiting, onFinish }) {
         await video.play();
       } catch (error) {
         if (cancelled) return;
-
-        if (error?.name !== "NotAllowedError") {
-          onFinishRef.current();
-          return;
-        }
-
-        video.muted = true;
-        setMuted(true);
-
-        try {
-          await video.play();
-        } catch {
-          if (!cancelled) onFinishRef.current();
-        }
+        onFinishRef.current();
       }
     };
 
     startPlayback();
+    video?.addEventListener("canplay", startPlayback, { once: true });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(stallTimeout);
+      video?.removeEventListener("canplay", startPlayback);
       video?.pause();
     };
   }, []);
@@ -109,10 +101,10 @@ export default function IntroOverlay({ exiting, onFinish }) {
         <video
           ref={videoRef}
           className="h-full w-full bg-[#FBF5EA] object-contain [mix-blend-mode:multiply]"
-          src="/videos/intro.mp4"
+          src="/videos/intro.mp4?v=20261125"
           poster="/assets/logoOs-640.webp"
           autoPlay
-          muted={muted}
+          muted
           playsInline
           preload="auto"
           onEnded={onFinish}
