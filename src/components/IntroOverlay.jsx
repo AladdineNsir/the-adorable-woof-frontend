@@ -56,11 +56,17 @@ export default function IntroOverlay({ exiting, onFinish }) {
     const stallTimeout = window.setTimeout(() => {
       if (!cancelled) onFinishRef.current();
     }, 15000);
+    const skipLogoIntro = () => {
+      if (video && video.readyState >= 1 && video.duration > 1) {
+        video.currentTime = Math.min(0.8, video.duration * 0.2);
+      }
+    };
 
     const startPlayback = async () => {
       if (!video) return;
 
       try {
+        skipLogoIntro();
         await video.play();
       } catch (error) {
         if (cancelled) return;
@@ -70,11 +76,13 @@ export default function IntroOverlay({ exiting, onFinish }) {
 
     startPlayback();
     video?.addEventListener("canplay", startPlayback, { once: true });
+    video?.addEventListener("loadedmetadata", skipLogoIntro, { once: true });
 
     return () => {
       cancelled = true;
       window.clearTimeout(stallTimeout);
       video?.removeEventListener("canplay", startPlayback);
+      video?.removeEventListener("loadedmetadata", skipLogoIntro);
       video?.pause();
     };
   }, []);
@@ -102,7 +110,6 @@ export default function IntroOverlay({ exiting, onFinish }) {
           ref={videoRef}
           className="h-full w-full bg-[#FBF5EA] object-contain [mix-blend-mode:multiply]"
           src="/videos/intro.mp4?v=20261125"
-          poster="/assets/logoOs-640.webp"
           autoPlay
           muted
           playsInline
