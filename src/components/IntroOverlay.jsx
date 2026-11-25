@@ -81,10 +81,18 @@ export default function IntroOverlay({ exiting, onFinish }) {
         video.currentTime = Math.min(0.8, video.duration * 0.2);
       }
     };
-    const startPlayback = () => requestPlayback();
+    const startPlayback = () => {
+      if (!video || video.readyState < 2) return;
+      if (video.seeking) {
+        video.addEventListener("seeked", startPlayback, { once: true });
+        return;
+      }
+      requestPlayback();
+    };
 
     video?.addEventListener("loadedmetadata", skipLogoIntro, { once: true });
     video?.addEventListener("canplay", startPlayback, { once: true });
+    video?.addEventListener("seeked", startPlayback, { once: true });
     if (video?.readyState >= 1) skipLogoIntro();
     if (video?.readyState >= 3) startPlayback();
 
@@ -92,6 +100,7 @@ export default function IntroOverlay({ exiting, onFinish }) {
       window.clearTimeout(stallTimeoutRef.current);
       video?.removeEventListener("loadedmetadata", skipLogoIntro);
       video?.removeEventListener("canplay", startPlayback);
+      video?.removeEventListener("seeked", startPlayback);
       video?.pause();
     };
   }, []);
