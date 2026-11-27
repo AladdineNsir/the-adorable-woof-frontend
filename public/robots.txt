@@ -7,4 +7,4 @@ Disallow: /login
 Disallow: /register
 Disallow: /order-success
 
-Sitemap: /sitemap.xml
+Sitemap: https://www.adorablewoof.tn/sitemap.xml

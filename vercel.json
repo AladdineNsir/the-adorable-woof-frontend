@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "https://the-adorable-woof-backend.onrender.com/api/sitemap.xml"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://the-adorable-woof-backend.onrender.com/api/:path*"
     },
