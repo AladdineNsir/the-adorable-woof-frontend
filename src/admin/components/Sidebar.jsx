@@ -100,7 +100,7 @@ export default function Sidebar({
               />
             ) : (
               <img
-                src="/assets/1.png"
+                src="/assets/2.png"
                 alt="The aDoraBle woof co."
                 className="h-10 w-full max-w-[220px] object-contain transition-all duration-300 ease-in-out"
               />
