@@ -11,6 +11,7 @@ import ScrollToTop from "./components/ScrollToTop";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import CookieConsent from "./components/CookieConsent";
 import Dashboard from "./admin/pages/Dashboard";
 import ProductDetails from "./pages/ProductDetails";
 import { Toaster } from "react-hot-toast";
@@ -378,6 +379,8 @@ export default function App() {
             )}
 
             <AppRoutes introActive={introVisible && !introExiting} />
+
+            <CookieConsent />
 
             <Toaster
   position="bottom-left"

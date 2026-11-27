@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTiktok, FaBone } from "react-icons/fa";
-import { trackClick } from "../analytics/analytics";
+import { openCookieSettings, trackClick } from "../analytics/analytics";
 
 export default function Footer() {
   return (
@@ -34,6 +34,14 @@ export default function Footer() {
               </a>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={openCookieSettings}
+            className="text-[11px] font-medium text-white/65 underline decoration-white/30 underline-offset-4 transition hover:text-white"
+          >
+            Paramètres des cookies
+          </button>
 
           {/* Made in Tunisia */}
           <div className="flex-1 text-center md:text-right">

@@ -16,7 +16,6 @@ export default function AnalyticsProvider({ children }) {
   const isAdmin = location.pathname.startsWith("/admin");
 
   useEffect(() => {
-    captureAttribution();
     const loadConfig = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/tracking/config`);
@@ -35,10 +34,14 @@ export default function AnalyticsProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (isAdmin || !configLoaded || consent !== "granted") return;
+    if (consent?.analytics) captureAttribution();
+  }, [consent?.analytics]);
+
+  useEffect(() => {
+    if (isAdmin || !configLoaded || (!consent?.analytics && !consent?.marketing)) return;
     loadAnalyticsVendors();
     trackPageView(location.pathname);
-  }, [configLoaded, consent, isAdmin, location.pathname]);
+  }, [configLoaded, consent?.analytics, consent?.marketing, isAdmin, location.pathname]);
 
   return children;
 }
